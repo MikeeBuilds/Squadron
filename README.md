@@ -212,6 +212,25 @@ squadron/
 
 ---
 
+## 📝 Customizing for Your Team
+
+The `knowledge/` folder contains example files that you should customize for your own team:
+
+| File | What to Customize |
+|------|-------------------|
+| `TEAM.md` | Replace with your team members (human and AI) |
+| `ROLES.md` | Define your agent personas and responsibilities |
+| `WORKFLOW.md` | Set your team's development process and rules |
+
+These files provide **context** that helps your agents understand your workflow. The examples show our agents (Marcus & Caleb) — replace them with your own!
+
+```bash
+# Example: Edit the roles file
+code squadron/knowledge/ROLES.md
+```
+
+---
+
 ## 🔌 Skills
 
 | Skill | Status | What It Does |

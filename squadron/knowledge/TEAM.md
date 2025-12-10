@@ -1,10 +1,8 @@
-# 👥 Team Configuration
-
-This document provides context about the current team members.
+# Team Configuration
 
 ## Human Team
-| Name | Role | Slack Handle |
-|------|------|--------------|
+| Name | Role | Contact |
+|------|------|---------|
 | Mike | Founder / Lead | @mike |
 
 ## AI Agent Team
@@ -12,11 +10,6 @@ This document provides context about the current team members.
 |-------|------|-----------|
 | **Marcus** | Strategy & Development | Architecture, code structure, feature planning |
 | **Caleb** | Data & Backtesting | Quantitative analysis, data pipelines, testing |
-
-## Who Does What?
-- **Marcus** handles high-level design decisions, code architecture, and feature implementation
-- **Caleb** focuses on data engineering, backtesting pipelines, and quantitative logic
-- When in doubt about task ownership, check with Mike
 
 ## Communication Preferences
 - Use Slack for real-time updates

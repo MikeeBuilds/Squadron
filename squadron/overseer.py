@@ -6,6 +6,8 @@ Watches Jira for new tickets and wakes up agents when work is assigned.
 import time
 import os
 import sys
+import subprocess
+import shlex
 from dotenv import load_dotenv
 
 try:
@@ -15,12 +17,15 @@ except ImportError:
     sys.exit(1)
 
 
-def watch_tickets(check_interval=30):
+def watch_tickets(check_interval=30, exec_command=None):
     """
     Watch Jira for new tickets assigned to the current user.
     
     Args:
         check_interval: Seconds between checks (default: 30)
+        exec_command: Command string to execute when a ticket is found.
+                      Use {key} and {summary} as placeholders.
+                      Example: "python agent.py --task '{summary}'"
     """
     # Load environment variables
     load_dotenv()
@@ -44,11 +49,15 @@ def watch_tickets(check_interval=30):
     jql = 'status = "To Do" AND assignee = currentUser()'
 
     print("=" * 50)
-    print("👀 SQUADRON OVERSEER")
+    print("👀 SQUADRON OVERSEER v2.0")
     print("=" * 50)
     print(f"   Server: {server}")
     print(f"   Watching for: {jql}")
     print(f"   Check interval: {check_interval}s")
+    if exec_command:
+        print(f"   Wake-up Command: {exec_command}")
+    else:
+        print("   Mode: Passive (Notification only)")
     print("=" * 50)
     print("")
 
@@ -61,14 +70,28 @@ def watch_tickets(check_interval=30):
             for issue in issues:
                 if issue.key not in seen_tickets:
                     seen_tickets.add(issue.key)
-                    print(f"🔔 NEW TASK DETECTED!")
-                    print(f"   Ticket: {issue.key}")
-                    print(f"   Summary: {issue.fields.summary}")
-                    print(f"   Priority: {issue.fields.priority}")
-                    print("")
-                    print("   🤖 (Agent trigger logic goes here)")
+                    
+                    summary = issue.fields.summary
+                    priority = issue.fields.priority.name if hasattr(issue.fields, 'priority') and issue.fields.priority else "None"
+                    
+                    print(f"🔔 NEW TASK DETECTED: [{issue.key}] {summary}")
+                    
+                    if exec_command:
+                        # Format the command with ticket details
+                        cmd_str = exec_command.replace("{key}", issue.key).replace("{summary}", summary)
+                        print(f"⚡ Waking up agent with: {cmd_str}")
+                        
+                        # Execute the command
+                        try:
+                            # Use shell=True for flexibility, but be careful with inputs
+                            subprocess.Popen(cmd_str, shell=True)
+                            print(f"✅ Agent process started for {issue.key}")
+                        except Exception as e:
+                            print(f"❌ Failed to start agent: {e}")
+                    else:
+                        print("   (Pasive mode: use --exec to trigger an agent)")
+                        
                     print("-" * 40)
-                    # TODO: Trigger agent API or subprocess here
 
             time.sleep(check_interval)
 
@@ -82,6 +105,7 @@ def watch_tickets(check_interval=30):
 
 def main():
     """Entry point for the overseer command."""
+    # This is handled by cli.py usually, but for standalone testing:
     watch_tickets()
 
 

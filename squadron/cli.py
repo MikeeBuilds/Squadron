@@ -12,6 +12,28 @@ from squadron.skills.slack_bridge.tool import SlackTool
 from squadron.skills.jira_bridge.tool import JiraTool
 from squadron.skills.discord_bridge.tool import DiscordTool
 from squadron.skills.github_bridge.tool import GitHubTool
+from squadron.skills.linear_bridge.tool import LinearTool
+from squadron.knowledge.reader import KnowledgeBase
+
+
+import yaml
+
+def load_agent_config(agent_name):
+    """Load agent details from agents.yaml if it exists."""
+    config_path = os.path.join(os.getcwd(), "squadron", "agents.yaml")
+    if not os.path.exists(config_path):
+        return None, None
+        
+    try:
+        with open(config_path, "r") as f:
+            data = yaml.safe_load(f)
+            if data and "agents" in data and agent_name.lower() in data["agents"]:
+                agent = data["agents"][agent_name.lower()]
+                return agent.get("name"), agent.get("avatar_url")
+    except Exception as e:
+        print(f"⚠️ Error loading agents.yaml: {e}")
+    
+    return None, None
 
 
 def main():
@@ -25,15 +47,22 @@ def main():
     subparsers = parser.add_subparsers(dest="command")
 
     # Command: 'report' - Main communication command
-    report_parser = subparsers.add_parser("report", help="Report status to Slack & Jira")
+    report_parser = subparsers.add_parser("report", help="Report status to Slack, Jira & Linear")
     report_parser.add_argument("--msg", required=True, help="Message to send")
     report_parser.add_argument("--ticket", help="Jira Ticket ID (e.g. PROJ-101)")
+    report_parser.add_argument("--linear", help="Linear Issue Key (e.g. PRO-123)")
     report_parser.add_argument("--channel", default="#general", help="Slack Channel")
-    report_parser.add_argument("--status", help="New Jira Status (e.g. 'Done')")
+    report_parser.add_argument("--status", help="New Status (e.g. 'Done')")
+    report_parser.add_argument("--agent", help="Agent identity (e.g. 'Marcus')")
 
     # Command: 'broadcast' - Discord community updates
     broadcast_parser = subparsers.add_parser("broadcast", help="Broadcast to Discord")
     broadcast_parser.add_argument("--msg", required=True, help="Message to broadcast")
+    broadcast_parser.add_argument("--agent", help="Agent identity (e.g. 'Marcus')")
+
+    # Command: 'ask' - Query Knowledge Base
+    ask_parser = subparsers.add_parser("ask", help="Query the team knowledge base")
+    ask_parser.add_argument("query", help="What do you want to know?")
 
     # Command: 'pr' - Create GitHub Pull Request
     pr_parser = subparsers.add_parser("pr", help="Create a GitHub Pull Request")
@@ -48,10 +77,11 @@ def main():
     issue_parser.add_argument("--repo", required=True, help="Repository (e.g. user/repo)")
     issue_parser.add_argument("--title", required=True, help="Issue title")
     issue_parser.add_argument("--body", default="", help="Issue description")
-
+    
     # Command: 'overseer' - Start the background watcher
     overseer_parser = subparsers.add_parser("overseer", help="Start Jira ticket watcher")
     overseer_parser.add_argument("--interval", type=int, default=30, help="Check interval (seconds)")
+    overseer_parser.add_argument("--exec", help="Command to run when ticket found (use {key} {summary})")
 
     args = parser.parse_args()
 
@@ -60,6 +90,8 @@ def main():
         handle_report(args)
     elif args.command == "broadcast":
         handle_broadcast(args)
+    elif args.command == "ask":
+        handle_ask(args)
     elif args.command == "pr":
         handle_pr(args)
     elif args.command == "issue":
@@ -71,24 +103,59 @@ def main():
 
 
 def handle_report(args):
-    """Handle the 'report' command - send updates to Slack and Jira."""
-    print("🚀 Squadron Bridge Activated...")
+    """Handle the 'report' command - send updates to all integrated tools."""
+    print("🚀 Squadron Reporting...")
+    
+    # Resolve Agent Identity
+    username, avatar_url = None, None
+    if args.agent:
+        username, avatar_url = load_agent_config(args.agent)
+        if username:
+            print(f"👤 Posting as: {username}")
 
     # A. Fire Slack
     slack = SlackTool()
-    slack.send_alert(args.channel, args.msg)
+    slack.send_alert(args.channel, args.msg, username=username, icon_url=avatar_url)
 
     # B. Fire Jira (if ticket provided)
     if args.ticket:
         jira = JiraTool()
         jira.update_ticket(args.ticket, args.msg, args.status)
+        
+    # C. Fire Linear (if issue provided)
+    if args.linear:
+        linear = LinearTool()
+        linear.update_issue(args.linear, args.msg, args.status)
 
 
 def handle_broadcast(args):
     """Handle the 'broadcast' command - send to Discord."""
     print("📢 Squadron Broadcasting...")
+    
+    # Resolve Agent Identity
+    username, avatar_url = None, None
+    if args.agent:
+        username, avatar_url = load_agent_config(args.agent)
+        if username:
+            print(f"👤 Broadcasting as: {username}")
+            
     discord = DiscordTool()
-    discord.broadcast(args.msg)
+    discord.broadcast(args.msg, username=username, avatar_url=avatar_url)
+
+
+def handle_ask(args):
+    """Handle the 'ask' command - query knowledge base."""
+    print(f"🧠 Asking the Knowledge Base: '{args.query}'")
+    kb = KnowledgeBase()
+    results = kb.search(args.query)
+    
+    if results:
+        print(f"\nFound {len(results)} matches:")
+        for res in results:
+            print(f"\n--- {res['source']} (Line {res['line']}) ---")
+            print(res['snippet'].strip())
+    else:
+        print("❌ No matches found in knowledge base.")
 
 
 def handle_pr(args):
@@ -118,7 +185,7 @@ def handle_issue(args):
 def handle_overseer(args):
     """Handle the 'overseer' command - start Jira watcher."""
     from squadron.overseer import watch_tickets
-    watch_tickets(check_interval=args.interval)
+    watch_tickets(check_interval=args.interval, exec_command=args.exec)
 
 
 if __name__ == "__main__":

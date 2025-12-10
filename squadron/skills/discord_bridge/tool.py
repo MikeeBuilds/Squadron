@@ -8,26 +8,30 @@ class DiscordTool:
     def __init__(self):
         self.webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
 
-    def broadcast(self, message, header="Agent Update"):
+    def broadcast(self, message, channel_name="general", username=None, avatar_url=None):
         """
         Broadcast a message to Discord via webhook.
         
         Args:
             message: The message content to send
-            header: Header text for the message
+            channel_name: Display name for footer context
+            username: Override default bot name
+            avatar_url: Override default bot avatar
         """
         if not self.webhook_url:
-            print("❌ Error: DISCORD_WEBHOOK_URL not found in .env")
+            print("⚠️ Discord Webhook URL not found. Skipping.")
             return False
 
+        # Create a nice embed for the agent
         payload = {
-            "embeds": [
-                {
-                    "title": f"🤖 {header}",
-                    "description": message,
-                    "color": 5814783,  # Purple color
-                }
-            ]
+            "username": username or "Squadron Agent",
+            "avatar_url": avatar_url or "https://i.imgur.com/4M34hi2.png",
+            "embeds": [{
+                "title": f"📢 {username or 'Agent'} Update",
+                "description": message,
+                "color": 5763719,  # Greenish/Blue
+                "footer": {"text": f"via Squadron • #{channel_name}"}
+            }]
         }
 
         try:
@@ -36,7 +40,7 @@ class DiscordTool:
                 print("✅ Discord: Broadcast sent.")
                 return True
             else:
-                print(f"❌ Discord Error: Status {response.status_code}")
+                print(f"❌ Discord Error: {response.status_code}")
                 return False
         except Exception as e:
             print(f"❌ Discord Connection Error: {e}")

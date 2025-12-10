@@ -12,7 +12,7 @@ class SlackTool:
             
         self.client = WebClient(token=self.token)
 
-    def send_alert(self, channel, message, header="Agent Report"):
+    def send_alert(self, channel, message, header="Agent Report", username=None, icon_url=None):
         """Sends a formatted message to Slack"""
         if not self.token:
             return
@@ -39,7 +39,13 @@ class SlackTool:
         ]
 
         try:
-            self.client.chat_postMessage(channel=channel, blocks=blocks, text=message)
+            self.client.chat_postMessage(
+                channel=channel, 
+                blocks=blocks, 
+                text=message,
+                username=username,
+                icon_url=icon_url
+            )
             print(f"✅ Slack: Message sent to {channel}")
         except SlackApiError as e:
             print(f"❌ Slack Error: {e.response['error']}")
