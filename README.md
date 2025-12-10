@@ -22,7 +22,19 @@
   <a href="#-architecture">Architecture</a> •
   <a href="#-skills">Skills</a> •
   <a href="#-roadmap">Roadmap</a>
+  <a href="#-roadmap">Roadmap</a>
 </p>
+
+---
+
+## 🔥 New in v0.2.3
+| Feature | Description |
+|:---|:---|
+| **📁 Init Command** | `squadron init` scaffolds your local environment |
+| **🧠 Librarian** | `squadron learn` auto-maps your codebase structure |
+| **🎭 Dynamic Identity** | Custom names & avatars in Slack/Discord |
+| **👂 The Ears** | Agents can listen & reply to `@mentions` |
+| **⚖️ AGPL-3.0** | Now protected by the AGPL license |
 
 ---
 
@@ -115,9 +127,25 @@ DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
 
 # GitHub (optional)
 GITHUB_TOKEN=ghp_your-token
+# Linear (optional)
+LINEAR_API_KEY=lin_api_...
 ```
 
-### 3. Test
+### 3. Initialize
+
+```bash
+squadron init
+```
+This creates a `squadron/knowledge/` folder in your project. Customize `TEAM.md` and `ROLES.md` here.
+
+### 4. Learn
+
+```bash
+squadron learn
+```
+This scans your code and builds a map for the agent to use.
+
+### 5. Test
 
 ```bash
 squadron report --msg "Hello from Squadron!" --channel "#general"
@@ -128,6 +156,24 @@ If you see `✅ Slack: Message sent` — you're live! 🎉
 ---
 
 ## 📖 Commands
+
+### `squadron init` — Setup 📁
+Scaffolds the Squadron files in your local project.
+```bash
+squadron init
+```
+
+### `squadron learn` — The Librarian 🧠
+Scans your codebase and generates `knowledge/CODEBASE_MAP.md`.
+```bash
+squadron learn
+```
+
+### `squadron listen` — The Ears 👂
+Starts the listener to hear @mentions in Slack.
+```bash
+squadron listen
+```
 
 ### `squadron report` — Team Updates
 Send updates to Slack and optionally update Jira tickets.
@@ -204,7 +250,7 @@ squadron/
 ### Why This Structure?
 
 | Layer | Purpose | Example |
-|-------|---------|---------|
+|-------|---------|---------
 | **Skills** | Executable actions | `JiraTool.update_ticket()` |
 | **Knowledge** | Context for decisions | "Move to Done only after tests pass" |
 
@@ -311,7 +357,7 @@ We're building the future of **Agent-First Development**. Want to add a new skil
 
 ## 📜 License
 
-MIT © [MikeeBuilds](https://github.com/MikeeBuilds)
+AGPL-3.0 © [MikeeBuilds](https://github.com/MikeeBuilds)
 
 ---
 
