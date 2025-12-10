@@ -86,6 +86,9 @@ def main():
     # Command: 'listen' - Start the Slack listener
     listen_parser = subparsers.add_parser("listen", help="Start Slack listener (The Ears)")
 
+    # Command: 'learn' - Scan codebase and generate knowledge map
+    learn_parser = subparsers.add_parser("learn", help="Scan codebase and update knowledge (The Librarian)")
+
     args = parser.parse_args()
 
     # 3. Execution Logic
@@ -103,6 +106,8 @@ def main():
         handle_overseer(args)
     elif args.command == "listen":
         handle_listen(args)
+    elif args.command == "learn":
+        handle_learn(args)
     else:
         parser.print_help()
 
@@ -198,6 +203,13 @@ def handle_listen(args):
     """Handle the 'listen' command - start Slack listener."""
     from squadron.listener import start_listening
     start_listening()
+
+
+def handle_learn(args):
+    """Handle the 'learn' command - scan codebase and update knowledge."""
+    from squadron.skills.librarian.tool import LibrarianTool
+    librarian = LibrarianTool()
+    librarian.scan_codebase()
 
 
 if __name__ == "__main__":
