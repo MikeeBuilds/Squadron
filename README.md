@@ -129,104 +129,29 @@ If you see `✅ Slack: Message sent` — you're live! 🎉
 
 ## 📖 Commands
 
+### `squadron listen` — The Ears 👂
+Starts the listener service to hear @mentions in Slack.
+```bash
+squadron listen
+# Now type "@Squadron hello!" in Slack
+```
+
+### `squadron ask` — The Brain 🧠
+Query the team's knowledge base.
+```bash
+squadron ask "What is our deployment workflow?"
+```
+
 ### `squadron report` — Team Updates
-Send updates to Slack and optionally update Jira tickets.
-
+Send updates as a specific agent with a custom avatar.
 ```bash
-# Basic Slack message
-squadron report --msg "Starting the database migration"
-
-# With Jira ticket update
-squadron report --msg "Fixed the login bug" --ticket "PROJ-101"
-
-# With status transition
-squadron report --msg "Feature complete" --ticket "PROJ-101" --status "Done"
+squadron report --agent "Marcus" --msg "I finished the analysis." --linear "LIN-123"
 ```
 
-### `squadron broadcast` — Discord Announcements
-Broadcast updates to your Discord community.
-
+### `squadron overseer` — The Eyes 👁️
+Watch for new tickets and **wake up** an agent script.
 ```bash
-squadron broadcast --msg "🚀 Just shipped v2.0!"
-```
-
-### `squadron pr` — GitHub Pull Requests
-Create PRs programmatically.
-
-```bash
-squadron pr --repo "user/repo" --title "Add auth module" --head "feature-auth"
-```
-
-### `squadron issue` — GitHub Issues
-Create issues from the command line.
-
-```bash
-squadron issue --repo "user/repo" --title "Bug: Login fails on mobile"
-```
-
-### `squadron overseer` — Background Watcher
-Start a daemon that watches Jira for new tickets assigned to you.
-
-```bash
-squadron overseer --interval 30
-```
-
-When a new ticket appears:
-```
-🔔 NEW TASK DETECTED!
-   Ticket: KAN-42
-   Summary: Implement user authentication
-```
-
----
-
-## 🏗️ Architecture
-
-Squadron uses a **Skill-Based Architecture** inspired by the [Model Context Protocol (MCP)](https://modelcontextprotocol.io).
-
-```
-squadron/
-├── cli.py                 # 🎯 The Router (entry point)
-├── overseer.py            # 👀 Background ticket watcher
-│
-├── skills/                # 🛠️ ACTION LAYER (The Hands)
-│   ├── jira_bridge/       # Jira API integration
-│   ├── slack_bridge/      # Slack API integration
-│   ├── discord_bridge/    # Discord webhooks
-│   └── github_bridge/     # GitHub API integration
-│
-└── knowledge/             # 🧠 CONTEXT LAYER (The Brain)
-    ├── TEAM.md            # Who is on the team?
-    ├── WORKFLOW.md        # How does work flow?
-    └── ROLES.md           # What does each agent do?
-```
-
-### Why This Structure?
-
-| Layer | Purpose | Example |
-|-------|---------|---------|
-| **Skills** | Executable actions | `JiraTool.update_ticket()` |
-| **Knowledge** | Context for decisions | "Move to Done only after tests pass" |
-
-**Skills = Hands. Knowledge = Brain.**
-
----
-
-## 📝 Customizing for Your Team
-
-The `knowledge/` folder contains example files that you should customize for your own team:
-
-| File | What to Customize |
-|------|-------------------|
-| `TEAM.md` | Replace with your team members (human and AI) |
-| `ROLES.md` | Define your agent personas and responsibilities |
-| `WORKFLOW.md` | Set your team's development process and rules |
-
-These files provide **context** that helps your agents understand your workflow. The examples show our agents (Marcus & Caleb) — replace them with your own!
-
-```bash
-# Example: Edit the roles file
-code squadron/knowledge/ROLES.md
+squadron overseer --exec "python agents/marcus.py --task '{summary}'"
 ```
 
 ---
@@ -235,47 +160,28 @@ code squadron/knowledge/ROLES.md
 
 | Skill | Status | What It Does |
 |-------|--------|--------------|
-| **Jira Bridge** | ✅ Live | Update tickets, add comments, transition status |
-| **Slack Bridge** | ✅ Live | Send formatted messages to channels |
-| **Discord Bridge** | ✅ Live | Broadcast via webhooks |
-| **GitHub Bridge** | ✅ Live | Create PRs and Issues |
-| **Overseer** | ✅ Live | Watch Jira for new assignments |
-
----
-
-## 🤖 Teaching Your Agents
-
-Add this to your agent's system prompt:
-
-```markdown
-## Tool: Squadron
-
-You have access to the `squadron` CLI for team communication.
-
-### When to use:
-- After completing a coding task
-- When you hit a blocker and need help
-- To update ticket status
-
-### Commands:
-- Start task: `squadron report --msg "Starting auth work" --ticket "KAN-1" --status "In Progress"`
-- Complete task: `squadron report --msg "Auth complete" --ticket "KAN-1" --status "Done"`
-- Announce: `squadron broadcast --msg "Shipped new feature!"`
-```
+| **Listener** | ✅ Live | **NEW:** Hear and reply to Slack mentions |
+| **Identity** | ✅ Live | **NEW:** Dynamic Avatars (Marcus/Caleb) |
+| **Linear** | ✅ Live | **NEW:** Full Issue tracking integration |
+| **Memory** | ✅ Live | **NEW:** RAG-Lite knowledge querying |
+| **Jira** | ✅ Live | Update tickets, add comments |
+| **Slack** | ✅ Live | Rich messages & Socket Mode |
+| **Discord** | ✅ Live | Webhook broadcasts |
+| **GitHub** | ✅ Live | Create PRs and Issues |
 
 ---
 
 ## 🗺️ Roadmap
+See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 - [x] **Core CLI** — `squadron report` command
-- [x] **Jira Integration** — Comments + status transitions
-- [x] **Slack Integration** — Rich block messages
-- [x] **Discord Integration** — Webhook broadcasts
-- [x] **GitHub Integration** — PRs and Issues
-- [x] **Overseer Mode** — Background ticket watcher
-- [x] **PyPI Release** — `pip install squadron-agents`
-- [ ] **Agent Wake-up** — Trigger agents when Overseer detects tickets
-- [ ] **Linear/Trello Support** — Alternative project management tools
+- [x] **Agent Avatars** — Dynamic identities
+- [x] **Listener Service** — Slack Socket Mode
+- [x] **Linear Support** — GraphQL Integration
+- [x] **Agent Wake-up** — Overseer `--exec` trigger
+- [x] **Memory System** — RAG-Lite (`ask`)
+- [ ] **Linear App OAuth** — "Bot" user identity
+- [ ] **Web Dashboard** — Local UI for agent status
 - [ ] **Email Notifications** — SMTP integration
 
 ---
