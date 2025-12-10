@@ -10,20 +10,29 @@
 </p>
 
 <p align="center">
+  <a href="https://pypi.org/project/squadron-agents/"><img src="https://img.shields.io/pypi/v/squadron-agents?color=blue&label=PyPI" alt="PyPI"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="Python 3.10+"></a>
   <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/Architecture-MCP%20Ready-purple" alt="MCP Ready"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Status-Production%20Ready-brightgreen" alt="Status"></a>
 </p>
 
 <p align="center">
-  <a href="#-the-problem">Problem</a> •
-  <a href="#-the-solution">Solution</a> •
   <a href="#-quick-start">Quick Start</a> •
-  <a href="#-usage">Usage</a> •
+  <a href="#-commands">Commands</a> •
   <a href="#-architecture">Architecture</a> •
+  <a href="#-skills">Skills</a> •
   <a href="#-roadmap">Roadmap</a>
 </p>
+
+---
+
+## ⚡ Install
+
+```bash
+pip install squadron-agents
+```
+
+That's it. You're ready.
 
 ---
 
@@ -33,11 +42,11 @@
 $ squadron report --msg "Refactored the auth module." --ticket "KAN-1"
 
 🚀 Squadron Bridge Activated...
-✅ Slack: Message sent to #dev-updates
+✅ Slack: Message sent to #general
 ✅ Jira: Comment added to KAN-1
 ```
 
-**One command. Two integrations. Zero context switching.**
+**One command. Multiple integrations. Zero context switching.**
 
 ---
 
@@ -74,7 +83,8 @@ Squadron is a **bridge** that connects your local AI agents to your team's real 
 
 **Squadron gives your agents:**
 - 🗣️ **A Voice** — Post updates to Slack/Discord
-- ✋ **Hands** — Update Jira tickets, change statuses
+- ✋ **Hands** — Update Jira tickets, create GitHub PRs
+- 👀 **Awareness** — Overseer watches for new assignments
 - 🧠 **Context** — Knowledge files that define your workflow
 
 ---
@@ -84,9 +94,7 @@ Squadron is a **bridge** that connects your local AI agents to your team's real 
 ### 1. Install
 
 ```bash
-git clone https://github.com/MikeeBuilds/squadron.git
-cd squadron
-pip install -e .
+pip install squadron-agents
 ```
 
 ### 2. Configure
@@ -101,6 +109,12 @@ JIRA_TOKEN=your-api-token
 
 # Slack
 SLACK_BOT_TOKEN=xoxb-your-bot-token
+
+# Discord (optional)
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
+
+# GitHub (optional)
+GITHUB_TOKEN=ghp_your-token
 ```
 
 ### 3. Test
@@ -113,30 +127,55 @@ If you see `✅ Slack: Message sent` — you're live! 🎉
 
 ---
 
-## 📖 Usage
+## 📖 Commands
 
-### Basic Report (Slack Only)
+### `squadron report` — Team Updates
+Send updates to Slack and optionally update Jira tickets.
+
 ```bash
+# Basic Slack message
 squadron report --msg "Starting the database migration"
-```
 
-### Report + Jira Update
-```bash
+# With Jira ticket update
 squadron report --msg "Fixed the login bug" --ticket "PROJ-101"
-```
 
-### Report + Jira Status Transition
-```bash
+# With status transition
 squadron report --msg "Feature complete" --ticket "PROJ-101" --status "Done"
 ```
 
-### Full Command
+### `squadron broadcast` — Discord Announcements
+Broadcast updates to your Discord community.
+
 ```bash
-squadron report \
-  --msg "Refactored RBI pipeline logic" \
-  --ticket "KAN-42" \
-  --channel "#dev-updates" \
-  --status "In Review"
+squadron broadcast --msg "🚀 Just shipped v2.0!"
+```
+
+### `squadron pr` — GitHub Pull Requests
+Create PRs programmatically.
+
+```bash
+squadron pr --repo "user/repo" --title "Add auth module" --head "feature-auth"
+```
+
+### `squadron issue` — GitHub Issues
+Create issues from the command line.
+
+```bash
+squadron issue --repo "user/repo" --title "Bug: Login fails on mobile"
+```
+
+### `squadron overseer` — Background Watcher
+Start a daemon that watches Jira for new tickets assigned to you.
+
+```bash
+squadron overseer --interval 30
+```
+
+When a new ticket appears:
+```
+🔔 NEW TASK DETECTED!
+   Ticket: KAN-42
+   Summary: Implement user authentication
 ```
 
 ---
@@ -148,14 +187,13 @@ Squadron uses a **Skill-Based Architecture** inspired by the [Model Context Prot
 ```
 squadron/
 ├── cli.py                 # 🎯 The Router (entry point)
+├── overseer.py            # 👀 Background ticket watcher
 │
 ├── skills/                # 🛠️ ACTION LAYER (The Hands)
-│   ├── jira_bridge/
-│   │   ├── tool.py        # Jira API integration
-│   │   └── SKILL.md       # Instructions for agents
-│   └── slack_bridge/
-│       ├── tool.py        # Slack API integration
-│       └── SKILL.md       # Instructions for agents
+│   ├── jira_bridge/       # Jira API integration
+│   ├── slack_bridge/      # Slack API integration
+│   ├── discord_bridge/    # Discord webhooks
+│   └── github_bridge/     # GitHub API integration
 │
 └── knowledge/             # 🧠 CONTEXT LAYER (The Brain)
     ├── TEAM.md            # Who is on the team?
@@ -174,9 +212,21 @@ squadron/
 
 ---
 
+## 🔌 Skills
+
+| Skill | Status | What It Does |
+|-------|--------|--------------|
+| **Jira Bridge** | ✅ Live | Update tickets, add comments, transition status |
+| **Slack Bridge** | ✅ Live | Send formatted messages to channels |
+| **Discord Bridge** | ✅ Live | Broadcast via webhooks |
+| **GitHub Bridge** | ✅ Live | Create PRs and Issues |
+| **Overseer** | ✅ Live | Watch Jira for new assignments |
+
+---
+
 ## 🤖 Teaching Your Agents
 
-Add this to your agent's system prompt or `SKILL.md`:
+Add this to your agent's system prompt:
 
 ```markdown
 ## Tool: Squadron
@@ -189,9 +239,9 @@ You have access to the `squadron` CLI for team communication.
 - To update ticket status
 
 ### Commands:
-- Start task: `squadron report --msg "Starting work on auth" --ticket "KAN-1" --status "In Progress"`
-- Complete task: `squadron report --msg "Auth module complete" --ticket "KAN-1" --status "Done"`
-- Report blocker: `squadron report --msg "Blocked: Need API keys" --ticket "KAN-1"`
+- Start task: `squadron report --msg "Starting auth work" --ticket "KAN-1" --status "In Progress"`
+- Complete task: `squadron report --msg "Auth complete" --ticket "KAN-1" --status "Done"`
+- Announce: `squadron broadcast --msg "Shipped new feature!"`
 ```
 
 ---
@@ -201,10 +251,13 @@ You have access to the `squadron` CLI for team communication.
 - [x] **Core CLI** — `squadron report` command
 - [x] **Jira Integration** — Comments + status transitions
 - [x] **Slack Integration** — Rich block messages
-- [ ] **Discord Integration** — Webhook support
-- [ ] **GitHub Skill** — Open PRs, merge branches
-- [ ] **Overseer Mode** — Wake agents when tickets are assigned
-- [ ] **PyPI Release** — `pip install squadron-agents`
+- [x] **Discord Integration** — Webhook broadcasts
+- [x] **GitHub Integration** — PRs and Issues
+- [x] **Overseer Mode** — Background ticket watcher
+- [x] **PyPI Release** — `pip install squadron-agents`
+- [ ] **Agent Wake-up** — Trigger agents when Overseer detects tickets
+- [ ] **Linear/Trello Support** — Alternative project management tools
+- [ ] **Email Notifications** — SMTP integration
 
 ---
 
@@ -249,6 +302,6 @@ MIT © [MikeeBuilds](https://github.com/MikeeBuilds)
 
 <p align="center">
   <a href="https://github.com/MikeeBuilds/squadron">⭐ Star this repo</a> •
-  <a href="https://github.com/MikeeBuilds/squadron/issues">🐛 Report Bug</a> •
-  <a href="https://github.com/MikeeBuilds/squadron/issues">💡 Request Feature</a>
+  <a href="https://pypi.org/project/squadron-agents/">📦 PyPI</a> •
+  <a href="https://github.com/MikeeBuilds/squadron/issues">🐛 Report Bug</a>
 </p>
