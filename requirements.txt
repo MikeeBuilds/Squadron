@@ -1,0 +1,5 @@
+jira>=3.5.0
+slack_sdk>=3.20.0
+python-dotenv>=1.0.0
+rich>=13.0.0
+requests>=2.31.0
