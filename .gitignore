@@ -7,6 +7,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+squadron/agents.local.yaml
 .Python
 build/
 develop-eggs/

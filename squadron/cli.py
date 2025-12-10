@@ -19,13 +19,20 @@ from squadron.knowledge.reader import KnowledgeBase
 import yaml
 
 def load_agent_config(agent_name):
-    """Load agent details from agents.yaml (Local > Package)."""
+    """Load agent details from agents.yaml (Local Override > Local > Package)."""
+    # 0. Try LOCAL OVERRIDE (for developers)
+    local_override_path = os.path.join(os.getcwd(), "squadron", "agents.local.yaml")
     # 1. Try LOCAL config
     local_path = os.path.join(os.getcwd(), "squadron", "agents.yaml")
     # 2. Try PACKAGE config
     package_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "agents.yaml")
 
-    config_path = local_path if os.path.exists(local_path) else package_path
+    if os.path.exists(local_override_path):
+        config_path = local_override_path
+    elif os.path.exists(local_path):
+        config_path = local_path
+    else:
+        config_path = package_path
 
     if not os.path.exists(config_path):
         return None, None
