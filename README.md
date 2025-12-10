@@ -22,7 +22,18 @@
   <a href="#-architecture">Architecture</a> •
   <a href="#-skills">Skills</a> •
   <a href="#-roadmap">Roadmap</a>
+  <a href="#-roadmap">Roadmap</a>
 </p>
+
+---
+
+## 🔥 New in v0.2.1
+| Feature | Description |
+|:---|:---|
+| **🎭 Dynamic Identity** | Agents now have custom names & avatars in Slack/Discord |
+| **👂 The Ears** | Agents can listen & reply to `@mentions` in Slack |
+| **🧠 RAG-Lite** | Query your team knowledge base with `squadron ask` |
+| **⚡ Overseer 2.0** | Trigger scripts automatically when Jira tickets are assigned |
 
 ---
 
