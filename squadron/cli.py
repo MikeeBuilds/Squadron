@@ -83,6 +83,9 @@ def main():
     overseer_parser.add_argument("--interval", type=int, default=30, help="Check interval (seconds)")
     overseer_parser.add_argument("--exec", help="Command to run when ticket found (use {key} {summary})")
 
+    # Command: 'listen' - Start the Slack listener
+    listen_parser = subparsers.add_parser("listen", help="Start Slack listener (The Ears)")
+
     args = parser.parse_args()
 
     # 3. Execution Logic
@@ -98,8 +101,11 @@ def main():
         handle_issue(args)
     elif args.command == "overseer":
         handle_overseer(args)
+    elif args.command == "listen":
+        handle_listen(args)
     else:
         parser.print_help()
+
 
 
 def handle_report(args):
@@ -186,6 +192,12 @@ def handle_overseer(args):
     """Handle the 'overseer' command - start Jira watcher."""
     from squadron.overseer import watch_tickets
     watch_tickets(check_interval=args.interval, exec_command=args.exec)
+
+
+def handle_listen(args):
+    """Handle the 'listen' command - start Slack listener."""
+    from squadron.listener import start_listening
+    start_listening()
 
 
 if __name__ == "__main__":
