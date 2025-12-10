@@ -26,7 +26,7 @@ Squadron provides a simple CLI that acts as the "voice" and "hands" for your age
 
 **Your agent runs this:**
 ```bash
-squadron report --msg "Refactored the RBI pipeline logic." --ticket "PROJ-101" --channel "#dev-updates"
+squadron report --msg "Refactored the RBI pipeline logic." --ticket "PROJ-101" --channel "#dev-updates"```
 
 ** The Result:**
  * Jira ticket PROJ-101 is updated with a comment and moved to "In Progress".
@@ -35,8 +35,11 @@ squadron report --msg "Refactored the RBI pipeline logic." --ticket "PROJ-101" -
 📦 Installation
 Currently in Alpha. Install from source:
 git clone [https://github.com/MikeeBuilds/squadron.git](https://github.com/MikeeBuilds/squadron.git)
+
+```bash
 cd squadron
 pip install -e .
+```
 
 (Coming soon to PyPI: pip install squadron-agents)
 ⚙️ Configuration
