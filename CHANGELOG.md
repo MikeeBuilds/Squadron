@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.5] - 2025-12-10
+### Added
+- **Local Agent Config**: `squadron init` now creates a local `squadron/agents.yaml`.
+- **Packaging Fix**: Included `agents.yaml` and `knowledge/*.md` templates in PyPI package via `MANIFEST.in`.
+
+### Changed
+- **Privacy**: Default package avatars are now generic Robohash avatars. Users can override them in their local `agents.yaml`.
+- **CLI Logic**: Prioritizes local configuration files over package defaults for both Knowledge and Agents.
+
 ## [0.2.4] - 2025-12-10
 ### Changed
 - **Documentation**: Synced `README.md` on PyPI to reflect v0.2.3 features (Init/Learn/AGPL).

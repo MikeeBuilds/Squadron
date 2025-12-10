@@ -19,8 +19,14 @@ from squadron.knowledge.reader import KnowledgeBase
 import yaml
 
 def load_agent_config(agent_name):
-    """Load agent details from agents.yaml if it exists."""
-    config_path = os.path.join(os.getcwd(), "squadron", "agents.yaml")
+    """Load agent details from agents.yaml (Local > Package)."""
+    # 1. Try LOCAL config
+    local_path = os.path.join(os.getcwd(), "squadron", "agents.yaml")
+    # 2. Try PACKAGE config
+    package_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "agents.yaml")
+
+    config_path = local_path if os.path.exists(local_path) else package_path
+
     if not os.path.exists(config_path):
         return None, None
         
@@ -31,7 +37,7 @@ def load_agent_config(agent_name):
                 agent = data["agents"][agent_name.lower()]
                 return agent.get("name"), agent.get("avatar_url")
     except Exception as e:
-        print(f"⚠️ Error loading agents.yaml: {e}")
+        print(f"⚠️ Error loading agents.yaml from {config_path}: {e}")
     
     return None, None
 
@@ -86,6 +92,12 @@ def main():
     # Command: 'listen' - Start the Slack listener
     listen_parser = subparsers.add_parser("listen", help="Start Slack listener (The Ears)")
 
+    # Command: 'learn' - Scan codebase and update knowledge (The Librarian)
+    learn_parser = subparsers.add_parser("learn", help="Scan codebase and update knowledge (The Librarian)")
+
+    # Command: 'init' - Initialize Squadron in a new project
+    init_parser = subparsers.add_parser("init", help="Initialize Squadron in this project")
+
     args = parser.parse_args()
 
     # 3. Execution Logic
@@ -103,6 +115,10 @@ def main():
         handle_overseer(args)
     elif args.command == "listen":
         handle_listen(args)
+    elif args.command == "learn":
+        handle_learn(args)
+    elif args.command == "init":
+        handle_init(args)
     else:
         parser.print_help()
 
@@ -198,6 +214,66 @@ def handle_listen(args):
     """Handle the 'listen' command - start Slack listener."""
     from squadron.listener import start_listening
     start_listening()
+
+
+def handle_learn(args):
+    """Handle the 'learn' command - scan codebase and update knowledge."""
+    from squadron.skills.librarian.tool import LibrarianTool
+    librarian = LibrarianTool()
+    librarian.scan_codebase()
+
+
+def handle_init(args):
+    """Initialize Squadron project structure."""
+    import shutil
+    import os
+    from pathlib import Path
+
+    print("🦅 Initializing Squadron...")
+    
+    # 1. Create directory structure
+    local_sq = Path.cwd() / "squadron"
+    local_know = local_sq / "knowledge"
+    
+    if local_know.exists():
+        print(f"✅ Knowledge directory already exists: {local_know}")
+    else:
+        print(f"📁 Creating: {local_know}")
+        local_know.mkdir(parents=True, exist_ok=True)
+        
+        # Copy templates
+        package_know = Path(os.path.dirname(__file__)) / "knowledge"
+        for file in ["TEAM.md", "WORKFLOW.md", "ROLES.md"]:
+            src = package_know / file
+            dst = local_know / file
+            if src.exists():
+                shutil.copy(src, dst)
+                print(f"   + Copied template: {file}")
+            else:
+                 # Fallback if package templates are missing
+                 with open(dst, "w") as f:
+                     f.write(f"# {file}\nAdd your content here.")
+                 print(f"   + Created blank: {file}")
+
+    # 2. Copy agents.yaml template
+    agents_src = Path(os.path.dirname(__file__)) / "agents.yaml"
+    agents_dst = local_sq / "agents.yaml"
+    if not agents_dst.exists() and agents_src.exists():
+        shutil.copy(agents_src, agents_dst)
+        print("   + Copied template: agents.yaml")
+    elif agents_dst.exists():
+        print("✅ agents.yaml already exists")
+
+    # 3. Create .env if missing
+    env_file = Path.cwd() / ".env"
+    if not env_file.exists():
+        print("📝 Creating .env from template...")
+        with open(env_file, "w") as f:
+            f.write("# Squadron Configuration\n\n# Slack\nSLACK_APP_TOKEN=\nSLACK_BOT_TOKEN=\n\n# Jira\nJIRA_SERVER=\nJIRA_EMAIL=\nJIRA_TOKEN=\n\n# Linear\nLINEAR_API_KEY=\n")
+    else:
+        print("✅ .env already exists")
+        
+    print("\n🎉 Done! You can now run:\n  1. Edit .env\n  2. Edit squadron/agents.yaml (for custom avatars)\n  3. Edit squadron/knowledge/*.md\n  4. squadron learn")
 
 
 if __name__ == "__main__":

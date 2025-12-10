@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="squadron-agents",
-    version="0.2.4",
+    version="0.2.5",
     author="MikeeBuilds",
     author_email="your-email@example.com",
     description="The Operating System for Autonomous Software Teams",
@@ -38,5 +38,6 @@ setup(
             "squadron=squadron.cli:main",
         ],
     },
+    include_package_data=True,
     python_requires=">=3.10",
 )

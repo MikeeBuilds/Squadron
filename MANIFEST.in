@@ -1,0 +1,2 @@
+include squadron/agents.yaml
+recursive-include squadron/knowledge *.md
