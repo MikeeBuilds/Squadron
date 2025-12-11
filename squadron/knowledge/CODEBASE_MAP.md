@@ -5,12 +5,18 @@
 
 ---
 
+### 📄 `debug_discord.py`
+
 ### 📄 `setup.py`
 
-### 📄 `squadron\cli.py`
+### 📄 `squadron/__init__.py`
+_Squadron - The Operating System for Autonomous Software Teams._
+
+
+### 📄 `squadron/cli.py`
 _Squadron CLI - The Main Router_
 
-- ⚡ **Function**: `load_agent_config()` - _Load agent details from agents.yaml if it exists._
+- ⚡ **Function**: `load_agent_config()` - _Load agent details from agents.yaml (Local Override > Local > Package)._
 - ⚡ **Function**: `main()`
 - ⚡ **Function**: `handle_report()` - _Handle the 'report' command - send updates to all integrated tools._
 - ⚡ **Function**: `handle_broadcast()` - _Handle the 'broadcast' command - send to Discord._
@@ -20,23 +26,25 @@ _Squadron CLI - The Main Router_
 - ⚡ **Function**: `handle_overseer()` - _Handle the 'overseer' command - start Jira watcher._
 - ⚡ **Function**: `handle_listen()` - _Handle the 'listen' command - start Slack listener._
 - ⚡ **Function**: `handle_learn()` - _Handle the 'learn' command - scan codebase and update knowledge._
+- ⚡ **Function**: `handle_plan()` - _Handle the 'plan' command - generate PLAN.md._
+- ⚡ **Function**: `handle_init()` - _Initialize Squadron project structure._
 
-### 📄 `squadron\listener.py`
-_Squadron Listener - The Ears of the Operation 👂_
-
-- ⚡ **Function**: `start_listening()` - _Start the Slack Socket Mode listener._
-
-### 📄 `squadron\overseer.py`
+### 📄 `squadron/overseer.py`
 _Squadron Overseer - The Background Daemon_
 
 - ⚡ **Function**: `watch_tickets()` - _Watch Jira for new tickets assigned to the current user._
 - ⚡ **Function**: `main()` - _Entry point for the overseer command._
 
-### 📄 `squadron\__init__.py`
-_Squadron - The Operating System for Autonomous Software Teams._
+### 📄 `squadron/listener.py`
+_Squadron Listener - The Ears of the Operation 👂_
+
+- ⚡ **Function**: `start_listening()` - _Start the Slack Socket Mode listener._
+
+### 📄 `squadron/knowledge/__init__.py`
+_Squadron Knowledge - The Context Layer_
 
 
-### 📄 `squadron\knowledge\reader.py`
+### 📄 `squadron/knowledge/reader.py`
 _Knowledge Reader_
 
 - 📦 **Class**: `KnowledgeBase`
@@ -45,61 +53,63 @@ _Knowledge Reader_
   - `.search()`
   - `.get_full_context()`
 
-### 📄 `squadron\knowledge\__init__.py`
-_Squadron Knowledge - The Context Layer_
-
-
-### 📄 `squadron\skills\__init__.py`
+### 📄 `squadron/skills/__init__.py`
 _Squadron Skills - The Action Layer_
 
 
-### 📄 `squadron\skills\discord_bridge\tool.py`
-- 📦 **Class**: `DiscordTool` - _Tool for broadcasting messages to Discord via webhooks._
-  - `.broadcast()`
+### 📄 `squadron/skills/librarian/__init__.py`
 
-### 📄 `squadron\skills\discord_bridge\__init__.py`
-_Discord Bridge Skill_
-
-
-### 📄 `squadron\skills\github_bridge\tool.py`
-- 📦 **Class**: `GitHubTool` - _Tool for interacting with GitHub - creating PRs, managing issues._
-  - `.create_pr()`
-  - `.create_issue()`
-
-### 📄 `squadron\skills\github_bridge\__init__.py`
-_GitHub Bridge Skill_
-
-
-### 📄 `squadron\skills\jira_bridge\tool.py`
-- 📦 **Class**: `JiraTool`
-  - `.update_ticket()`
-
-### 📄 `squadron\skills\jira_bridge\__init__.py`
-_Jira Bridge Skill_
-
-
-### 📄 `squadron\skills\librarian\tool.py`
+### 📄 `squadron/skills/librarian/tool.py`
 _The Librarian: Scans the codebase and builds a knowledge map._
 
 - 📦 **Class**: `LibrarianTool` - _The Cartographer: Scans the codebase and builds a knowledge map._
   - `.scan_codebase()`
 
-### 📄 `squadron\skills\librarian\__init__.py`
+### 📄 `squadron/skills/slack_bridge/__init__.py`
+_Slack Bridge Skill_
 
-### 📄 `squadron\skills\linear_bridge\tool.py`
+
+### 📄 `squadron/skills/slack_bridge/tool.py`
+- 📦 **Class**: `SlackTool`
+  - `.send_alert()`
+
+### 📄 `squadron/skills/planner/__init__.py`
+
+### 📄 `squadron/skills/planner/tool.py`
+- 📦 **Class**: `PlannerTool`
+  - `.create_plan()`
+
+### 📄 `squadron/skills/github_bridge/__init__.py`
+_GitHub Bridge Skill_
+
+
+### 📄 `squadron/skills/github_bridge/tool.py`
+- 📦 **Class**: `GitHubTool` - _Tool for interacting with GitHub - creating PRs, managing issues._
+  - `.create_pr()`
+  - `.create_issue()`
+
+### 📄 `squadron/skills/linear_bridge/__init__.py`
+_Linear Bridge Skill_
+
+
+### 📄 `squadron/skills/linear_bridge/tool.py`
 - 📦 **Class**: `LinearTool` - _Tool for interacting with Linear (linear.app) via GraphQL API._
   - `.get_issue_id()`
   - `.update_issue()`
 
-### 📄 `squadron\skills\linear_bridge\__init__.py`
-_Linear Bridge Skill_
+### 📄 `squadron/skills/jira_bridge/__init__.py`
+_Jira Bridge Skill_
 
 
-### 📄 `squadron\skills\slack_bridge\tool.py`
-- 📦 **Class**: `SlackTool`
-  - `.send_alert()`
+### 📄 `squadron/skills/jira_bridge/tool.py`
+- 📦 **Class**: `JiraTool`
+  - `.update_ticket()`
 
-### 📄 `squadron\skills\slack_bridge\__init__.py`
-_Slack Bridge Skill_
+### 📄 `squadron/skills/discord_bridge/__init__.py`
+_Discord Bridge Skill_
 
+
+### 📄 `squadron/skills/discord_bridge/tool.py`
+- 📦 **Class**: `DiscordTool` - _Tool for broadcasting messages to Discord via webhooks._
+  - `.broadcast()`
 
