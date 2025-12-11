@@ -15,3 +15,5 @@
 - Use Slack for real-time updates
 - Update Jira tickets for task tracking
 - Tag @mike for critical decisions or blockers
+- Always update changelog files 
+

@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="squadron-agents",
-    version="0.4.0",
+    version="0.4.1",
     author="MikeeBuilds",
     author_email="your-email@example.com",
     description="The Operating System for Autonomous Software Teams",
@@ -31,7 +31,9 @@ setup(
         "requests",
         "PyGithub",
         "PyYAML",
-        "slack_bolt"
+        "slack_bolt",
+        "discord.py",
+        "paramiko"
     ],
     entry_points={
         "console_scripts": [

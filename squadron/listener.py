@@ -39,7 +39,6 @@ def start_listening():
         avatar_url = None
         
         # Simple keyword matching for agents defined in agents.yaml
-        # (In v0.3 we can make this smarter with an LLM router)
         lower_text = text.lower()
         if "marcus" in lower_text:
             agent_name = "Marcus"
@@ -49,18 +48,92 @@ def start_listening():
         # Load Identity
         if agent_name:
             _, avatar_url = load_agent_config(agent_name)
-            response = f"👀 {agent_name} is listening... (Auto-response)"
+            
+            # --- BRAIN INTEGRATION ---
+            try:
+                # We need an object with .system_prompt for the brain.
+                # Since we are in Squadron-Repo context, we mock/load it from yaml or use a simple struct.
+                # Ideally we share AgentService, but for now let's construct a compatible object.
+                from services.agent_service import AgentService
+                agent = AgentService.get_agent(agent_name)
+            except ImportError:
+                # Fallback if not running from consolidated main.py
+                print("⚠️  AgentService not found, using minimal fallback profile.")
+                from dataclasses import dataclass
+                @dataclass
+                class MinimalProfile:
+                    system_prompt: str
+                agent = MinimalProfile(system_prompt=f"You are {agent_name}. Act helpful.")
+
+            from squadron.brain import brain
+            
+            # 1. Think
+            try:
+                decision = brain.think(text, agent)
+                
+                # 2. Act
+                if decision["action"] == "tool":
+                    # Notify we are working...
+                    say(f"🛠️ {agent_name} is working on that...", username=agent_name, icon_url=avatar_url)
+                    result_dict = brain.execute(decision)
+                    response_text = f"Done.\n{result_dict.get('text', '')}"
+                    files = result_dict.get("files", [])
+                else:
+                    response_text = decision.get("content", "...")
+                    files = []
+                    
+            except Exception as e:
+                response_text = f"Brain error: {e}"
+                files = []
+            # -------------------------
+            
         else:
             # Default Bot Response
-            response = "👋 Squadron here. Mention an agent name (Marcus/Caleb) to route your request."
+            response_text = "👋 Squadron here. Mention an agent name (Marcus/Caleb) to route your request."
             agent_name = "Squadron"
+            files = []
 
-        # Reply
-        say(
-            text=response,
-            username=agent_name,
-            icon_url=avatar_url
-        )
+        # Reply with Files if needed
+        if files:
+            # Use the WebClient from the app
+            # Note: 'say' is a shortcut, for files we might need app.client.files_upload_v2
+            # However, 'say' doesn't support files directly in Bolt usually, check docs or use client.
+            # We can access client via app? Listener structure is strict.
+            # We can get client from context if we had it, but here we can't easily access 'app' inside the function scope 
+            # unless we make 'app' global or pass it?
+            # 'say' is wrapper around chat.postMessage.
+            # Let's inspect 'say' args or just print file path for now to be safe, 
+            # or try to use a global client if available.
+            # Correction: We instantiated 'app' inside start_listening.
+            # We can just use the token from env again to make a temp client or Refactor.
+            # Quick hack: reply with text, then upload file separately.
+            
+            say(
+                text=response_text,
+                username=agent_name,
+                icon_url=avatar_url
+            )
+            
+            # Upload files
+            from slack_sdk import WebClient
+            client = WebClient(token=os.getenv("SLACK_BOT_TOKEN"))
+            for fpath in files:
+                try:
+                    client.files_upload_v2(
+                        channel=channel,
+                        file=fpath,
+                        title=os.path.basename(fpath),
+                        initial_comment=f"📸 Upload from {agent_name}"
+                    )
+                except Exception as e:
+                    say(f"⚠️ Failed to upload file: {e}")
+        else:
+            # Normal Reply
+            say(
+                text=response_text,
+                username=agent_name,
+                icon_url=avatar_url
+            )
 
     # 4. Start Socket Mode
     print("👂 Squadron Listener is active. Waiting for mentions...")
