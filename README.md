@@ -35,14 +35,14 @@
 
 ---
 
-## 🔥 New in v0.2.3
+## 🔥 New in v0.4.1
 | Feature | Description |
 |:---|:---|
-| **📁 Init Command** | `squadron init` scaffolds your local environment |
-| **🧠 Librarian** | `squadron learn` auto-maps your codebase structure |
-| **🎭 Dynamic Identity** | Custom names & avatars in Slack/Discord |
-| **👂 The Ears** | Agents can listen & reply to `@mentions` |
-| **⚖️ AGPL-3.0** | Now protected by the AGPL license |
+| **🧠 The Brain** | Centralized intelligence router for complex decisions |
+| **🤖 Neural Link** | Discord Bot that masquerades as agents (`squadron listen --discord`) |
+| **💻 SSH Skill** | Agents (Caleb) can execute commands on remote servers |
+| **🌐 Browser Skill** | Agents (Marcus) can visit websites and capture screenshots |
+| **📁 File Uploads** | Tools can now return files (images/logs) to chat |
 
 ---
 
@@ -183,10 +183,14 @@ Scans your codebase and generates `knowledge/CODEBASE_MAP.md`.
 squadron learn
 ```
 
-### `squadron listen` — The Ears 👂
-Starts the listener to hear @mentions in Slack.
+ ### `squadron listen` — The Ears 👂
+Starts the listener to hear @mentions in Slack or Discord.
 ```bash
+# Listen to Slack (Default)
 squadron listen
+
+# Listen to Discord (Neural Link)
+squadron listen --discord
 ```
 
 ### `squadron report` — Team Updates
@@ -297,9 +301,11 @@ code squadron/knowledge/ROLES.md
 |-------|--------|--------------|
 | **Jira Bridge** | ✅ Live | Update tickets, add comments, transition status |
 | **Slack Bridge** | ✅ Live | Send formatted messages to channels |
-| **Discord Bridge** | ✅ Live | Broadcast via webhooks |
+| **Discord Bridge** | ✅ Live | Broadcast via webhooks & Reply via Bot |
 | **GitHub Bridge** | ✅ Live | Create PRs and Issues |
 | **Overseer** | ✅ Live | Watch Jira for new assignments |
+| **SSH Skill** | ✅ Live | Execute remote commands (Caleb) |
+| **Browser Skill** | ✅ Live | Navigate & Screenshot Web (Marcus) |
 
 ---
 
