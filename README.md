@@ -48,6 +48,10 @@
 
 ## ⚡ Install
 
+<p align="center">
+  <img src="assets/banner.png" alt="Squadron Banner" width="100%">
+</p>
+
 ```bash
 pip install squadron-agents
 ```

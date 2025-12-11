@@ -102,6 +102,11 @@ def main():
     # Command: 'learn' - Scan codebase and update knowledge (The Librarian)
     learn_parser = subparsers.add_parser("learn", help="Scan codebase and update knowledge (The Librarian)")
 
+    # Command: 'plan' - Generate Implementation Plan (The Architect)
+    plan_parser = subparsers.add_parser("plan", help="Generate Implementation Plan from Ticket")
+    plan_parser.add_argument("--ticket", help="Jira Ticket ID (e.g. KAN-123)")
+    plan_parser.add_argument("--output", default="PLAN.md", help="Output file (default: PLAN.md)")
+
     # Command: 'init' - Initialize Squadron in a new project
     init_parser = subparsers.add_parser("init", help="Initialize Squadron in this project")
 
@@ -124,6 +129,8 @@ def main():
         handle_listen(args)
     elif args.command == "learn":
         handle_learn(args)
+    elif args.command == "plan":
+        handle_plan(args)
     elif args.command == "init":
         handle_init(args)
     else:
@@ -228,6 +235,17 @@ def handle_learn(args):
     from squadron.skills.librarian.tool import LibrarianTool
     librarian = LibrarianTool()
     librarian.scan_codebase()
+
+
+def handle_plan(args):
+    """Handle the 'plan' command - generate PLAN.md."""
+    from squadron.skills.planner.tool import PlannerTool
+    if not args.ticket:
+        print("❌ Error: --ticket is required for planning.")
+        return
+        
+    planner = PlannerTool()
+    planner.create_plan(args.ticket, args.output)
 
 
 def handle_init(args):
