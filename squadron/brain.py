@@ -15,6 +15,7 @@ from squadron.skills.fs_tool.tool import read_file, write_file, list_dir
 from squadron.skills.shell_tool.tool import run_command
 from squadron.memory.hippocampus import Hippocampus, remember
 from squadron.planner.architect import create_plan, read_plan, update_plan
+from squadron.skills.quant.tool import research_strategy, run_backtest, get_market_data, find_strategy_videos
 # Note: dynamic import for delegator to avoid circular dependency
 # from squadron.swarm.delegator import assign_task (Done inside function/execution to be safe)
 
@@ -23,7 +24,7 @@ logger = logging.getLogger('SquadronBrain')
 class SquadronBrain:
     def __init__(self):
         # We use the smart model for routing
-        self.planner_model = ModelFactory.create("gpt-5.1") 
+        self.planner_model = ModelFactory.create("gemini-3-pro") 
         self.tools = {}
         self.safety_mode = True  # Default: Safety Interlocks ENGAGED
         
@@ -143,6 +144,17 @@ class SquadronBrain:
             self._tag_agent,
             hazardous=False
         )
+
+        # --- Quant Skills (From Remote) ---
+        def plan_ticket(ticket_id: str):
+             # Stub or import if needed, assuming plan_ticket logic is handled by new planner
+             return "Please use create_plan instead."
+
+        self.register_tool("find_strategy_videos", "Search YouTube for trading videos.", find_strategy_videos, hazardous=False)
+        self.register_tool("research_strategy", "Research strategy from URL/Text.", research_strategy, hazardous=False)
+        self.register_tool("run_backtest", "Run backtest for strategy.", run_backtest, hazardous=False)
+        self.register_tool("get_market_data", "Fetch market data.", get_market_data, hazardous=False)
+
 
         # --- Level 6: Evolution ---
         from squadron.evolution.improver import Improver

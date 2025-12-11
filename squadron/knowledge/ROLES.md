@@ -1,9 +1,22 @@
-# Agent Roles
+# Agent Roles & Responsibilities
 
-Define your agent specializations here. This helps the Swarm route tasks correctly.
+> **Rule of Law**: Keep everything separate. Caleb documents his work; Marcus documents his.
 
-- **Atlas:** Lead Developer. Focuses on architecture, backend, and implementation.
-- **Sage:** Research Analyst. Focuses on data analysis, research, and documentation.
+## 🤖 Caleb (AI & Data)
+**Focus**: Bot Logic, AI Integration, QA, Data Pipelines.
+- **Responsibilities**:
+    - **Bot Core**: `cogs/`, `main.py`, `brain.py`.
+    - **AI Architecture**: `services/model_factory.py`, `services/openai_client.py`.
+    - **Skill Building**: `squadron/skills/` (e.g., SSH, Librarian).
+    - **Testing**: Backtesting, Unit Tests, Verification scripts.
+    - **Documentation**: Updates `discord-bot-docs` and `CHANGELOG.md` for bot features.
+- **Tools**: `SSHTool`, `LibrarianTool`.
 
-<!-- Add your own agents below -->
-
+## 🎨 Marcus (Product & Full Stack)
+**Focus**: Dashboard, API, Frontend, UI/UX, Database.
+- **Responsibilities**:
+    - **Dashboard**: Next.js app, ShadCN UI, Tailwind.
+    - **Backend API**: FastAPI endpoints, Prisma Schema.
+    - **Database**: PostgreSQL migrations, Schema changes.
+    - **Visuals**: Design system, animations, "Vibes".
+- **Tools**: `BrowserTool` (for UI checks).
