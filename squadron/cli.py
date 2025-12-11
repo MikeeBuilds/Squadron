@@ -50,8 +50,13 @@ def load_agent_config(agent_name):
 
 
 def main():
-    # 1. Load Environment Variables
-    load_dotenv()
+    # 1. Load Environment Variables (Explicitly from CWD)
+    env_path = os.path.join(os.getcwd(), ".env")
+    if os.path.exists(env_path):
+        load_dotenv(env_path, override=True)
+    else:
+        load_dotenv() # Fallback
+
 
     # 2. Setup Arguments
     parser = argparse.ArgumentParser(
@@ -96,8 +101,9 @@ def main():
     overseer_parser.add_argument("--interval", type=int, default=30, help="Check interval (seconds)")
     overseer_parser.add_argument("--exec", help="Command to run when ticket found (use {key} {summary})")
 
-    # Command: 'listen' - Start the Slack listener
-    listen_parser = subparsers.add_parser("listen", help="Start Slack listener (The Ears)")
+    # Command: 'listen' - Start the Slack/Discord listener
+    listen_parser = subparsers.add_parser("listen", help="Start the Listener (Slack/Discord)")
+    listen_parser.add_argument("--discord", action="store_true", help="Listen to Discord instead of Slack")
 
     # Command: 'learn' - Scan codebase and update knowledge (The Librarian)
     learn_parser = subparsers.add_parser("learn", help="Scan codebase and update knowledge (The Librarian)")
@@ -225,9 +231,15 @@ def handle_overseer(args):
 
 
 def handle_listen(args):
-    """Handle the 'listen' command - start Slack listener."""
-    from squadron.listener import start_listening
-    start_listening()
+    """Handle the 'listen' command."""
+    if args.discord:
+        print("🎧 Starting Discord Listener...")
+        from squadron.skills.discord_bridge.bot import start_discord_bot
+        start_discord_bot()
+    else:
+        print("👂 Starting Slack Listener...")
+        from squadron.listener import start_listening
+        start_listening()
 
 
 def handle_learn(args):

@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="squadron-agents",
-    version="0.3.0",
+    version="0.4.0",
     author="MikeeBuilds",
     author_email="your-email@example.com",
     description="The Operating System for Autonomous Software Teams",
