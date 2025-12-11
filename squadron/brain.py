@@ -8,6 +8,9 @@ import logging
 import json
 from squadron.services.model_factory import ModelFactory
 import PIL.Image
+import yaml
+import os
+import asyncio
 # Tool Imports
 from squadron.skills.browser.tool import browse_website
 from squadron.skills.ssh.tool import ssh_command
@@ -16,6 +19,7 @@ from squadron.skills.shell_tool.tool import run_command
 from squadron.memory.hippocampus import Hippocampus, remember
 from squadron.planner.architect import create_plan, read_plan, update_plan
 from squadron.skills.quant.tool import research_strategy, run_backtest, get_market_data, find_strategy_videos
+from squadron.clients.mcp_client import MCPBridge
 # Note: dynamic import for delegator to avoid circular dependency
 # from squadron.swarm.delegator import assign_task (Done inside function/execution to be safe)
 
@@ -35,6 +39,10 @@ class SquadronBrain:
             logger.warning(f"Failed to initialize Memory: {e}")
             self.memory = None
         
+        # MCP Bridge
+        self.mcp_bridge = MCPBridge()
+        self.mcp_initialized = False
+
         # Register Core Tools
         self.register_tool(
             "browse_website", 
@@ -175,6 +183,73 @@ class SquadronBrain:
         self.register_tool("get_screen_size", "get_screen_size(): Returns WxH.", get_screen_size, hazardous=False)
 
         self.last_files = [] # Stores file paths from last tool run
+
+    def initialize_mcp(self):
+        """Loads MCP servers from config and registers tools."""
+        if self.mcp_initialized:
+            return
+            
+        config_path = os.path.join(os.path.dirname(__file__), "mcp_servers.yaml")
+        if not os.path.exists(config_path):
+            return
+
+        try:
+            with open(config_path, "r") as f:
+                config = yaml.safe_load(f)
+            
+            servers = config.get("servers", {})
+            loop = asyncio.get_event_loop()
+            
+            for name, srv_config in servers.items():
+                if not srv_config: continue
+                # List tools (JIT connection)
+                tools = loop.run_until_complete(self.mcp_bridge.list_tools(name, srv_config))
+                
+                for tool in tools:
+                    # Create a callable wrapper for the tool
+                    wrapper = self._make_tool_wrapper(tool_name=tool["tool_name"])  # Pass tool_name explicitly or by closure
+                    # Wait, in loop variable capture is easier if we use a factory or partial.
+                    # Actually _make_tool_wrapper handles closure.
+                    
+                    self.tools[tool["tool_name"]] = {
+                        "func": wrapper,
+                        "description": f"[{name}] {tool.get('description', '')}"
+                    }
+            
+            self.mcp_initialized = True
+            logger.info(f"✅ MCP Bridge Initialized. Total tools: {len(self.tools)}")
+            
+        except Exception as e:
+            logger.error(f"Failed to init MCP: {e}")
+
+    def _make_tool_wrapper(self, tool_name):
+        """Creates a synchronous wrapper for an async MCP tool call."""
+        def wrapper(**kwargs):
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                # Call tool
+                result = loop.run_until_complete(self.mcp_bridge.call_tool(tool_name, kwargs))
+                
+                # Format output
+                text_content = []
+                # Check if result corresponds to expected SDK output
+                # The SDK result likely has a 'content' field which is a list of TextContent or ImageContent equivalent
+                if hasattr(result, 'content'):
+                    for content in result.content:
+                        if hasattr(content, 'text'):
+                            text_content.append(content.text)
+                        elif hasattr(content, 'type') and content.type == 'text':
+                             text_content.append(content.text)
+                        else:
+                             text_content.append(str(content))
+                else:
+                    text_content.append(str(result))
+                
+                return "\n".join(text_content)
+            finally:
+                loop.close()
+        return wrapper
 
     def _refresh_skills_impl(self):
         new_skills = self.improver.discover_skills()
@@ -399,6 +474,17 @@ class SquadronBrain:
         except Exception as e:
             logger.warning(f"Plan Read Failed: {e}")
         # --------------------
+
+        # Ensure MCP tools are loaded
+        if not self.mcp_initialized:
+             # We might need to be careful about loops here.
+             # If think is called from async context, we shouldn't use run_until_complete inside init.
+             # But init uses loop.run_until_complete which is blocking.
+             # For MVP, let's try.
+             try:
+                self.initialize_mcp()
+             except Exception as e:
+                logger.warning(f"MCP Init deferred/failed: {e}")
 
         # Construct a prompt that explains available tools
         tool_desc = "\n".join([f"- {name}: {info['description']}" for name, info in self.tools.items()])

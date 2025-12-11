@@ -42,6 +42,7 @@ setup(
         "slack_sdk",
         "slack_bolt",
         "discord.py",
+        "discord.py",
         "PyGithub",
         
         # Skills
@@ -50,6 +51,7 @@ setup(
         
         # Memory (ChromaDB)
         "chromadb",
+        "mcp"
     ],
     extras_require={
         "dev": [

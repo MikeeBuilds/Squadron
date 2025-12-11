@@ -17,6 +17,7 @@ slack_sdk
 slack_bolt
 discord.py
 PyGithub
+PyGithub
 
 # Skills
 paramiko
@@ -24,3 +25,8 @@ playwright
 
 # Memory
 chromadb
+
+# Other
+PyYAML
+slack_bolt
+mcp

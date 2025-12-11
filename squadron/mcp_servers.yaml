@@ -1,0 +1,10 @@
+servers:
+  # Example: Filesystem Server (requires Node.js)
+  # filesystem:
+  #   command: "npx"
+  #   args: ["-y", "@modelcontextprotocol/server-filesystem", "/Users/algohussle/Documents"]
+  
+  # Example: Git Server (requires Docker)
+  # git:
+  #   command: "docker"
+  #   args: ["run", "-i", "--rm", "-v", "${PWD}:/repo", "mcp/git"]
