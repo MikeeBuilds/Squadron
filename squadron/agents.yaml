@@ -1,13 +1,14 @@
 # Squadron Agent Profiles
 # Avatars hosted on: https://github.com/MikeeBuilds/Squadron/tree/main/assets
 
+
 agents:
   marcus:
     name: "Marcus"
     role: "Lead Architect"
-    avatar_url: "https://robohash.org/marcus?set=set1"
+    avatar_url: "https://raw.githubusercontent.com/MikeeBuilds/Squadron/main/assets/marcus.jpg"
 
   caleb:
     name: "Caleb"
     role: "Quant Researcher"
-    avatar_url: "https://robohash.org/caleb?set=set1"
+    avatar_url: "https://raw.githubusercontent.com/MikeeBuilds/Squadron/main/assets/caleb.png"

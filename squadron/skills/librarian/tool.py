@@ -91,7 +91,7 @@ class LibrarianTool:
     def _save_map(self, structure):
         """Saves the map to knowledge/CODEBASE_MAP.md"""
         knowledge_dir = self.root_dir / "squadron" / "knowledge"
-        knowledge_dir.mkdir(exist_ok=True)
+        knowledge_dir.mkdir(parents=True, exist_ok=True)
         
         target_file = knowledge_dir / "CODEBASE_MAP.md"
         
