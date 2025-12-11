@@ -1,13 +1,21 @@
-<p align="center">
-  <img src="https://img.shields.io/badge/🚀-SQUADRON-black?style=for-the-badge&labelColor=000" alt="Squadron" />
-</p>
+<div align="center">
+  <a href="https://github.com/MikeeBuilds/Squadron">
+    <img src="assets/logo.png" alt="Squadron Logo" width="200" height="200">
+  </a>
 
-<h1 align="center">Squadron</h1>
-<h3 align="center">The Operating System for Autonomous Software Teams</h3>
+  <h3 align="center">Squadron</h3>
 
-<p align="center">
-  <strong>Give your AI agents a job. Not just a prompt.</strong>
-</p>
+  <p align="center">
+    Autonomous Agent Orchestration for your local machine.
+    <br />
+    <a href="#getting-started"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/MikeeBuilds/Squadron/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/MikeeBuilds/Squadron/issues">Request Feature</a>
+  </p>
+</div>
 
 <p align="center">
   <a href="https://pypi.org/project/squadron-agents/"><img src="https://img.shields.io/pypi/v/squadron-agents?color=blue&label=PyPI" alt="PyPI"></a>
