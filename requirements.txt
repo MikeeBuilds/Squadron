@@ -1,6 +1,26 @@
-jira
-slack_sdk
+# Core
 python-dotenv
 rich
 requests
+PyYAML
+
+# LLM Providers
+google-generativeai
+
+# API Server
+fastapi
+uvicorn[standard]
+
+# Integrations
+jira
+slack_sdk
+slack_bolt
+discord.py
 PyGithub
+
+# Skills
+paramiko
+playwright
+
+# Memory
+chromadb

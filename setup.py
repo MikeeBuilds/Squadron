@@ -5,9 +5,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="squadron-agents",
-    version="0.4.1",
+    version="0.5.0",
     author="MikeeBuilds",
-    author_email="your-email@example.com",
+    author_email="mludlow000@icloud.com",
     description="The Operating System for Autonomous Software Teams",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -17,24 +17,47 @@ setup(
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Build Tools",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: GNU Affero General Public License v3",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
     ],
     install_requires=[
-        "jira",
-        "slack_sdk",
+        # Core
         "python-dotenv",
         "rich",
         "requests",
-        "PyGithub",
         "PyYAML",
+        
+        # LLM Providers
+        "google-generativeai",
+        
+        # API Server
+        "fastapi",
+        "uvicorn[standard]",
+        
+        # Integrations
+        "jira",
+        "slack_sdk",
         "slack_bolt",
         "discord.py",
-        "paramiko"
+        "PyGithub",
+        
+        # Skills
+        "paramiko",          # SSH
+        "playwright",        # Browser automation
+        
+        # Memory (ChromaDB)
+        "chromadb",
     ],
+    extras_require={
+        "dev": [
+            "pytest",
+            "black",
+            "flake8",
+        ],
+    },
     entry_points={
         "console_scripts": [
             "squadron=squadron.cli:main",

@@ -5,6 +5,54 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2025-12-12
+### Added
+- **🎮 Control Plane Dashboard**: Real-time web UI via `squadron server`
+  - Live SSE activity streaming
+  - Command input to send tasks to agents
+  - Agent status cards with current objectives
+  - System statistics (active agents, task queue, missions)
+  - **Integrations Panel**: Send to Slack, Discord, Jira, GitHub directly from UI
+  - GitHub PR/Issue creation from dashboard
+  - **Agents Page**: Detailed agent profiles with capabilities
+  - **Missions Page**: Active/history view with mission trigger
+  - **Console Page**: Direct REPL-style chat with agents
+  - **Settings Page**: System status and env configuration reference
+- **🐝 Swarm 2.0**: Enhanced multi-agent orchestration
+  - LLM-powered intelligent routing (replaces keyword heuristics)
+  - `handoff_task()` for agent-to-agent delegation with context
+  - Delegation chain tracking
+  - Task queue with priority support
+- **🧬 Evolution Layer**: Self-improvement system
+  - `skill_registry.py` for tracking evolved skills
+  - Version control with rollback support
+  - Quality scoring based on success/failure rates
+  - Skill creation, validation, and archival
+- **⏰ Wake Protocol**: Autonomous agent execution
+  - `wake_protocol.py` orchestrates trigger → route → execute → report
+  - `squadron wake` CLI command for manual triggering
+  - Automatic ticket reporting after task completion
+- **📡 Event Bus**: Central pub/sub for real-time activity
+  - Powers dashboard SSE streaming
+  - Tracks agent starts, tool calls, completions, errors
+- **💬 Agent Communication**: Agents can talk to each other via tickets
+  - **Overseer v3.0**: Auto-wakes agents when Jira/Linear tickets assigned
+  - **@Mention Support**: Tag agents in ticket comments to trigger them
+  - `reply_to_ticket()` tool for agents to comment on tickets
+  - `tag_agent()` tool to request help from other agents
+  - Autonomous handoffs with context through ticket system
+- **🧠 Persistent Memory**: Agents remember past work
+  - **Hippocampus v2.0**: Agent-specific semantic memory with ChromaDB
+  - `save_memory()`, `recall_memory()`, `get_memory_context()` tools
+  - Conversation and task history tracking
+  - Memory API endpoints for dashboard integration
+
+### Changed
+- **Swarm Overseer**: Now uses Gemini for intelligent routing
+- **Dashboard Frontend**: Complete rewrite with shadcn/ui components
+- **CLI**: Added `wake` command for autonomous execution
+
+
 ## [0.4.1] - 2025-12-11
 ### Added
 - **The Brain**: Centralized intelligence router (`brain.py`) that decides between conversational replies and tool execution.

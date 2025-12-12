@@ -1,4 +1,9 @@
 # Agent Roles
 
-- **Marcus:** Lead Strategy & Backend. Focuses on Architecture and Python logic.
-- **Caleb:** Data & Quality. Focuses on Backtesting, Data pipelines, and QA.
+Define your agent specializations here. This helps the Swarm route tasks correctly.
+
+- **Atlas:** Lead Developer. Focuses on architecture, backend, and implementation.
+- **Sage:** Research Analyst. Focuses on data analysis, research, and documentation.
+
+<!-- Add your own agents below -->
+

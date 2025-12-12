@@ -206,3 +206,15 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Squadron specific
+.squadron/memory/
+squadron_plan.md
+active.txt
+test.txt
+test_safety.txt
+screen_*.png
+
+# Dashboard
+dashboard/node_modules/
+dashboard/.next/

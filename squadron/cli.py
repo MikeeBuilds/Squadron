@@ -105,6 +105,9 @@ def main():
     listen_parser = subparsers.add_parser("listen", help="Start the Listener (Slack/Discord)")
     listen_parser.add_argument("--discord", action="store_true", help="Listen to Discord instead of Slack")
 
+    # Command: 'server' - Start the Dashboard Backend
+    server_parser = subparsers.add_parser("server", help="Start the Control Plane API Server")
+
     # Command: 'learn' - Scan codebase and update knowledge (The Librarian)
     learn_parser = subparsers.add_parser("learn", help="Scan codebase and update knowledge (The Librarian)")
 
@@ -115,6 +118,12 @@ def main():
 
     # Command: 'init' - Initialize Squadron in a new project
     init_parser = subparsers.add_parser("init", help="Initialize Squadron in this project")
+
+    # Command: 'wake' - Trigger autonomous agent execution
+    wake_parser = subparsers.add_parser("wake", help="Trigger the Wake Protocol (autonomous execution)")
+    wake_parser.add_argument("task", nargs="?", help="Task to execute (or interactive if omitted)")
+    wake_parser.add_argument("--ticket", help="Associated ticket ID for reporting")
+    wake_parser.add_argument("--agent", help="Route to specific agent (Marcus/Caleb/Sentinel)")
 
     args = parser.parse_args()
 
@@ -133,12 +142,16 @@ def main():
         handle_overseer(args)
     elif args.command == "listen":
         handle_listen(args)
+    elif args.command == "server":
+        handle_server(args)
     elif args.command == "learn":
         handle_learn(args)
     elif args.command == "plan":
         handle_plan(args)
     elif args.command == "init":
         handle_init(args)
+    elif args.command == "wake":
+        handle_wake(args)
     else:
         parser.print_help()
 
@@ -249,6 +262,13 @@ def handle_learn(args):
     librarian.scan_codebase()
 
 
+
+def handle_server(args):
+    """Handle the 'server' command - start FastAPI backend."""
+    from squadron.server import start_server
+    start_server()
+
+
 def handle_plan(args):
     """Handle the 'plan' command - generate PLAN.md."""
     from squadron.skills.planner.tool import PlannerTool
@@ -311,6 +331,57 @@ def handle_init(args):
         print("✅ .env already exists")
         
     print("\n🎉 Done! You can now run:\n  1. Edit .env\n  2. Edit squadron/agents.yaml (for custom avatars)\n  3. Edit squadron/knowledge/*.md\n  4. squadron learn")
+
+
+def handle_wake(args):
+    """Handle the 'wake' command - trigger autonomous execution."""
+    from squadron.services.wake_protocol import trigger_wake, wake_protocol
+    
+    print("⏰ Squadron Wake Protocol")
+    print("="*40)
+    
+    # Get task from args or interactive
+    if args.task:
+        task = args.task
+    else:
+        print("Enter the task for the agents (or 'exit' to quit):")
+        task = input("> ").strip()
+        if task.lower() == 'exit':
+            return
+    
+    if not task:
+        print("❌ No task provided.")
+        return
+    
+    # Determine source type
+    source_type = "ticket" if args.ticket else "manual"
+    
+    print(f"\n🚀 Activating agents...")
+    print(f"   Task: {task[:60]}{'...' if len(task) > 60 else ''}")
+    if args.ticket:
+        print(f"   Ticket: {args.ticket}")
+    if args.agent:
+        print(f"   Target: {args.agent}")
+    print()
+    
+    # Route to specific agent if requested
+    if args.agent:
+        from squadron.swarm.overseer import overseer
+        if args.agent in overseer.agents:
+            agent = overseer.agents[args.agent]
+            result = agent.process_task(task)
+            print(f"\n✅ [{args.agent}]: {result['text']}")
+        else:
+            print(f"❌ Agent '{args.agent}' not found. Available: {list(overseer.agents.keys())}")
+    else:
+        # Use full wake protocol
+        result = trigger_wake(task, source_type, args.ticket)
+        
+        if result.get('success'):
+            print(f"\n✅ Mission Complete: {result.get('mission_id')}")
+            print(f"\n📝 Result:\n{result.get('result', 'No result')}")
+        else:
+            print(f"\n❌ Mission Failed: {result.get('error', 'Unknown error')}")
 
 
 if __name__ == "__main__":
