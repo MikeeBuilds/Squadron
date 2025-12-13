@@ -197,19 +197,30 @@ class SquadronBrain:
             with open(config_path, "r") as f:
                 config = yaml.safe_load(f)
             
-            servers = config.get("servers", {})
-            loop = asyncio.get_event_loop()
+            servers = config.get("servers") or {}
+            
+            # Handle Event Loop (Main Thread vs Executor Thread)
+            try:
+                loop = asyncio.get_event_loop()
+            except RuntimeError:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
             
             for name, srv_config in servers.items():
                 if not srv_config: continue
                 # List tools (JIT connection)
+                # If loop is running (Main Thread), we can't use run_until_complete
+                if loop.is_running():
+                     # This is tricky. For now, skip if we are in main loop active 
+                     # (Should verify_mcp.py/main.py call this separately?)
+                     logger.warning("Cannot init MCP context inside active loop without async.")
+                     continue
+                
                 tools = loop.run_until_complete(self.mcp_bridge.list_tools(name, srv_config))
                 
                 for tool in tools:
                     # Create a callable wrapper for the tool
-                    wrapper = self._make_tool_wrapper(tool_name=tool["tool_name"])  # Pass tool_name explicitly or by closure
-                    # Wait, in loop variable capture is easier if we use a factory or partial.
-                    # Actually _make_tool_wrapper handles closure.
+                    wrapper = self._make_tool_wrapper(tool_name=tool["tool_name"])  
                     
                     self.tools[tool["tool_name"]] = {
                         "func": wrapper,
@@ -225,30 +236,32 @@ class SquadronBrain:
     def _make_tool_wrapper(self, tool_name):
         """Creates a synchronous wrapper for an async MCP tool call."""
         def wrapper(**kwargs):
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
             try:
-                # Call tool
-                result = loop.run_until_complete(self.mcp_bridge.call_tool(tool_name, kwargs))
-                
-                # Format output
-                text_content = []
-                # Check if result corresponds to expected SDK output
-                # The SDK result likely has a 'content' field which is a list of TextContent or ImageContent equivalent
-                if hasattr(result, 'content'):
-                    for content in result.content:
-                        if hasattr(content, 'text'):
+                loop = asyncio.get_event_loop()
+            except RuntimeError:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+
+            # If loop running, we might be in trouble if we block.
+            # But the executor thread usually has no loop running.
+            
+            # Call tool
+            result = loop.run_until_complete(self.mcp_bridge.call_tool(tool_name, kwargs))
+            
+            # Format output
+            text_content = []
+            if hasattr(result, 'content'):
+                for content in result.content:
+                    if hasattr(content, 'text'):
+                        text_content.append(content.text)
+                    elif hasattr(content, 'type') and content.type == 'text':
                             text_content.append(content.text)
-                        elif hasattr(content, 'type') and content.type == 'text':
-                             text_content.append(content.text)
-                        else:
-                             text_content.append(str(content))
-                else:
-                    text_content.append(str(result))
-                
-                return "\n".join(text_content)
-            finally:
-                loop.close()
+                    else:
+                            text_content.append(str(content))
+            else:
+                text_content.append(str(result))
+            
+            return "\n".join(text_content)
         return wrapper
 
     def _refresh_skills_impl(self):
@@ -405,6 +418,7 @@ class SquadronBrain:
             "hazardous": hazardous
         }
 
+<<<<<<< HEAD
     def toggle_safety(self, enabled: bool):
         """Toggle the safety interlocks on or off."""
         self.safety_mode = enabled
@@ -448,6 +462,9 @@ class SquadronBrain:
             return False
 
     def think(self, user_input: str, agent_profile) -> dict:
+=======
+    def think(self, user_input: str, agent_profile=None) -> dict:
+>>>>>>> 8916e0b (feat: upgrade brain to gemini-3-pro and add read_file tool)
         """
         Decides the next action.
         Returns a dict: {"action": "reply"|"tool", "content": str, "tool_name": str, "tool_args": dict}
@@ -477,10 +494,6 @@ class SquadronBrain:
 
         # Ensure MCP tools are loaded
         if not self.mcp_initialized:
-             # We might need to be careful about loops here.
-             # If think is called from async context, we shouldn't use run_until_complete inside init.
-             # But init uses loop.run_until_complete which is blocking.
-             # For MVP, let's try.
              try:
                 self.initialize_mcp()
              except Exception as e:
@@ -489,8 +502,11 @@ class SquadronBrain:
         # Construct a prompt that explains available tools
         tool_desc = "\n".join([f"- {name}: {info['description']}" for name, info in self.tools.items()])
         
+        # Default Profile if None
+        system_prompt = agent_profile.system_prompt if agent_profile else "You are a helpful AI assistant. Use tools if needed."
+        
         system_instructions = f"""
-{agent_profile.system_prompt}
+{system_prompt}
 
 {memory_context}
 
@@ -532,7 +548,7 @@ INSTRUCTIONS:
             # We force JSON format for the tool decision
             response = self.planner_model.generate(
                 prompt=prompt_parts if len(prompt_parts) > 1 else prompt_parts[0],
-                max_tokens=1000,
+                max_tokens=4096,
                 temperature=0.3
             )
             
