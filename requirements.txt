@@ -30,3 +30,4 @@ chromadb
 PyYAML
 slack_bolt
 mcp
+chromadb

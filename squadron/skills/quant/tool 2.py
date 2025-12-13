@@ -106,46 +106,23 @@ def find_strategy_videos(topic: str) -> Dict[str, Any]:
         Dict with video list and summaries.
     """
     try:
-        # Manual search to avoid library dependency issues (httpx/proxies)
-        import requests
-        import re
-        import urllib.parse
+        from youtubesearchpython import VideosSearch
+        logger.info(f"🔎 Searching YouTube for: {topic}")
         
-        encoded_topic = urllib.parse.quote(topic)
-        url = f"https://www.youtube.com/results?search_query={encoded_topic}"
+        search = VideosSearch(topic, limit=5)
+        results = search.result()
         
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36"
-        }
-        
-        logger.info(f"🔎 Searching YouTube (Manual) for: {topic}")
-        response = requests.get(url, headers=headers, timeout=10)
-        html = response.text
-        
-        # Regex to find video data (simple parse of initial data)
-        # Look for "videoRenderer" blocks which contain title and videoId
-        video_ids = re.findall(r'"videoId":"([a-zA-Z0-9_-]{11})"', html)
-        titles = re.findall(r'"title":{"runs":\[{"text":"(.*?)"}\]', html)
-        
-        # De-duplicate while preserving order
-        seen = set()
-        unique_videos = []
-        for i, vid in enumerate(video_ids):
-            if vid not in seen and i < len(titles):
-                title = titles[i]
-                # Filter out likely garbage/shorts if needed, though simple regex catches most standard vids
-                unique_videos.append({'id': vid, 'title': title})
-                seen.add(vid)
-            if len(unique_videos) >= 5:
-                break
-                
-        if not unique_videos:
-             return {"text": f"No videos found for '{topic}'. Search URL: {url}", "files": []}
+        if not results.get('result'):
+            return {"text": f"No videos found for '{topic}'.", "files": []}
             
         videos_text = "📺 **Top Strategy Videos Found:**\n\n"
-        for v in unique_videos:
-            link = f"https://www.youtube.com/watch?v={v['id']}"
-            videos_text += f"• **[{v['title']}]({link})**\n"
+        for video in results['result']:
+            title = video.get('title')
+            link = video.get('link')
+            duration = video.get('duration')
+            views = video.get('viewCount', {}).get('short', 'N/A')
+            
+            videos_text += f"• **[{title}]({link})** ({duration} • {views} views)\n"
             
         return {
             "text": videos_text + "\n\nReply with 'Research [URL]' to analyze one.",
@@ -188,92 +165,3 @@ def get_market_data(ticker: str, limit: int = 100) -> Dict[str, Any]:
     except Exception as e:
         logger.error(f"Data fetch error: {e}")
         return {"text": f"Error fetching market data: {e}", "files": []}
-
-def auto_optimize_strategy(failure_reason: str) -> Dict[str, Any]:
-    """
-    Self-Healing Loop:
-    1. Search YouTube for strategies based on the failure reason.
-    2. Pick the best video automatically.
-    3. Run RBI (Research, Backtest, Package).
-    4. Evaluate Backtest.
-    5. Update Strategy Config if promising.
-    
-    Args:
-        failure_reason: e.g. "Low Win Rate in Choppy Market" or "Breakouts failing"
-        
-    Returns:
-        Summary of the optimization run.
-    """
-    try:
-        logger.info(f"🚑 Starting Auto-Optimization for: {failure_reason}")
-        
-        # 1. Search for solutions
-        search_results = find_strategy_videos(f"trading strategy for {failure_reason}")
-        if "No videos found" in search_results.get("text", ""):
-            return {"text": "Auto-Optimize Failed: No videos found.", "files": []}
-            
-        # Parse first video URL from "• **[Title](https://...)"
-        # Note: My find_strategy_videos returns markdown links
-        import re
-        urls = re.findall(r'https://www.youtube.com/watch\?v=[a-zA-Z0-9_-]+', search_results['text'])
-        
-        if not urls:
-            return {"text": "Auto-Optimize Failed: Could not parse video URLs.", "files": []}
-            
-        selected_url = urls[0] # Pick top result
-        logger.info(f"🎬 auto-selected top video: {selected_url}")
-        
-        # 2. Run RBI
-        rbi = get_rbi_service()
-        import asyncio
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        
-        # Run with backtest=True to get stats
-        result = loop.run_until_complete(rbi.process_idea(selected_url, run_backtest=True))
-        loop.close()
-        
-        if not result['success']:
-             return {"text": f"Optimization Failed during RBI: {result.get('error')}", "files": []}
-             
-        # 3. Evaluate Results
-        # Check Backtest Stdout for "Win Rate [%]" or similar logic
-        # For now, we trust the process and assume if it compiled, it's worth trying
-        # Real logic would parse `result['backtest_result']['stdout']`
-        
-        strategy_name = result['strategy_name']
-        
-        # 4. Update Strategy Config (Self-Heal)
-        # We need to map the new strategy to parameters scanner understands
-        # For now, we update the 'name' and set a description, enabling 'Dynamic' mode
-        from squadron.skills.strategy.tool import save_strategy
-        import pandas as pd
-        
-        new_config = {
-            "source_strategy": strategy_name,
-            "mode": "Dynamic",
-            "optimization_timestamp": str(pd.Timestamp.now()),
-            "reason": failure_reason
-        }
-        
-        save_msg = save_strategy(
-            name=f"Auto-{strategy_name}", 
-            config=new_config, 
-            description=f"Auto-generated to fix: {failure_reason}"
-        )
-        
-        return {
-            "text": (
-                f"✅ **Auto-Optimization Complete**\n"
-                f"1. Analyzed issue: {failure_reason}\n"
-                f"2. Selected Solution: {selected_url}\n"
-                f"3. Generated Strategy: **{strategy_name}**\n"
-                f"4. Result: {save_msg}\n\n"
-                f"Use `!scan` to test the new logic."
-            ),
-            "files": [str(result['final_file'])] if result.get('final_file') else []
-        }
-
-    except Exception as e:
-        logger.error(f"Auto-Optimize error: {e}", exc_info=True)
-        return {"text": f"System Error during optimization: {e}", "files": []}
