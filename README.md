@@ -41,16 +41,14 @@
 
 ---
 
-## 🔥 New in v0.5.0
+## 🔥 New in v0.5.1
 
 | Feature | Description |
 |:---|:---|
-| **🎮 Control Plane Dashboard** | Real-time web UI for managing agents via `squadron server` |
-| **🐝 Swarm 2.0** | LLM-powered intelligent routing with agent-to-agent handoffs |
-| **💬 Agent Communication** | Agents can @mention each other and comment on tickets |
-| **🧠 Persistent Memory** | Semantic memory with ChromaDB - agents remember past work |
-| **🧬 Evolution Layer** | Self-improving skills with version control and rollback |
-| **⏰ Wake Protocol** | Autonomous execution: trigger → route → execute → report |
+| **🧪 Comprehensive Test Suite** | Full pytest coverage with mocked dependencies |
+| **🔄 GitHub Actions CI/CD** | Automated testing on Python 3.10, 3.11, 3.12 |
+| **🐛 Bug Fixes** | Resolved merge conflicts and duplicate dependencies |
+| **📊 README Badges** | Tests, Coverage, Downloads, Last Commit, Issues |
 
 ---
 
