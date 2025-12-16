@@ -5,8 +5,9 @@ Comprehensive test suite for the Squadron agent framework.
 ## Quick Start
 
 ```bash
-# Install dev dependencies
-pip install -e ".[dev]"
+# Install dependencies and package
+pip install -r requirements.txt
+pip install -e .
 
 # Run all tests
 pytest

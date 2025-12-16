@@ -538,8 +538,9 @@ Squadron is the nervous system that connects our AI workforce to our human tools
 Squadron has a comprehensive test suite with mocked dependencies for fast, reliable tests.
 
 ```bash
-# Install dev dependencies
-pip install -e ".[dev]"
+# Install dependencies
+pip install -r requirements.txt
+pip install -e .
 
 # Run all tests
 python -m pytest tests/ -v
