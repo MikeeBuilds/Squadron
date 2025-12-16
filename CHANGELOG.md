@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2025-12-16
+### Added
+- **🧪 Comprehensive Test Suite**: Full pytest coverage with mocked dependencies
+  - Unit tests for Brain, Hippocampus, ModelFactory, Delegator, TagParser, Skills
+  - Integration tests for CLI commands and Wake Protocol
+  - Shared fixtures for fast, deterministic testing
+  - `tests/README.md` documentation for contributors
+- **🔄 GitHub Actions CI/CD**: Automated testing on Python 3.10, 3.11, 3.12
+- **📊 README Badges**: Tests, Coverage, Downloads, Last Commit, Issues
+
+### Fixed
+- Resolved git merge conflict markers in `brain.py` and `hippocampus.py`
+- Removed duplicate dependencies in `setup.py` and `requirements.txt`
+- Fixed 408 lines of duplicate code in `hippocampus.py`
+
 ## [0.6.0] - 2025-12-13
 ### Added
 - **🎮 Control Plane Dashboard**: Real-time web UI via `squadron server`
