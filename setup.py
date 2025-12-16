@@ -42,7 +42,6 @@ setup(
         "slack_sdk",
         "slack_bolt",
         "discord.py",
-        "discord.py",
         "PyGithub",
         
         # Skills

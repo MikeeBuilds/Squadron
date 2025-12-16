@@ -418,7 +418,6 @@ class SquadronBrain:
             "hazardous": hazardous
         }
 
-<<<<<<< HEAD
     def toggle_safety(self, enabled: bool):
         """Toggle the safety interlocks on or off."""
         self.safety_mode = enabled
@@ -461,10 +460,7 @@ class SquadronBrain:
             # Handle non-interactive environments
             return False
 
-    def think(self, user_input: str, agent_profile) -> dict:
-=======
     def think(self, user_input: str, agent_profile=None) -> dict:
->>>>>>> 8916e0b (feat: upgrade brain to gemini-3-pro and add read_file tool)
         """
         Decides the next action.
         Returns a dict: {"action": "reply"|"tool", "content": str, "tool_name": str, "tool_args": dict}

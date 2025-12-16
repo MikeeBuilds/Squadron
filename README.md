@@ -19,9 +19,14 @@
 
 <p align="center">
   <a href="https://pypi.org/project/squadron-agents/"><img src="https://img.shields.io/pypi/v/squadron-agents?color=blue&label=PyPI" alt="PyPI"></a>
+  <a href="https://github.com/MikeeBuilds/Squadron/actions/workflows/test.yml"><img src="https://github.com/MikeeBuilds/Squadron/actions/workflows/test.yml/badge.svg" alt="Tests"></a>
+  <a href="https://codecov.io/gh/MikeeBuilds/Squadron"><img src="https://codecov.io/gh/MikeeBuilds/Squadron/branch/main/graph/badge.svg" alt="Coverage"></a>
+  <a href="https://pypi.org/project/squadron-agents/"><img src="https://img.shields.io/pypi/dm/squadron-agents?color=green&label=Downloads" alt="Downloads"></a>
+  <br/>
   <a href="https://www.gnu.org/licenses/agpl-3.0"><img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="License: AGPL v3"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="Python 3.10+"></a>
-  <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/Architecture-MCP%20Ready-purple" alt="MCP Ready"></a>
+  <a href="https://github.com/MikeeBuilds/Squadron/commits/main"><img src="https://img.shields.io/github/last-commit/MikeeBuilds/Squadron" alt="Last Commit"></a>
+  <a href="https://github.com/MikeeBuilds/Squadron/issues"><img src="https://img.shields.io/github/issues/MikeeBuilds/Squadron" alt="Issues"></a>
 </p>
 
 <p align="center">
@@ -30,6 +35,7 @@
   <a href="#-commands">Commands</a> •
   <a href="#-architecture">Architecture</a> •
   <a href="#-skills">Skills</a> •
+  <a href="#-testing">Testing</a> •
   <a href="#-roadmap">Roadmap</a>
 </p>
 
@@ -524,6 +530,31 @@ We're building [BlackCircleTerminal](https://blackcircleterminal.com), a quantit
 We realized that for agents to be truly useful, they need to be part of the **workflow**, not just the **code editor**.
 
 Squadron is the nervous system that connects our AI workforce to our human tools.
+
+---
+
+## 🧪 Testing
+
+Squadron has a comprehensive test suite with mocked dependencies for fast, reliable tests.
+
+```bash
+# Install dev dependencies
+pip install -e ".[dev]"
+
+# Run all tests
+python -m pytest tests/ -v
+
+# Run with coverage
+python -m pytest tests/ --cov=squadron --cov-report=html
+
+# Run only unit tests (fast)
+python -m pytest tests/unit/ -v
+
+# Run integration tests
+python -m pytest tests/integration/ -v
+```
+
+Tests run automatically on push/PR via GitHub Actions. See `tests/README.md` for details on fixtures and writing new tests.
 
 ---
 
