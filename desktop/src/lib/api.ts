@@ -22,6 +22,7 @@ export interface Task {
     priority: number;
     assigned_to: string | null;
     status: 'backlog' | 'planning' | 'in_progress' | 'review' | 'done';
+    progress: number;
     created: string;
     result?: string;
 }

@@ -179,6 +179,7 @@ Respond with ONLY the agent name (Marcus, Caleb, or Sentinel). Nothing else."""
             "priority": priority,
             "assigned_to": assigned_to,
             "status": "backlog", # Kanban initial state
+            "progress": 0,
             "created": datetime.now().isoformat()
         }
 
@@ -202,17 +203,23 @@ Respond with ONLY the agent name (Marcus, Caleb, or Sentinel). Nothing else."""
             logger.info(f"⚙️ Processing: {task_entry['id']}")
             
             # Route to assigned agent or auto-route
+            task_entry["progress"] = 10  # Planning
             if task_entry.get("assigned_to"):
                 agent = self.agents.get(task_entry["assigned_to"])
                 if agent:
+                    task_entry["progress"] = 30  # Found Agent
                     result = agent.process_task(task_entry["task"])
+                    task_entry["progress"] = 90  # Execution Finished
                 else:
                     result = {"text": f"Agent {task_entry['assigned_to']} not found"}
             else:
+                task_entry["progress"] = 30  # Routing
                 result_text = self.route(task_entry["task"])
                 result = {"text": result_text}
+                task_entry["progress"] = 90  # Execution Finished
             
             task_entry["status"] = "done"
+            task_entry["progress"] = 100
             task_entry["result"] = result["text"]
             results.append(task_entry)
         
