@@ -23,20 +23,26 @@ import yaml
 
 console = Console()
 
-app = FastAPI(
-    title="Squadron Control Plane",
-    version="0.5.0",
-    description="Real-time dashboard API for Squadron agent orchestration"
-)
 
-# CORS - Allow Next.js frontend to talk to us
+app = FastAPI(title="Squadron Control Plane")
+
+# Configure CORS
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
 
 
 @app.get("/")
@@ -589,7 +595,7 @@ def get_system_status():
             "agents_active": active_count,
             "tasks_queued": queue_count,
             "missions_active": mission_count,
-            "status": "operational"
+            "status": "online"
         }
     
     except Exception as e:
@@ -598,7 +604,7 @@ def get_system_status():
 
 def start_server(host: str = "127.0.0.1", port: int = 8000):
     """Launch the Uvicorn server."""
-    console.print(f"[bold green]🚀 Squadron Control Plane online at http://{host}:{port}[/bold green]")
+    console.print(f"[bold green]Squadron Control Plane online at http://{host}:{port}[/bold green]")
     console.print(f"[dim]   Dashboard: http://localhost:3000[/dim]")
     console.print(f"[dim]   API Docs: http://{host}:{port}/docs[/dim]")
     uvicorn.run(app, host=host, port=port)

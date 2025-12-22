@@ -1,0 +1,31 @@
+appId: com.squadron.app
+productName: Squadron
+directories:
+  output: release
+  buildResources: build
+files:
+  - "dist/**/*"
+  - "dist-electron/**/*"
+  - "package.json"
+  - from: "../squadron"
+    to: "squadron"
+    filter:
+      - "**/*"
+      - "!**/__pycache__"
+      - "!**/*.pyc"
+  - from: ".."
+    to: "."
+    filter:
+      - "requirements.txt"
+win:
+  target: nsis
+  icon: public/favicon.ico
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+mac:
+  target: dmg
+  icon: public/favicon.ico
+linux:
+  target: AppImage
+  icon: public/favicon.ico

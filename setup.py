@@ -50,7 +50,9 @@ setup(
         
         # Memory (ChromaDB)
         "chromadb",
-        "mcp"
+        "mcp",
+        "watchdog",      # File system events
+        "pyautogui"      # Vision/GUI automation
     ],
     extras_require={
         "dev": [
