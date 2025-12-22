@@ -131,7 +131,7 @@ export function KanbanBoard() {
                 onDragEnd={handleDragEnd}
             >
                 {columns.map(col => (
-                    <div key={col.id} className="flex-1 min-w-[320px] max-w-[450px]">
+                    <div key={col.id} className="flex-1 min-w-[260px] max-w-[360px]">
                         <KanbanColumn
                             id={col.id}
                             title={col.title}
@@ -140,6 +140,7 @@ export function KanbanBoard() {
                         />
                     </div>
                 ))}
+
 
                 <DragOverlay>
                     {activeTask ? (
