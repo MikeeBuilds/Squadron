@@ -66,39 +66,18 @@ That's it. You're ready.
 
 ---
 
-## 🎮 Control Plane Dashboard
+## 🎮 Squadron Desktop (v2.0)
 
-Squadron now includes a full **Control Plane Dashboard** for real-time agent management.
+Squadron is evolving into a native **Desktop Application**. 
+The web-based Control Plane is being deprecated in favor of a high-performance Electron + React application.
 
-<!-- 🖼️ SCREENSHOT PLACEHOLDER: Dashboard Overview -->
-<!-- TODO: Add screenshot showing the main dashboard with agent cards and activity feed -->
-> **Screenshot needed:** Main dashboard showing agent status cards, activity stream, and system stats
+### Roadmap for v2.0
+- **Native Experience**: One-click installer (no terminal required).
+- **Kanban Board**: Drag-and-drop task management.
+- **Agent Terminals**: Watch your agents work in real-time.
+- **Git Worktrees**: Safety and parallelism for agent tasks.
 
-### Features
-
-- **📡 Live Activity Stream** — Real-time SSE updates of agent actions
-- **🤖 Agent Cards** — View status, current objectives, and capabilities
-- **💬 Console** — Direct REPL-style chat with any agent
-- **🚀 Missions** — Track active/completed missions, trigger new ones
-- **🔌 Integrations Panel** — Send to Slack, Discord, Jira, GitHub from the UI
-- **⚙️ Settings** — System status and configuration reference
-
-### Running the Dashboard
-
-```bash
-# Start the API server
-squadron server
-
-# In another terminal, start the frontend
-cd dashboard
-npm run dev
-```
-
-Open `http://localhost:3000` to access the dashboard.
-
-<!-- 🎥 RECORDING PLACEHOLDER: Dashboard Demo -->
-<!-- TODO: Add screen recording showing navigation through dashboard pages -->
-> **Recording needed:** Walkthrough of dashboard pages - Home → Agents → Console → Missions → Settings
+> _Work in Progress: The new desktop app is currently under active development._
 
 ---
 

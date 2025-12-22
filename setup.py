@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="squadron-agents",
-    version="0.5.1",
+    version="0.6.0",
     author="MikeeBuilds",
     author_email="mludlow000@icloud.com",
     description="The Operating System for Autonomous Software Teams",
@@ -50,7 +50,9 @@ setup(
         
         # Memory (ChromaDB)
         "chromadb",
-        "mcp"
+        "mcp",
+        "watchdog",      # File system events
+        "pyautogui"      # Vision/GUI automation
     ],
     extras_require={
         "dev": [

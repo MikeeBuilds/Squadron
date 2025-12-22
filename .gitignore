@@ -9,13 +9,14 @@ __pycache__/
 # Distribution / packaging
 squadron/agents.local.yaml
 .Python
+.github
 build/
 develop-eggs/
 dist/
 downloads/
 eggs/
 .eggs/
-lib/
+/lib/
 lib64/
 parts/
 sdist/
@@ -218,3 +219,10 @@ screen_*.png
 # Dashboard
 dashboard/node_modules/
 dashboard/.next/
+
+# Electron Desktop
+desktop/node_modules/
+desktop/dist/
+desktop/dist-electron/
+desktop/release/
+desktop/.vite/
