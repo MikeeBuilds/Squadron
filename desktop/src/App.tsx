@@ -65,18 +65,18 @@ export default function App() {
   return (
     <SidebarProvider className="dark">
       <Sidebar collapsible="icon" variant="inset">
-        <SidebarHeader className="h-[60px] border-b border-zinc-800 flex flex-row items-center gap-2 px-4 drag-region shrink-0">
-          <div className="flex gap-1.5 shrink-0">
-            <div className="w-3 h-3 rounded-full bg-red-500/80" />
-            <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-            <div className="w-3 h-3 rounded-full bg-green-500/80" />
+        <SidebarHeader className="h-[64px] border-b border-zinc-800 flex flex-row items-center gap-2 px-3 drag-region shrink-0 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:justify-center">
+          <div className="flex gap-2 shrink-0 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:gap-1.5 group-data-[collapsible=icon]:items-center">
+            <div className="w-2.5 h-2.5 rounded-full bg-red-500/80 hover:bg-red-500 transition-colors cursor-pointer" />
+            <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80 hover:bg-yellow-500 transition-colors cursor-pointer" />
+            <div className="w-2.5 h-2.5 rounded-full bg-green-500/80 hover:bg-green-500 transition-colors cursor-pointer" />
           </div>
           <span className="ml-2 font-bold text-sm text-zinc-400 group-data-[collapsible=icon]:hidden">Squadron</span>
         </SidebarHeader>
 
-        <SidebarContent className="py-6 px-2 space-y-8 scrollbar-hide overflow-x-hidden">
-          <SidebarGroup>
-            <SidebarGroupLabel className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] mb-4">Project</SidebarGroupLabel>
+        <SidebarContent className="py-6 space-y-8 scrollbar-hide overflow-x-hidden">
+          <SidebarGroup className="group-data-[collapsible=icon]:px-0">
+            <SidebarGroupLabel className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] mb-4 px-2 group-data-[collapsible=icon]:hidden">Project</SidebarGroupLabel>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton isActive={activeTab === 'kanban'} onClick={() => navigate('kanban')} tooltip="Kanban Board">
@@ -104,15 +104,17 @@ export default function App() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton isActive={activeTab === 'changelog'} onClick={() => navigate('changelog')} tooltip="Changelog">
-                  <FileClock /> <span>Changelog</span>
-                </SidebarMenuButton>
+                <SidebarMenuItem>
+                  <SidebarMenuButton isActive={activeTab === 'changelog'} onClick={() => navigate('changelog')} tooltip="Changelog">
+                    <FileClock /> <span>Changelog</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroup>
 
-          <SidebarGroup>
-            <SidebarGroupLabel className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] mb-4">Tools</SidebarGroupLabel>
+          <SidebarGroup className="group-data-[collapsible=icon]:px-0">
+            <SidebarGroupLabel className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] mb-4 px-2 group-data-[collapsible=icon]:hidden">Tools</SidebarGroupLabel>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton isActive={activeTab === 'github'} onClick={() => navigate('github')} tooltip="GitHub Issues">
@@ -128,9 +130,9 @@ export default function App() {
           </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter className="p-4 border-t border-zinc-800 space-y-3 bg-zinc-900/10">
-          <SidebarMenu>
-            <SidebarMenuItem>
+        <SidebarFooter className="p-4 border-t border-zinc-800 space-y-3 bg-zinc-900/10 group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center">
+          <SidebarMenu className="group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center">
+            <SidebarMenuItem className="group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center">
               <SidebarMenuButton isActive={activeTab === 'settings'} onClick={() => navigate('settings')} tooltip="Settings">
                 <Settings /> <span>Settings</span>
               </SidebarMenuButton>
@@ -138,7 +140,7 @@ export default function App() {
           </SidebarMenu>
           <button
             onClick={() => setIsWizardOpen(true)}
-            className="w-full flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-black font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(250,204,21,0.15)] active:scale-95 duration-200 py-2.5 px-4 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:h-10 group-data-[collapsible=icon]:w-10 overflow-hidden"
+            className="w-full flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-black font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(250,204,21,0.15)] active:scale-95 duration-200 py-2.5 px-4 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:p-0 overflow-hidden"
           >
             <Plus size={18} className="shrink-0" />
             <span className="text-xs uppercase tracking-wider group-data-[collapsible=icon]:hidden whitespace-nowrap">New Task</span>
