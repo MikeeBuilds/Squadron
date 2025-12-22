@@ -32,6 +32,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getSettings: () => ipcRenderer.invoke('settings-get-all'),
     getEnabledProviders: () => ipcRenderer.invoke('settings-get-providers'),
     hasApiKey: (provider: string) => ipcRenderer.invoke('settings-has-key', { provider }),
+    // Onboarding & Project IPC
+    isOnboardingComplete: () => ipcRenderer.invoke('settings-onboarding-complete'),
+    setOnboardingComplete: (complete: boolean) => ipcRenderer.invoke('settings-set-onboarding', { complete }),
+    setProjectPath: (projectPath: string) => ipcRenderer.invoke('settings-set-project', { projectPath }),
+    getIntegrationConfig: () => ipcRenderer.invoke('settings-get-integrations'),
+    exportEnvFile: (targetPath: string) => ipcRenderer.invoke('settings-export-env', { targetPath }),
+    selectFolder: () => ipcRenderer.invoke('dialog-select-folder'),
     // CLI Installation IPC
     checkCliInstalled: (cli: string) => ipcRenderer.invoke('cli-check-installed', { cli }),
     installCli: (installCommand: string) => ipcRenderer.invoke('cli-install', { installCommand }),

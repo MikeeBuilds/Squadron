@@ -17,6 +17,7 @@ import { TaskWizard } from '@/components/TaskWizard'
 import { AgentCard } from '@/components/AgentCard'
 import { TerminalHub } from '@/components/TerminalHub'
 import { SettingsPanel } from '@/components/SettingsPanel'
+import { OnboardingWizard } from '@/components/OnboardingWizard'
 
 // Shadcn Sidebar Imports
 import {
@@ -41,6 +42,25 @@ export default function App() {
   const [isWizardOpen, setIsWizardOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [kanbanKey, setKanbanKey] = useState(0)
+  const [showOnboarding, setShowOnboarding] = useState(false)
+  const [loading, setLoading] = useState(true)
+
+  const api = (window as any).electronAPI
+
+  // Check if onboarding is needed
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      try {
+        const isComplete = await api.isOnboardingComplete()
+        setShowOnboarding(!isComplete)
+      } catch (err) {
+        console.error('Failed to check onboarding:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    checkOnboarding()
+  }, [])
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -52,6 +72,19 @@ export default function App() {
     const interval = setInterval(fetchStatus, 5000)
     return () => clearInterval(interval)
   }, [])
+
+  // Show loading or onboarding
+  if (loading) {
+    return (
+      <div className="dark h-full w-full flex items-center justify-center bg-zinc-950">
+        <div className="text-zinc-500">Loading...</div>
+      </div>
+    )
+  }
+
+  if (showOnboarding) {
+    return <OnboardingWizard onComplete={() => setShowOnboarding(false)} />
+  }
 
   const navItems = [
     { id: 'kanban', label: 'Operations', icon: LayoutDashboard },
