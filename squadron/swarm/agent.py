@@ -3,6 +3,8 @@ import logging
 from typing import Optional
 from squadron.brain import SquadronBrain
 from squadron.services.model_factory import ModelFactory
+from squadron.services.event_bus import emit_agent_start, emit_agent_thought, emit_agent_complete
+
 
 logger = logging.getLogger('SwarmAgent')
 
@@ -13,6 +15,9 @@ class AgentNode:
         self.system_prompt = system_prompt
         self.task_history = []  # Track past tasks
         self._current_task = None  # Current task being processed
+        self._current_thought = None
+        self._current_tool = None
+
         
         # Each Agent gets its own Brain
         self.brain = SquadronBrain()
@@ -65,10 +70,27 @@ class AgentNode:
         
         profile = AgentProfile(self.name, self.system_prompt, context)
         
+        emit_agent_start(self.name, task)
+        
         # 1. Think
+        # We might want to capture thoughts more granularly in the future
+        self._current_thought = f"Analyzing task: {task[:50]}..."
+        emit_agent_thought(self.name, self._current_thought)
+        
         decision = self.brain.think(task, profile)
         
+        # Update thought based on decision
+        if decision.get("action") == "tool":
+            self._current_thought = f"Decided to use {decision.get('tool_name')}"
+            self._current_tool = decision.get("tool_name")
+        else:
+            self._current_thought = "Formulating response..."
+            self._current_tool = None
+            
+        emit_agent_thought(self.name, self._current_thought)
+        
         # 2. Execute
+        # Note: brain.execute will now handle tool_call/result emission if we update it
         result = self.brain.execute(decision)
         
         # 3. Log to history
@@ -83,9 +105,26 @@ class AgentNode:
         if len(self.task_history) > 100:
             self.task_history = self.task_history[-100:]
         
+        emit_agent_complete(self.name, result["text"][:200])
+        
         self._current_task = None
+        self._current_thought = None
+        self._current_tool = None
+        
         logger.info(f"   [{self.name}] Result: {result['text'][:50]}...")
         return result
+
+    def get_status(self) -> dict:
+        """Returns the current status of the agent."""
+        return {
+            "name": self.name,
+            "role": self.role,
+            "status": "active" if self._current_task else "idle",
+            "current_task": self._current_task,
+            "current_thought": self._current_thought,
+            "current_tool": self._current_tool
+        }
+
 
     def get_history(self, limit: int = 10) -> list:
         """Get recent task history for this agent."""

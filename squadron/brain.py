@@ -12,7 +12,9 @@ import yaml
 import os
 import asyncio
 # Tool Imports
+from squadron.services.event_bus import emit_tool_call, emit_tool_result, emit_error
 from squadron.skills.browser.tool import browse_website
+
 from squadron.skills.ssh.tool import ssh_command
 from squadron.skills.fs_tool.tool import read_file, write_file, list_dir
 from squadron.skills.shell_tool.tool import run_command
@@ -580,6 +582,10 @@ INSTRUCTIONS:
 
             try:
                 logger.info(f"🔧 Executing {tool_name} with {args}")
+                
+                agent_name = getattr(agent_profile, 'name', 'autonomous')
+                emit_tool_call(agent_name, tool_name, args)
+                
                 result = tool_info["func"](**args)
                 
                 # Handle structured tool output (dict) vs legacy simple string
@@ -587,12 +593,19 @@ INSTRUCTIONS:
                     # Capture files for next turn
                     if "files" in result:
                         self.last_files = result["files"]
+                    
+                    emit_tool_result(agent_name, tool_name, result["text"])
                     return result
                 else:
-                    return {"text": f"Tool Output: {result}", "files": []}
+                    text_result = f"Tool Output: {result}"
+                    emit_tool_result(agent_name, tool_name, text_result)
+                    return {"text": text_result, "files": []}
                     
             except Exception as e:
+                agent_name = getattr(agent_profile, 'name', 'autonomous')
+                emit_error(agent_name, str(e))
                 return {"text": f"Tool Error: {e}", "files": []}
+
         
         # Fallback: Try to extract any text-like content from the decision
         fallback_content = (

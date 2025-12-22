@@ -249,14 +249,8 @@ Respond with ONLY the agent name (Marcus, Caleb, or Sentinel). Nothing else."""
 
     def get_agent_status(self) -> list:
         """Return agent status for dashboard."""
-        return [
-            {
-                "name": name,
-                "role": agent.role,
-                "status": "active" if hasattr(agent, '_current_task') else "idle"
-            }
-            for name, agent in self.agents.items()
-        ]
+        return [agent.get_status() for agent in self.agents.values()]
+
 
     def _log_activity(self, event_type: str, data: dict):
         """Log activity for dashboard streaming."""

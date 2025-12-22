@@ -1,26 +1,35 @@
 import { useState, useEffect } from 'react'
 import { LayoutDashboard, Terminal, Activity, Map, Lightbulb, FileClock, Settings, Plus, Github, GitBranch } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { getSystemStatus, type SystemStatus } from '@/lib/api'
+import { getSystemStatus, getAgents, type SystemStatus, type Agent } from '@/lib/api'
 import { KanbanBoard } from '@/components/KanbanBoard'
 import { TaskWizard } from '@/components/TaskWizard'
+import { AgentCard } from '@/components/AgentCard'
+import { ActivityFeed } from '@/components/ActivityFeed'
+
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('kanban')
   const [systemStatus, setSystemStatus] = useState<SystemStatus | null>(null)
+  const [agents, setAgents] = useState<Agent[]>([])
   const [isWizardOpen, setIsWizardOpen] = useState(false)
-  const [kanbanKey, setKanbanKey] = useState(0) // Used to force refresh Kanban after creation
+  const [kanbanKey, setKanbanKey] = useState(0)
+
 
   useEffect(() => {
     const fetchStatus = async () => {
       const status = await getSystemStatus()
       setSystemStatus(status)
+
+      const latestAgents = await getAgents()
+      setAgents(latestAgents)
     }
 
     fetchStatus()
-    const interval = setInterval(fetchStatus, 5000) // Poll every 5s
+    const interval = setInterval(fetchStatus, 3000) // Poll faster (3s) for agent status
     return () => clearInterval(interval)
   }, [])
+
 
   const handleTaskCreated = () => {
     setKanbanKey(prev => prev + 1)
@@ -75,11 +84,11 @@ export default function App() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto bg-zinc-900/10 p-6">
-        <header className="flex justify-between items-center mb-8">
+      <main className="flex-1 overflow-auto bg-zinc-900/10 p-8">
+        <header className="flex justify-between items-center mb-10">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1).replace('-', ' ')}</h1>
-            <p className="text-zinc-500 text-sm flex items-center gap-4 mt-1">
+            <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-500">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1).replace('-', ' ')}</h1>
+            <p className="text-zinc-500 text-sm flex items-center gap-4 mt-2 font-medium">
               <span className={cn("flex items-center gap-1.5", systemStatus?.status === 'online' ? "text-green-500" : "text-red-500")}>
                 <span className={cn("w-2 h-2 rounded-full", systemStatus?.status === 'online' ? "bg-green-500" : "bg-red-500 animate-pulse")} />
                 {systemStatus?.status === 'online' ? 'System Online' : (systemStatus?.status || 'Connecting...')}
@@ -87,17 +96,35 @@ export default function App() {
               {systemStatus && (
                 <>
                   <span className="opacity-20">|</span>
-                  <span className="flex items-center gap-1"><Terminal size={12} className="opacity-50" /> {systemStatus.agents_online} Agents Online</span>
+                  <span className="flex items-center gap-2 rounded-full bg-zinc-900 px-3 py-1 border border-zinc-800"><Terminal size={12} className="text-yellow-400" /> <span className="text-zinc-300 font-bold">{systemStatus.agents_online}</span> Agents Online</span>
                   <span className="opacity-20">|</span>
-                  <span className="flex items-center gap-1"><Plus size={12} className="opacity-50" /> {systemStatus.missions_active} Active Missions</span>
+                  <span className="flex items-center gap-2 rounded-full bg-zinc-900 px-3 py-1 border border-zinc-800"><Plus size={12} className="text-blue-400" /> <span className="text-zinc-300 font-bold">{systemStatus.missions_active}</span> Active Missions</span>
                 </>
               )}
             </p>
           </div>
         </header>
 
-        {activeTab === 'kanban' && <KanbanBoard key={kanbanKey} />}
-        {activeTab === 'terminals' && <div className="text-zinc-500 bg-zinc-900/50 p-12 rounded-2xl border border-dashed border-zinc-800 text-center">Agent Terminals placeholder - Coming soon in Issue 7</div>}
+
+        {activeTab === 'kanban' && (
+          <div className="space-y-8 animate-in fade-in duration-500">
+            {/* Agent Status Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {agents.map(agent => (
+                <AgentCard key={agent.name} agent={agent} />
+              ))}
+            </div>
+
+            <KanbanBoard key={kanbanKey} />
+          </div>
+        )}
+
+        {activeTab === 'terminals' && (
+          <div className="h-[calc(100vh-160px)] animate-in slide-in-from-right-4 duration-500">
+            <ActivityFeed />
+          </div>
+        )}
+
 
         <TaskWizard
           isOpen={isWizardOpen}
