@@ -161,6 +161,40 @@ async def create_task(request: Request):
         return {"success": False, "error": str(e)}
 
 
+@app.post("/tasks/{task_id}/finalize")
+async def finalize_task(task_id: str, request: Request):
+    """
+    Finalize a task by merging or discarding its worktree.
+    
+    Body:
+    {
+        "action": "merge" | "discard"
+    }
+    """
+    try:
+        body = await request.json()
+        action = body.get("action", "merge")
+        
+        from squadron.swarm.overseer import overseer
+        success = overseer.finalize_task(task_id, action)
+        
+        if success:
+            return {"success": True, "task_id": task_id, "action": action}
+        return {"success": False, "error": "Failed to finalize task"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.get("/worktrees")
+async def get_worktrees():
+    """Get list of active worktrees for all tasks."""
+    try:
+        from squadron.swarm.overseer import overseer
+        return {"worktrees": overseer.list_worktrees()}
+    except Exception as e:
+        return {"worktrees": [], "error": str(e)}
+
+
 
 @app.get("/activity")
 async def activity_stream():
