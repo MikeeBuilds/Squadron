@@ -135,6 +135,38 @@ function setupTerminalIPC(mainWindow: BrowserWindow) {
             });
         });
     });
+
+    // Onboarding & Project IPC Handlers
+    ipcMain.handle('settings-onboarding-complete', async () => {
+        return settingsStore.isOnboardingComplete();
+    });
+
+    ipcMain.handle('settings-set-onboarding', async (_, { complete }) => {
+        settingsStore.setOnboardingComplete(complete);
+        return true;
+    });
+
+    ipcMain.handle('settings-set-project', async (_, { projectPath }) => {
+        settingsStore.setProjectPath(projectPath);
+        return true;
+    });
+
+    ipcMain.handle('settings-get-integrations', async () => {
+        return settingsStore.getIntegrationConfig();
+    });
+
+    ipcMain.handle('settings-export-env', async (_, { targetPath }) => {
+        return settingsStore.exportToEnvFile(targetPath);
+    });
+
+    ipcMain.handle('dialog-select-folder', async () => {
+        const { dialog } = require('electron');
+        const result = await dialog.showOpenDialog({
+            properties: ['openDirectory'],
+            title: 'Select Project Folder'
+        });
+        return result.canceled ? null : result.filePaths[0];
+    });
 }
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
