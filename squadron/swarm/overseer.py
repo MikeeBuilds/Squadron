@@ -178,9 +178,10 @@ Respond with ONLY the agent name (Marcus, Caleb, or Sentinel). Nothing else."""
             "task": task,
             "priority": priority,
             "assigned_to": assigned_to,
-            "status": "queued",
+            "status": "backlog", # Kanban initial state
             "created": datetime.now().isoformat()
         }
+
         self.task_queue.append(task_entry)
         self.task_queue.sort(key=lambda x: x["priority"], reverse=True)
         
@@ -192,14 +193,16 @@ Respond with ONLY the agent name (Marcus, Caleb, or Sentinel). Nothing else."""
     def process_queue(self) -> list:
         """Process all queued tasks."""
         results = []
-        while self.task_queue:
-            task_entry = self.task_queue.pop(0)
-            task_entry["status"] = "processing"
+        # Find tasks that are ready to run
+        tasks_to_run = [t for t in self.task_queue if t["status"] in ["backlog", "planning"]]
+        
+        for task_entry in tasks_to_run:
+            task_entry["status"] = "in_progress"
             
             logger.info(f"⚙️ Processing: {task_entry['id']}")
             
             # Route to assigned agent or auto-route
-            if task_entry["assigned_to"]:
+            if task_entry.get("assigned_to"):
                 agent = self.agents.get(task_entry["assigned_to"])
                 if agent:
                     result = agent.process_task(task_entry["task"])
@@ -209,15 +212,36 @@ Respond with ONLY the agent name (Marcus, Caleb, or Sentinel). Nothing else."""
                 result_text = self.route(task_entry["task"])
                 result = {"text": result_text}
             
-            task_entry["status"] = "complete"
+            task_entry["status"] = "done"
             task_entry["result"] = result["text"]
             results.append(task_entry)
         
         return results
 
+
     def get_queue_status(self) -> list:
         """Return current task queue for dashboard."""
         return self.task_queue.copy()
+
+    def update_task_status(self, task_id: str, status: str) -> bool:
+        """Update the status of a specific task (used by Kanban)."""
+        valid_statuses = ["backlog", "planning", "in_progress", "review", "done"]
+        if status not in valid_statuses:
+            return False
+            
+        for task in self.task_queue:
+            if task["id"] == task_id:
+                old_status = task["status"]
+                task["status"] = status
+                logger.info(f"📋 Task {task_id} moved: {old_status} -> {status}")
+                self._log_activity("status_change", {
+                    "task_id": task_id,
+                    "old_status": old_status,
+                    "new_status": status
+                })
+                return True
+        return False
+
 
     def get_activity_log(self, limit: int = 50) -> list:
         """Return recent activity for dashboard."""
