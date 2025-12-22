@@ -121,12 +121,45 @@ def get_tasks():
         from squadron.swarm.overseer import overseer
         
         return {
-            "queued": overseer.get_queue_status(),
+            "tasks": overseer.get_queue_status(),
             "recent_activity": overseer.get_activity_log(limit=20)
         }
     
     except Exception as e:
-        return {"queued": [], "recent_activity": [], "error": str(e)}
+        return {"tasks": [], "recent_activity": [], "error": str(e)}
+
+@app.patch("/tasks/{task_id}")
+async def update_task(task_id: str, request: Request):
+    """Update task status (for Kanban drag and drop)."""
+    try:
+        body = await request.json()
+        status = body.get("status")
+        
+        from squadron.swarm.overseer import overseer
+        success = overseer.update_task_status(task_id, status)
+        
+        if success:
+            return {"success": True, "task_id": task_id, "status": status}
+        return {"success": False, "error": "Task not found or invalid status"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+@app.post("/tasks")
+async def create_task(request: Request):
+    """Manually create a task (for Task Wizard)."""
+    try:
+        body = await request.json()
+        task = body.get("task")
+        priority = body.get("priority", 5)
+        assigned_to = body.get("assigned_to")
+        
+        from squadron.swarm.overseer import overseer
+        task_entry = overseer.enqueue_task(task, priority, assigned_to)
+        
+        return {"success": True, "task": task_entry}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
 
 
 @app.get("/activity")

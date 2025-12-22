@@ -16,6 +16,22 @@ export interface SystemStatus {
     missions_active: number;
 }
 
+export interface Task {
+    id: string;
+    task: string;
+    priority: number;
+    assigned_to: string | null;
+    status: 'backlog' | 'planning' | 'in_progress' | 'review' | 'done';
+    created: string;
+    result?: string;
+}
+
+export interface Agent {
+    name: string;
+    role: string;
+    status: 'active' | 'idle';
+}
+
 export const getSystemStatus = async (): Promise<SystemStatus> => {
     try {
         const response = await api.get('/system/status');
@@ -30,3 +46,24 @@ export const getSystemStatus = async (): Promise<SystemStatus> => {
         };
     }
 };
+
+export const getTasks = async (): Promise<Task[]> => {
+    const response = await api.get('/tasks');
+    return response.data.tasks;
+};
+
+export const updateTaskStatus = async (taskId: string, status: Task['status']) => {
+    const response = await api.patch(`/tasks/${taskId}`, { status });
+    return response.data;
+};
+
+export const createTask = async (task: string, priority: number = 5, assignedTo?: string) => {
+    const response = await api.post('/tasks', { task, priority, assigned_to: assignedTo });
+    return response.data;
+};
+
+export const getAgents = async (): Promise<Agent[]> => {
+    const response = await api.get('/agents');
+    return response.data.agents;
+};
+
