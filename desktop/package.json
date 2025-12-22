@@ -1,11 +1,15 @@
 {
-  "name": "desktop",
+  "name": "squadron-desktop",
   "productName": "Squadron",
-  "description": "The Operating System for Autonomous Software Teams",
+  "description": "The AI Agent Command Center for Your Desktop",
   "author": "MikeeBuilds",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.0.0",
   "main": "dist-electron/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MikeeBuilds/Squadron"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -13,7 +17,63 @@
     "preview": "vite preview",
     "electron:dev": "concurrently -k \"cross-env BROWSER=none npm run dev\" \"npm run build:main && wait-on http://localhost:5173 && cross-env VITE_DEV_SERVER_URL=http://localhost:5173 electron .\"",
     "electron:build": "npm run build && npm run build:main && electron-builder",
+    "electron:build:mac": "npm run build && npm run build:main && electron-builder --mac",
+    "electron:build:win": "npm run build && npm run build:main && electron-builder --win",
+    "electron:build:linux": "npm run build && npm run build:main && electron-builder --linux",
     "build:main": "tsc -p electron/tsconfig.json"
+  },
+  "build": {
+    "appId": "com.squadron.desktop",
+    "productName": "Squadron",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "public/icon.icns",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "public/icon.ico"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "category": "Development",
+      "icon": "public/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -41,7 +101,7 @@
     "@eslint/js": "^9.39.1",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^24.10.1",
-    "@types/react": "^19.2.5",
+    "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "autoprefixer": "^10.4.23",
