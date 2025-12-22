@@ -4,10 +4,17 @@ FastAPI backend for the Squadron dashboard.
 Provides real-time agent status, activity streaming, and command interface.
 """
 import os
+import sys
 import json
 import asyncio
 import uvicorn
 from datetime import datetime
+
+# Add current directory to path so relative imports work
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
+sys.path.append(os.path.dirname(current_dir)) # Add parent for 'squadron' package resolution
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse

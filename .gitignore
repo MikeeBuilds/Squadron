@@ -9,6 +9,7 @@ __pycache__/
 # Distribution / packaging
 squadron/agents.local.yaml
 .Python
+.github
 build/
 develop-eggs/
 dist/
