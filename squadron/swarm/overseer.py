@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 from typing import Optional
 from .agent import AgentNode
+from squadron.services.worktree import cleanup_worktree, list_worktrees as get_all_worktrees
 
 logger = logging.getLogger('Overseer')
 
@@ -257,6 +258,42 @@ Respond with ONLY the agent name (Marcus, Caleb, or Sentinel). Nothing else."""
     def get_agent_status(self) -> list:
         """Return agent status for dashboard."""
         return [agent.get_status() for agent in self.agents.values()]
+
+    def finalize_task(self, task_id: str, action: str = "merge") -> bool:
+        """
+        Finalize a task by merging or discarding its worktree.
+        
+        Args:
+            task_id: The task ID to finalize
+            action: "merge" to merge changes into main, "discard" to throw away
+        
+        Returns:
+            True if successful, False otherwise
+        """
+        if action not in ["merge", "discard"]:
+            logger.error(f"Invalid action: {action}. Must be 'merge' or 'discard'")
+            return False
+        
+        merge = (action == "merge")
+        success = cleanup_worktree(task_id, merge=merge)
+        
+        if success:
+            new_status = "done" if merge else "discarded"
+            self.update_task_status(task_id, new_status if new_status in ["done"] else "done")
+            self._log_activity("task_finalized", {
+                "task_id": task_id,
+                "action": action,
+                "merged": merge
+            })
+            logger.info(f"✅ Task {task_id} finalized: {action}")
+        else:
+            logger.error(f"❌ Failed to finalize task {task_id}")
+        
+        return success
+
+    def list_worktrees(self) -> list:
+        """Return list of active worktrees for dashboard."""
+        return get_all_worktrees()
 
 
     def _log_activity(self, event_type: str, data: dict):

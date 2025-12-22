@@ -1,9 +1,11 @@
 
 import logging
+import os
 from typing import Optional
 from squadron.brain import SquadronBrain
 from squadron.services.model_factory import ModelFactory
 from squadron.services.event_bus import emit_agent_start, emit_agent_thought, emit_agent_complete
+from squadron.services.worktree import create_worktree, get_worktree_path
 
 
 logger = logging.getLogger('SwarmAgent')
@@ -37,8 +39,25 @@ class AgentNode:
                 - original_request: The original user request
                 - previous_results: Results from prior steps
                 - notes: Any additional context
+                - task_id: If provided, creates an isolated worktree
         """
         self._current_task = task
+        
+        # Setup worktree isolation if task_id is provided
+        task_id = context.get('task_id') if context else None
+        worktree_path = None
+        original_cwd = os.getcwd()
+        
+        if task_id:
+            try:
+                worktree_path = get_worktree_path(task_id)
+                if not worktree_path:
+                    worktree_path = create_worktree(task_id)
+                os.chdir(worktree_path)
+                logger.info(f"🌳 [{self.name}] Working in isolated worktree: {worktree_path}")
+            except Exception as e:
+                logger.warning(f"⚠️ [{self.name}] Failed to create worktree: {e}. Continuing in main repo.")
+                worktree_path = None
         
         logger.info(f"🤖 [{self.name}] Processing task: {task}")
         if context:
@@ -106,6 +125,11 @@ class AgentNode:
             self.task_history = self.task_history[-100:]
         
         emit_agent_complete(self.name, result["text"][:200])
+        
+        # Return to original directory if we switched to worktree
+        if worktree_path:
+            os.chdir(original_cwd)
+            logger.info(f"🌳 [{self.name}] Returned from worktree to main repo")
         
         self._current_task = None
         self._current_thought = None
