@@ -193,22 +193,16 @@ Respond with ONLY the agent name (Marcus, Caleb, or Sentinel). Nothing else."""
     def process_queue(self) -> list:
         """Process all queued tasks."""
         results = []
-        while self.task_queue:
-            # Only process things in 'backlog' or 'planning'
-            tasks_to_run = [t for t in self.task_queue if t["status"] in ["backlog", "planning"]]
-            if not tasks_to_run:
-                break
-                
-            task_entry = tasks_to_run.pop(0)
-            self.task_queue.remove(task_entry)
-            
+        # Find tasks that are ready to run
+        tasks_to_run = [t for t in self.task_queue if t["status"] in ["backlog", "planning"]]
+        
+        for task_entry in tasks_to_run:
             task_entry["status"] = "in_progress"
             
             logger.info(f"⚙️ Processing: {task_entry['id']}")
-
             
             # Route to assigned agent or auto-route
-            if task_entry["assigned_to"]:
+            if task_entry.get("assigned_to"):
                 agent = self.agents.get(task_entry["assigned_to"])
                 if agent:
                     result = agent.process_task(task_entry["task"])
@@ -218,11 +212,12 @@ Respond with ONLY the agent name (Marcus, Caleb, or Sentinel). Nothing else."""
                 result_text = self.route(task_entry["task"])
                 result = {"text": result_text}
             
-            task_entry["status"] = "complete"
+            task_entry["status"] = "done"
             task_entry["result"] = result["text"]
             results.append(task_entry)
         
         return results
+
 
     def get_queue_status(self) -> list:
         """Return current task queue for dashboard."""
