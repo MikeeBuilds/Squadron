@@ -122,7 +122,7 @@ export function KanbanBoard() {
     }
 
     return (
-        <div className="flex gap-4 h-[calc(100vh-200px)] min-h-[500px]">
+        <div className="flex gap-6 h-[calc(100vh-180px)] min-h-[500px] overflow-x-auto pb-4 scrollbar-hide">
             <DndContext
                 sensors={sensors}
                 collisionDetection={closestCorners}
@@ -131,18 +131,20 @@ export function KanbanBoard() {
                 onDragEnd={handleDragEnd}
             >
                 {columns.map(col => (
-                    <KanbanColumn
-                        key={col.id}
-                        id={col.id}
-                        title={col.title}
-                        status={col.status}
-                        tasks={tasks.filter(t => t.status === col.id)}
-                    />
+                    <div key={col.id} className="flex-1 min-w-[260px] max-w-[360px]">
+                        <KanbanColumn
+                            id={col.id}
+                            title={col.title}
+                            status={col.status}
+                            tasks={tasks.filter(t => t.status === col.id)}
+                        />
+                    </div>
                 ))}
+
 
                 <DragOverlay>
                     {activeTask ? (
-                        <div className="w-[280px]">
+                        <div className="w-[320px]">
                             <TaskCard task={activeTask} />
                         </div>
                     ) : null}
@@ -150,4 +152,5 @@ export function KanbanBoard() {
             </DndContext>
         </div>
     )
+
 }

@@ -113,8 +113,16 @@ def emit_tool_call(agent: str, tool_name: str, args: dict):
         "data": {"tool": tool_name, "args": safe_args}
     })
 
+def emit_agent_thought(agent: str, thought: str):
+    """Emit when an agent has a thought or reasoning step."""
+    event_bus.publish({
+        "type": "agent_thought",
+        "agent": agent,
+        "data": {"thought": thought[:500]}
+    })
 
 def emit_tool_result(agent: str, tool_name: str, result: str, success: bool = True):
+
     """Emit after a tool finishes executing."""
     event_bus.publish({
         "type": "tool_result",

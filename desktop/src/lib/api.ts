@@ -22,6 +22,7 @@ export interface Task {
     priority: number;
     assigned_to: string | null;
     status: 'backlog' | 'planning' | 'in_progress' | 'review' | 'done';
+    progress: number;
     created: string;
     result?: string;
 }
@@ -30,7 +31,11 @@ export interface Agent {
     name: string;
     role: string;
     status: 'active' | 'idle';
+    current_thought?: string;
+    current_tool?: string;
+    current_task?: string;
 }
+
 
 export const getSystemStatus = async (): Promise<SystemStatus> => {
     try {

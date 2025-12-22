@@ -69,8 +69,17 @@ export function TaskCard({ task }: TaskCardProps) {
             </div>
 
             {task.status === 'in_progress' && (
-                <div className="absolute bottom-0 left-0 w-full h-0.5 bg-zinc-800 overflow-hidden rounded-b-lg">
-                    <div className="h-full bg-yellow-500 animate-pulse w-full" />
+                <div className="mt-4 space-y-1.5">
+                    <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-wider">
+                        <span className="text-zinc-500">Progress</span>
+                        <span className="text-yellow-500">{task.progress}%</span>
+                    </div>
+                    <div className="w-full h-1 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800/50">
+                        <div
+                            className="h-full bg-gradient-to-r from-yellow-500/80 to-yellow-400 transition-all duration-1000 ease-out shadow-[0_0_8px_rgba(234,179,8,0.3)]"
+                            style={{ width: `${task.progress}%` }}
+                        />
+                    </div>
                 </div>
             )}
 

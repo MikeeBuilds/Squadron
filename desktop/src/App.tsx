@@ -1,128 +1,214 @@
 import { useState, useEffect } from 'react'
-import { LayoutDashboard, Terminal, Activity, Map, Lightbulb, FileClock, Settings, Plus, Github, GitBranch } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { getSystemStatus, type SystemStatus } from '@/lib/api'
+import {
+  LayoutDashboard,
+  Terminal,
+  Activity,
+  Map,
+  Lightbulb,
+  FileClock,
+  Settings,
+  Plus,
+  Github,
+  GitBranch,
+} from 'lucide-react'
+import { getAgents, type Agent } from '@/lib/api'
 import { KanbanBoard } from '@/components/KanbanBoard'
 import { TaskWizard } from '@/components/TaskWizard'
+import { AgentCard } from '@/components/AgentCard'
+import { TerminalHub } from '@/components/TerminalHub'
+import { SettingsPanel } from '@/components/SettingsPanel'
+
+// Shadcn Sidebar Imports
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+  SidebarRail,
+} from "@/components/ui/sidebar"
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('kanban')
-  const [systemStatus, setSystemStatus] = useState<SystemStatus | null>(null)
+  const [agents, setAgents] = useState<Agent[]>([])
   const [isWizardOpen, setIsWizardOpen] = useState(false)
-  const [kanbanKey, setKanbanKey] = useState(0) // Used to force refresh Kanban after creation
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [kanbanKey, setKanbanKey] = useState(0)
 
   useEffect(() => {
     const fetchStatus = async () => {
-      const status = await getSystemStatus()
-      setSystemStatus(status)
+      const latestAgents = await getAgents()
+      setAgents(latestAgents)
     }
 
     fetchStatus()
-    const interval = setInterval(fetchStatus, 5000) // Poll every 5s
+    const interval = setInterval(fetchStatus, 5000)
     return () => clearInterval(interval)
   }, [])
 
-  const handleTaskCreated = () => {
-    setKanbanKey(prev => prev + 1)
-  }
+  const navItems = [
+    { id: 'kanban', label: 'Operations', icon: LayoutDashboard },
+    { id: 'terminals', label: 'Terminal Hub', icon: Terminal },
+    { id: 'network', label: 'Agent Network', icon: Activity },
+    { id: 'roadmap', label: 'Flight Plan', icon: Map },
+    { id: 'prompts', label: 'Command Library', icon: Lightbulb },
+    { id: 'history', label: 'Mission Logs', icon: FileClock },
+    { id: 'settings', label: 'System Config', icon: Settings },
+  ]
 
   return (
-    <div className="flex h-screen bg-zinc-950 text-zinc-100 font-sans overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-64 border-r border-zinc-800 flex flex-col">
-        <div className="p-4 border-b border-zinc-800 flex items-center gap-2 drag-region">
-          <div className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 transition-colors" />
-          <div className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 transition-colors" />
-          <div className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-600 transition-colors" />
-          <span className="ml-2 font-bold text-sm text-zinc-400">Squadron</span>
-        </div>
-
-        <div className="flex-1 overflow-y-auto py-4 px-3 space-y-6">
-
-          {/* Project Section */}
-          <div>
-            <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 px-2">Project</h3>
-            <div className="space-y-1">
-              <SidebarItem icon={<LayoutDashboard size={16} />} label="Kanban Board" isActive={activeTab === 'kanban'} onClick={() => setActiveTab('kanban')} />
-              <SidebarItem icon={<Terminal size={16} />} label="Agent Terminals" isActive={activeTab === 'terminals'} onClick={() => setActiveTab('terminals')} />
-              <SidebarItem icon={<Activity size={16} />} label="Insights" isActive={activeTab === 'insights'} onClick={() => setActiveTab('insights')} />
-              <SidebarItem icon={<Map size={16} />} label="Roadmap" isActive={activeTab === 'roadmap'} onClick={() => setActiveTab('roadmap')} />
-              <SidebarItem icon={<Lightbulb size={16} />} label="Ideation" isActive={activeTab === 'ideation'} onClick={() => setActiveTab('ideation')} />
-              <SidebarItem icon={<FileClock size={16} />} label="Changelog" isActive={activeTab === 'changelog'} onClick={() => setActiveTab('changelog')} />
+    <div className="dark h-full w-full">
+      <SidebarProvider>
+        <Sidebar variant="inset" collapsible="icon" className="border-r border-zinc-900 bg-zinc-950 backdrop-blur-xl">
+          <SidebarHeader className="p-4 pt-6 group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:pt-10">
+            <div className="flex items-center gap-3 px-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
+              <div className="w-8 h-8 rounded-xl bg-yellow-400 flex items-center justify-center shadow-[0_0_15px_rgba(250,204,21,0.3)] shrink-0">
+                <span className="text-black font-black text-xs">S</span>
+              </div>
+              <div className="flex flex-col group-data-[collapsible=icon]:hidden overflow-hidden">
+                <h2 className="text-sm font-black tracking-tight text-white leading-tight">SQUADRON</h2>
+                <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-[0.2em]">Agentic OS v2.0</span>
+              </div>
             </div>
-          </div>
+          </SidebarHeader>
 
-          {/* Tools Section */}
-          <div>
-            <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 px-2">Tools</h3>
-            <div className="space-y-1">
-              <SidebarItem icon={<Github size={16} />} label="GitHub Issues" isActive={activeTab === 'github'} onClick={() => setActiveTab('github')} />
-              <SidebarItem icon={<GitBranch size={16} />} label="Worktrees" isActive={activeTab === 'worktrees'} onClick={() => setActiveTab('worktrees')} />
-            </div>
-          </div>
-        </div>
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupLabel className="px-6 text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] mb-4 group-data-[collapsible=icon]:hidden">
+                Main Interface
+              </SidebarGroupLabel>
+              <SidebarMenu className="px-2 group-data-[collapsible=icon]:px-0">
+                {navItems.map((item) => (
+                  <SidebarMenuItem key={item.id} className="mb-1">
+                    <SidebarMenuButton
+                      onClick={() => item.id === 'settings' ? setIsSettingsOpen(true) : setActiveTab(item.id)}
+                      isActive={activeTab === item.id}
+                      tooltip={item.label}
+                      className={activeTab === item.id ? "bg-yellow-400 text-black font-bold" : "text-zinc-500 hover:text-white hover:bg-zinc-900"}
+                    >
+                      <item.icon className="shrink-0" size={18} />
+                      <span className="font-bold tracking-tight">{item.label}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroup>
 
-        {/* Bottom Actions */}
-        <div className="p-4 border-t border-zinc-800 space-y-2">
-          <SidebarItem icon={<Settings size={16} />} label="Settings" isActive={activeTab === 'settings'} onClick={() => setActiveTab('settings')} />
-          <button
-            onClick={() => setIsWizardOpen(true)}
-            className="w-full flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded-md transition-colors text-sm shadow-lg shadow-yellow-400/10 active:scale-95 duration-100"
-          >
-            <Plus size={16} /> New Task
-          </button>
-        </div>
-      </aside>
+            <SidebarGroup className="mt-auto">
+              <SidebarGroupLabel className="px-6 text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] mb-4 group-data-[collapsible=icon]:hidden">
+                Deployment
+              </SidebarGroupLabel>
+              <SidebarMenu className="px-2 group-data-[collapsible=icon]:px-0">
+                <SidebarMenuItem className="mb-1">
+                  <SidebarMenuButton className="text-zinc-500 hover:text-white hover:bg-zinc-900">
+                    <Github size={18} />
+                    <span className="font-bold tracking-tight">Repository</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton className="text-zinc-500 hover:text-white hover:bg-zinc-900">
+                    <GitBranch size={18} />
+                    <span className="font-bold tracking-tight">Active Branch</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroup>
+          </SidebarContent>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-auto bg-zinc-900/10 p-6">
-        <header className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1).replace('-', ' ')}</h1>
-            <p className="text-zinc-500 text-sm flex items-center gap-4 mt-1">
-              <span className={cn("flex items-center gap-1.5", systemStatus?.status === 'online' ? "text-green-500" : "text-red-500")}>
-                <span className={cn("w-2 h-2 rounded-full", systemStatus?.status === 'online' ? "bg-green-500" : "bg-red-500 animate-pulse")} />
-                {systemStatus?.status === 'online' ? 'System Online' : (systemStatus?.status || 'Connecting...')}
-              </span>
-              {systemStatus && (
-                <>
-                  <span className="opacity-20">|</span>
-                  <span className="flex items-center gap-1"><Terminal size={12} className="opacity-50" /> {systemStatus.agents_online} Agents Online</span>
-                  <span className="opacity-20">|</span>
-                  <span className="flex items-center gap-1"><Plus size={12} className="opacity-50" /> {systemStatus.missions_active} Active Missions</span>
-                </>
+          <SidebarFooter className="p-4 border-t border-zinc-900/50 group-data-[collapsible=icon]:p-2">
+            <SidebarMenu>
+              <SidebarMenuItem className="flex items-center gap-3 px-2 py-3 bg-zinc-900/30 rounded-xl mb-4 group-data-[collapsible=icon]:hidden">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-zinc-700 to-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0">
+                  <div className="w-2 h-2 rounded-full bg-green-500" />
+                </div>
+                <div className="flex flex-col overflow-hidden">
+                  <span className="text-xs font-bold text-zinc-200 truncate">Commander Michael</span>
+                  <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">Session Active</span>
+                </div>
+              </SidebarMenuItem>
+            </SidebarMenu>
+            <button
+              onClick={() => setIsWizardOpen(true)}
+              className="w-full flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-black font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(250,204,21,0.15)] active:scale-95 duration-200 py-2.5 px-4 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:p-0 overflow-hidden"
+            >
+              <Plus size={18} className="shrink-0" />
+              <span className="text-xs uppercase tracking-wider group-data-[collapsible=icon]:hidden whitespace-nowrap">New Task</span>
+            </button>
+          </SidebarFooter>
+          <SidebarRail />
+        </Sidebar>
+
+        <SidebarInset className="bg-zinc-950 flex-1 overflow-hidden border-none relative flex flex-col">
+          <main className="h-full overflow-hidden p-4 relative flex flex-col custom-scrollbar">
+            {/* Subtle Background Glow */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-yellow-400/5 blur-[120px] rounded-full pointer-events-none -mr-48 -mt-48" />
+
+            <header className="flex w-full justify-between items-center mb-2 max-w-[1400px] relative z-10 transition-all duration-300 shrink-0">
+              <div className="flex items-center gap-4">
+                <SidebarTrigger className="text-zinc-500 hover:text-yellow-400" />
+                <div className="flex items-center gap-4">
+                  <h1 className="text-2xl font-black tracking-tight text-white/90">
+                    {activeTab === 'kanban' ? 'Operation Dashboard' : 'Terminal Workbench'}
+                  </h1>
+                  <div className="h-4 w-px bg-zinc-800" />
+                  <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-green-500/10 border border-green-500/20 text-[8px] font-bold text-green-500 uppercase tracking-widest">
+                    <div className="w-1 h-1 rounded-full bg-green-500 animate-pulse" />
+                    Live System
+                  </div>
+                </div>
+              </div>
+            </header>
+
+            <div className="w-full max-w-[1400px] flex-1 min-h-0 overflow-hidden relative z-10 flex flex-col">
+              {activeTab === 'kanban' && (
+                <div className="h-full overflow-auto scrollbar-hide">
+                  <div className="space-y-16 animate-in fade-in duration-700">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                      {agents.map(agent => (
+                        <AgentCard key={agent.name} agent={agent} />
+                      ))}
+                    </div>
+
+                    <div className="relative">
+                      <div className="flex items-center gap-4 mb-8">
+                        <h3 className="text-xl font-black tracking-tight text-white">Project Flight Path</h3>
+                        <div className="flex-1 h-px bg-zinc-900" />
+                      </div>
+                      <KanbanBoard key={kanbanKey} />
+                    </div>
+                  </div>
+                </div>
               )}
-            </p>
-          </div>
-        </header>
 
-        {activeTab === 'kanban' && <KanbanBoard key={kanbanKey} />}
-        {activeTab === 'terminals' && <div className="text-zinc-500 bg-zinc-900/50 p-12 rounded-2xl border border-dashed border-zinc-800 text-center">Agent Terminals placeholder - Coming soon in Issue 7</div>}
+              {activeTab === 'terminals' && (
+                <div className="flex-1 min-h-0 pb-4 animate-in fade-in zoom-in-95 duration-500">
+                  <TerminalHub />
+                </div>
+              )}
+            </div>
+          </main>
+        </SidebarInset>
 
         <TaskWizard
           isOpen={isWizardOpen}
           onClose={() => setIsWizardOpen(false)}
-          onTaskCreated={handleTaskCreated}
+          onTaskCreated={() => {
+            setKanbanKey(prev => prev + 1)
+          }}
         />
-      </main>
+
+        <SettingsPanel
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+        />
+      </SidebarProvider>
     </div>
   )
 }
-
-function SidebarItem({ icon, label, isActive, onClick }: { icon: any, label: string, isActive?: boolean, onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-        isActive
-          ? "bg-zinc-800 text-yellow-400"
-          : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50"
-      )}
-    >
-      {icon}
-      {label}
-    </button>
-  )
-}
-
