@@ -32,6 +32,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
+  SidebarRail,
 } from "@/components/ui/sidebar"
 
 export default function App() {
@@ -63,8 +64,8 @@ export default function App() {
 
   return (
     <SidebarProvider className="dark">
-      <Sidebar collapsible="icon" className="border-r border-zinc-800">
-        <SidebarHeader className="h-[60px] border-b border-zinc-800 flex flex-row items-center gap-2 px-4 drag-region shrink-0 bg-transparent">
+      <Sidebar collapsible="icon" variant="inset">
+        <SidebarHeader className="h-[60px] border-b border-zinc-800 flex flex-row items-center gap-2 px-4 drag-region shrink-0">
           <div className="flex gap-1.5 shrink-0">
             <div className="w-3 h-3 rounded-full bg-red-500/80" />
             <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
@@ -73,7 +74,7 @@ export default function App() {
           <span className="ml-2 font-bold text-sm text-zinc-400 group-data-[collapsible=icon]:hidden">Squadron</span>
         </SidebarHeader>
 
-        <SidebarContent className="py-6 px-2 space-y-8 scrollbar-hide overflow-x-hidden bg-transparent">
+        <SidebarContent className="py-6 px-2 space-y-8 scrollbar-hide overflow-x-hidden">
           <SidebarGroup>
             <SidebarGroupLabel className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] mb-4">Project</SidebarGroupLabel>
             <SidebarMenu>
@@ -98,11 +99,9 @@ export default function App() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton isActive={activeTab === 'ideation'} onClick={() => navigate('ideation')} tooltip="Ideation">
-                    <Lightbulb /> <span>Ideation</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <SidebarMenuButton isActive={activeTab === 'ideation'} onClick={() => navigate('ideation')} tooltip="Ideation">
+                  <Lightbulb /> <span>Ideation</span>
+                </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton isActive={activeTab === 'changelog'} onClick={() => navigate('changelog')} tooltip="Changelog">
@@ -145,6 +144,7 @@ export default function App() {
             <span className="text-xs uppercase tracking-wider group-data-[collapsible=icon]:hidden whitespace-nowrap">New Task</span>
           </button>
         </SidebarFooter>
+        <SidebarRail />
       </Sidebar>
 
       <SidebarInset className="bg-zinc-950 flex-1 overflow-hidden border-none relative flex flex-col">
@@ -208,7 +208,6 @@ export default function App() {
           />
         </main>
       </SidebarInset>
-    </div>
-    </SidebarProvider >
+    </SidebarProvider>
   )
 }
