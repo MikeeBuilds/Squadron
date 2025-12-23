@@ -583,7 +583,7 @@ INSTRUCTIONS:
             try:
                 logger.info(f"🔧 Executing {tool_name} with {args}")
                 
-                agent_name = getattr(agent_profile, 'name', 'autonomous')
+                agent_name = 'autonomous'
                 emit_tool_call(agent_name, tool_name, args)
                 
                 result = tool_info["func"](**args)
@@ -602,7 +602,7 @@ INSTRUCTIONS:
                     return {"text": text_result, "files": []}
                     
             except Exception as e:
-                agent_name = getattr(agent_profile, 'name', 'autonomous')
+                agent_name = 'autonomous'
                 emit_error(agent_name, str(e))
                 return {"text": f"Tool Error: {e}", "files": []}
 
