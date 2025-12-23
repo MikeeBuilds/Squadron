@@ -9,7 +9,7 @@ const SETTINGS_FILE = 'squadron-settings.json'
 export const INTEGRATION_KEYS = {
     // AI Providers
     anthropic: { label: 'Claude (Anthropic)', envKey: 'ANTHROPIC_API_KEY', category: 'ai' },
-    google: { label: 'Gemini (Google)', envKey: 'GOOGLE_API_KEY', category: 'ai' },
+    google: { label: 'Gemini (Google)', envKey: 'GEMINI_API_KEY', category: 'ai' },
     openai: { label: 'OpenAI (Codex)', envKey: 'OPENAI_API_KEY', category: 'ai' },
 
     // Communication
