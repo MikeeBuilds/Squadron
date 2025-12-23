@@ -153,12 +153,24 @@ export function XTermComponent({ id, providerId = 'shell', modelId, cwd, isActiv
 
     useEffect(() => {
         if (isActive && fitAddon.current) {
-            setTimeout(() => fitAddon.current?.fit(), 100)
+            setTimeout(() => {
+                fitAddon.current?.fit()
+                // Focus terminal when it becomes active
+                terminalInstance.current?.focus()
+            }, 100)
         }
     }, [isActive])
 
+    // Focus terminal when clicked
+    const handleClick = () => {
+        terminalInstance.current?.focus()
+    }
+
     return (
-        <div className="h-full w-full bg-transparent p-0 overflow-hidden [&_.xterm-viewport]:scrollbar-hide">
+        <div
+            className="h-full w-full bg-transparent p-0 overflow-hidden [&_.xterm-viewport]:scrollbar-hide cursor-text"
+            onClick={handleClick}
+        >
             <style dangerouslySetInnerHTML={{
                 __html: `
                 .xterm-viewport::-webkit-scrollbar { display: none !important; width: 0 !important; }

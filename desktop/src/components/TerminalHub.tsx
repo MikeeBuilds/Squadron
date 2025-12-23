@@ -41,14 +41,49 @@ const DEFAULT_SESSIONS: TerminalSession[] = [
     { id: 'term-6', title: 'Terminal 6', providerId: 'shell', modelId: 'default', isActive: false, needsRespawn: false },
 ]
 
+const STORAGE_KEY = 'squadron-terminal-sessions'
+
+// Load sessions from localStorage or use defaults
+const loadSessions = (): TerminalSession[] => {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY)
+        if (saved) {
+            const parsed = JSON.parse(saved) as TerminalSession[]
+            // Merge with defaults to ensure all fields exist
+            return DEFAULT_SESSIONS.map((def, i) => ({
+                ...def,
+                ...parsed[i],
+                needsRespawn: false, // Always start fresh
+            }))
+        }
+    } catch (err) {
+        console.error('Failed to load terminal sessions:', err)
+    }
+    return DEFAULT_SESSIONS
+}
+
+// Save sessions to localStorage
+const saveSessions = (sessions: TerminalSession[]) => {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions))
+    } catch (err) {
+        console.error('Failed to save terminal sessions:', err)
+    }
+}
+
 export function TerminalHub() {
-    const [sessions, setSessions] = useState<TerminalSession[]>(DEFAULT_SESSIONS)
+    const [sessions, setSessions] = useState<TerminalSession[]>(loadSessions)
     const [tasks, setTasks] = useState<Task[]>([])
     const [enabledProviders, setEnabledProviders] = useState<string[]>(['shell'])
     const [openDropdown, setOpenDropdown] = useState<string | null>(null)
     const [openModelDropdown, setOpenModelDropdown] = useState<string | null>(null)
     const [openTaskDropdown, setOpenTaskDropdown] = useState<string | null>(null)
     const respawnTriggersRef = useRef<Record<string, number>>({})
+
+    // Save sessions to localStorage whenever they change
+    useEffect(() => {
+        saveSessions(sessions)
+    }, [sessions])
 
     // Fetch enabled providers on mount and periodically refresh
     useEffect(() => {
