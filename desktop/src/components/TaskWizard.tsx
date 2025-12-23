@@ -1,8 +1,39 @@
-import { useState, useEffect } from 'react'
-import { X, Zap } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import { X, Zap, RotateCcw } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { type Agent, getAgents, createTask } from '@/lib/api'
 
+const DRAFT_KEY = 'squadron_task_draft'
+
+interface TaskDraft {
+    taskName: string
+    priority: number
+    assignedTo?: string
+    savedAt: Date
+}
+
+function saveDraft(draft: TaskDraft) {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft))
+}
+
+function loadDraft(): TaskDraft | null {
+    const raw = localStorage.getItem(DRAFT_KEY)
+    if (!raw) return null
+    try {
+        return JSON.parse(raw)
+    } catch {
+        return null
+    }
+}
+
+function clearDraft() {
+    localStorage.removeItem(DRAFT_KEY)
+}
+
+function isDraftEmpty(draft: TaskDraft | null): boolean {
+    if (!draft) return true
+    return !draft.taskName.trim()
+}
 
 interface TaskWizardProps {
     isOpen: boolean
@@ -17,16 +48,57 @@ export function TaskWizard({ isOpen, onClose, onTaskCreated }: TaskWizardProps) 
     const [assignedTo, setAssignedTo] = useState<string | undefined>()
     const [agents, setAgents] = useState<Agent[]>([])
     const [isLoading, setIsLoading] = useState(false)
+    const [isDraftRestored, setIsDraftRestored] = useState(false)
 
+    // Load draft or reset when opening
     useEffect(() => {
         if (isOpen) {
             getAgents().then(setAgents).catch(console.error)
-            setStep(1)
-            setTaskName('')
-            setPriority(3)
-            setAssignedTo(undefined)
+
+            const draft = loadDraft()
+            if (draft && !isDraftEmpty(draft)) {
+                setTaskName(draft.taskName)
+                setPriority(draft.priority)
+                setAssignedTo(draft.assignedTo)
+                setIsDraftRestored(true)
+            } else {
+                setStep(1)
+                setTaskName('')
+                setPriority(3)
+                setAssignedTo(undefined)
+                setIsDraftRestored(false)
+            }
         }
     }, [isOpen])
+
+    // Get current draft state
+    const getCurrentDraft = useCallback((): TaskDraft => ({
+        taskName,
+        priority,
+        assignedTo,
+        savedAt: new Date()
+    }), [taskName, priority, assignedTo])
+
+    // Handle close - save draft if content exists
+    const handleClose = useCallback(() => {
+        const draft = getCurrentDraft()
+        if (!isDraftEmpty(draft)) {
+            saveDraft(draft)
+        } else {
+            clearDraft()
+        }
+        onClose()
+    }, [getCurrentDraft, onClose])
+
+    // Discard draft and start fresh
+    const handleDiscardDraft = () => {
+        clearDraft()
+        setStep(1)
+        setTaskName('')
+        setPriority(3)
+        setAssignedTo(undefined)
+        setIsDraftRestored(false)
+    }
 
     if (!isOpen) return null
 
@@ -34,6 +106,7 @@ export function TaskWizard({ isOpen, onClose, onTaskCreated }: TaskWizardProps) 
         setIsLoading(true)
         try {
             await createTask(taskName, priority, assignedTo)
+            clearDraft() // Clear draft on successful creation
             onTaskCreated()
             onClose()
         } catch (err) {
@@ -47,11 +120,25 @@ export function TaskWizard({ isOpen, onClose, onTaskCreated }: TaskWizardProps) 
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
                 <div className="p-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/50">
-                    <h2 className="text-lg font-bold flex items-center gap-2">
-                        <Zap className="text-cyan-400" size={18} />
-                        New Mission
-                    </h2>
-                    <button onClick={onClose} className="p-1 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-500 hover:text-white">
+                    <div className="flex items-center gap-3">
+                        <h2 className="text-lg font-bold flex items-center gap-2">
+                            <Zap className="text-cyan-400" size={18} />
+                            New Mission
+                        </h2>
+                        {isDraftRestored && (
+                            <div className="flex items-center gap-2">
+                                <span className="text-xs bg-teal-500/20 text-teal-400 px-2 py-1 rounded-md">Draft restored</span>
+                                <button
+                                    onClick={handleDiscardDraft}
+                                    className="text-xs text-zinc-500 hover:text-white flex items-center gap-1 transition-colors"
+                                >
+                                    <RotateCcw size={12} />
+                                    Fresh
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                    <button onClick={handleClose} className="p-1 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-500 hover:text-white">
                         <X size={20} />
                     </button>
                 </div>
