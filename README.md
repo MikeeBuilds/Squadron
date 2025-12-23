@@ -6,12 +6,12 @@
   <h1>Squadron</h1>
 
   <p>
-    <strong>The AI Agent Command Center for Your Desktop</strong>
+    <strong>The Agentic Operating System for Your Desktop</strong>
   </p>
 
   <p>
-    Run Claude, Gemini, Codex, and more — all in one native app.<br/>
-    6 terminals. Any AI Provider. Complete control.
+    Squadron is a native command center that lets you manage swarms of local AI agents (Gemini, Claude, Codex) as if they were employees.<br/>
+    Features a 6-terminal parallel workbench, Kanban task management, and deep integration with Jira/Linear to turn AI autonomy into real engineering work.
   </p>
 
   <br/>

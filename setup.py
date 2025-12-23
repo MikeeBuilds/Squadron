@@ -8,7 +8,7 @@ setup(
     version="2.0.0",
     author="MikeeBuilds",
     author_email="mludlow000@icloud.com",
-    description="The Operating System for Autonomous Software Teams",
+    description="The Agentic Operating System for your desktop. Manage swarms of local AI agents as employees.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/MikeeBuilds/squadron",

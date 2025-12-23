@@ -1,7 +1,7 @@
 {
   "name": "squadron-desktop",
   "productName": "Squadron",
-  "description": "The AI Agent Command Center for Your Desktop",
+  "description": "The Agentic Operating System for your desktop. Manage swarms of local AI agents as employees.",
   "author": "MikeeBuilds",
   "private": true,
   "version": "2.0.0",
