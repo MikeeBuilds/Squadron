@@ -60,8 +60,8 @@ Download the latest release for your platform:
 | Platform | Download | Architecture |
 |----------|----------|--------------|
 | **Windows** | [Squadron-Setup.exe](https://github.com/MikeeBuilds/Squadron/releases/latest) | x64 |
-| **macOS** | [Squadron.dmg](https://github.com/MikeeBuilds/Squadron/releases/latest) | Intel & Apple Silicon |
-| **Linux** | [Squadron.AppImage](https://github.com/MikeeBuilds/Squadron/releases/latest) | x64 |
+| **macOS** | *Coming Soon* | Intel & Apple Silicon |
+| **Linux** | *Coming Soon* | x64 |
 
 > **Windows users**: You may see a SmartScreen warning. Click "More info" → "Run anyway". We're working on code signing.
 
