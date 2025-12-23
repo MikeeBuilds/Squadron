@@ -10,6 +10,8 @@ import {
   Plus,
   Github,
   GitBranch,
+  Sparkles,
+  FileText,
 } from 'lucide-react'
 import { getAgents, type Agent } from '@/lib/api'
 import { KanbanBoard } from '@/components/KanbanBoard'
@@ -18,6 +20,8 @@ import { AgentCard } from '@/components/AgentCard'
 import { TerminalHub } from '@/components/TerminalHub'
 import { SettingsPanel } from '@/components/SettingsPanel'
 import { OnboardingWizard } from '@/components/OnboardingWizard'
+import { InsightsPanel } from '@/components/InsightsPanel'
+import { ContextViewer } from '@/components/ContextViewer'
 
 // Shadcn Sidebar Imports
 import {
@@ -89,6 +93,8 @@ export default function App() {
   const navItems = [
     { id: 'kanban', label: 'Operations', icon: LayoutDashboard },
     { id: 'terminals', label: 'Terminal Hub', icon: Terminal },
+    { id: 'insights', label: 'Insights', icon: Sparkles },
+    { id: 'context', label: 'Context', icon: FileText },
     { id: 'network', label: 'Agent Network', icon: Activity },
     { id: 'roadmap', label: 'Flight Plan', icon: Map },
     { id: 'prompts', label: 'Command Library', icon: Lightbulb },
@@ -223,6 +229,18 @@ export default function App() {
               {activeTab === 'terminals' && (
                 <div className="flex-1 min-h-0 pb-4 animate-in fade-in zoom-in-95 duration-500">
                   <TerminalHub />
+                </div>
+              )}
+
+              {activeTab === 'insights' && (
+                <div className="flex-1 min-h-0 pb-4 animate-in fade-in zoom-in-95 duration-500">
+                  <InsightsPanel />
+                </div>
+              )}
+
+              {activeTab === 'context' && (
+                <div className="flex-1 min-h-0 pb-4 animate-in fade-in zoom-in-95 duration-500">
+                  <ContextViewer />
                 </div>
               )}
             </div>

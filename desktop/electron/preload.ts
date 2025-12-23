@@ -42,4 +42,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     // CLI Installation IPC
     checkCliInstalled: (cli: string) => ipcRenderer.invoke('cli-check-installed', { cli }),
     installCli: (installCommand: string) => ipcRenderer.invoke('cli-install', { installCommand }),
+    // Insights & Knowledge
+    askInsights: (query: string) => ipcRenderer.invoke('insights-ask', { query }),
+    getKnowledgeMap: () => ipcRenderer.invoke('knowledge-get'),
 });

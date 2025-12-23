@@ -1,6 +1,8 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import path from 'path';
+import fs from 'fs';
 import * as pty from 'node-pty';
+import OpenAI from 'openai';
 import { startPythonBackend, stopPythonBackend } from './process_manager';
 import * as settingsStore from './settings-store';
 
@@ -172,6 +174,55 @@ function setupTerminalIPC(mainWindow: BrowserWindow) {
             title: 'Select Project Folder'
         });
         return result.canceled ? null : result.filePaths[0];
+    });
+
+    // INSIGHTS IPC
+    ipcMain.handle('knowledge-get', async () => {
+        try {
+            const settings = await settingsStore.getAllSettings();
+            const projectPath = settings.projectPath || process.cwd();
+            const mapPath = path.join(projectPath, 'squadron', 'knowledge', 'CODEBASE_MAP.md');
+
+            if (fs.existsSync(mapPath)) {
+                return fs.readFileSync(mapPath, 'utf-8');
+            }
+            return "# Codebase Map\n\nNo map found. Run `squadron learn` to generate.";
+        } catch (e: any) {
+            console.error("Knowledge Read Error:", e);
+            return `Error reading map: ${e.message}`;
+        }
+    });
+
+    ipcMain.handle('insights-ask', async (_, { query }) => {
+        try {
+            const apiKey = await settingsStore.getApiKey('openai');
+            if (!apiKey) return "Please configure OpenAI API Key in Settings.";
+
+            const settings = await settingsStore.getAllSettings();
+            const projectPath = settings.projectPath || process.cwd();
+            const mapPath = path.join(projectPath, 'squadron', 'knowledge', 'CODEBASE_MAP.md');
+
+            let context = "";
+            if (fs.existsSync(mapPath)) {
+                context = fs.readFileSync(mapPath, 'utf-8');
+            } else {
+                return "Please run `squadron learn` first to generate a knowledge map.";
+            }
+
+            const openai = new OpenAI({ apiKey });
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    { role: "system", content: "You are an expert on this codebase. Answer the user's question using the provided Codebase Map context. Be concise and technical." },
+                    { role: "user", content: `Context:\n${context}\n\nQuestion: ${query}` }
+                ],
+                model: "gpt-4o",
+            });
+
+            return completion.choices[0].message.content || "No response.";
+        } catch (e: any) {
+            console.error("Insights Error:", e);
+            return `Error: ${e.message}`;
+        }
     });
 }
 
