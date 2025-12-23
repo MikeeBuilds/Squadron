@@ -45,7 +45,12 @@
       ],
       "icon": "public/icon.icns",
       "hardenedRuntime": true,
-      "gatekeeperAssess": false
+      "gatekeeperAssess": false,
+      "entitlements": "electron/entitlements.mac.plist",
+      "entitlementsInherit": "electron/entitlements.mac.plist",
+      "notarize": {
+        "teamId": "${env.TEAM_ID}"
+      }
     },
     "win": {
       "target": [
