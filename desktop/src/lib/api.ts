@@ -72,3 +72,22 @@ export const getAgents = async (): Promise<Agent[]> => {
     return response.data.agents;
 };
 
+// Start a task - triggers the wake protocol to have agents work on it
+export const startTask = async (taskId: string, taskDescription: string) => {
+    // First update status to in_progress
+    await updateTaskStatus(taskId, 'in_progress');
+
+    // Then trigger the wake protocol
+    const response = await api.post('/wake', {
+        summary: taskDescription,
+        source_type: 'desktop',
+        ticket_id: taskId
+    });
+    return response.data;
+};
+
+// Stop a task - sets status back to backlog
+export const stopTask = async (taskId: string) => {
+    await updateTaskStatus(taskId, 'backlog');
+    return { success: true };
+};
