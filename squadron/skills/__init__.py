@@ -6,5 +6,6 @@ from squadron.skills.discord_bridge.tool import DiscordTool
 from squadron.skills.github_bridge.tool import GitHubTool
 from squadron.skills.linear_bridge.tool import LinearTool
 from squadron.skills.librarian.tool import LibrarianTool
+from squadron.skills.git_tool.tool import GitTool
 
-__all__ = ["JiraTool", "SlackTool", "DiscordTool", "GitHubTool", "LinearTool", "LibrarianTool"]
+__all__ = ["JiraTool", "SlackTool", "DiscordTool", "GitHubTool", "LinearTool", "LibrarianTool", "GitTool"]
