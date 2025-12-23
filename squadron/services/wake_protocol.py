@@ -110,6 +110,15 @@ class WakeProtocol:
             if len(self.completed_missions) > 100:
                 self.completed_missions = self.completed_missions[-100:]
             
+            # Update Overseer task status to 'done' if this was triggered from a task
+            task_id = source.get("id", "")
+            if task_id and task_id.startswith("task-"):
+                try:
+                    overseer.update_task_status(task_id, "done")
+                    logger.info(f"   📋 Task {task_id} marked as done")
+                except Exception as te:
+                    logger.warning(f"Failed to update task status: {te}")
+            
             # Run callbacks
             for cb in self.callbacks["on_complete"]:
                 try:
@@ -118,6 +127,7 @@ class WakeProtocol:
                     logger.warning(f"Callback error: {e}")
             
             logger.info(f"   ✅ Mission Complete: {mission_id}")
+
             return {
                 "success": True,
                 "mission_id": mission_id,
