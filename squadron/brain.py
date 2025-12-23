@@ -607,6 +607,38 @@ INSTRUCTIONS:
                 return {"text": f"Tool Error: {e}", "files": []}
 
         
+        # Check if the action name is actually a tool name (Gemini sometimes returns this)
+        elif action in self.tools:
+            tool_info = self.tools[action]
+            args = decision.get("args", decision.get("arguments", decision.get("parameters", {})))
+            
+            # --- SAFETY CHECK ---
+            if not self.check_safety(action, args):
+                return {"text": "⛔ Action denied by safety interlock.", "files": []}
+            
+            try:
+                logger.info(f"🔧 Executing {action} with {args} (action-as-tool fallback)")
+                agent_name = 'autonomous'
+                emit_tool_call(agent_name, action, args)
+                
+                result = tool_info["func"](**args)
+                
+                if isinstance(result, dict) and "text" in result:
+                    if "files" in result:
+                        self.last_files = result["files"]
+                    emit_tool_result(agent_name, action, result["text"])
+                    return result
+                else:
+                    text_result = f"Tool Output: {result}"
+                    emit_tool_result(agent_name, action, text_result)
+                    return {"text": text_result, "files": []}
+                    
+            except Exception as e:
+                agent_name = 'autonomous'
+                emit_error(agent_name, str(e))
+                return {"text": f"Tool Error: {e}", "files": []}
+
+        
         # Fallback: Try to extract any text-like content from the decision
         fallback_content = (
             decision.get("content") or 
