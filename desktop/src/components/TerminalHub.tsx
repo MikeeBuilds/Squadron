@@ -207,13 +207,13 @@ export function TerminalHub() {
                             onClick={() => switchSession(s.id)}
                             className={cn(
                                 "flex flex-col min-h-0 bg-[#050506] transition-all cursor-pointer relative",
-                                s.isActive && "ring-1 ring-yellow-500/30"
+                                s.isActive && "ring-1 ring-cyan-500/30"
                             )}
                         >
                             {/* Terminal header */}
                             <div className="px-2 py-1 bg-zinc-950/50 border-b border-zinc-900/50 flex justify-between items-center shrink-0">
                                 <div className="flex items-center gap-1.5">
-                                    <div className={cn("w-1.5 h-1.5 rounded-full", s.isActive ? "bg-yellow-500 shadow-[0_0_6px_rgba(234,179,8,0.5)]" : "bg-zinc-800")} />
+                                    <div className={cn("w-1.5 h-1.5 rounded-full", s.isActive ? "bg-cyan-500 shadow-[0_0_6px_rgba(234,179,8,0.5)]" : "bg-zinc-800")} />
 
                                     {/* Provider Toggle */}
                                     <div className="relative">
@@ -283,7 +283,7 @@ export function TerminalHub() {
                                                             }}
                                                             className={cn(
                                                                 "w-full px-2 py-1.5 text-[8px] font-medium text-left hover:bg-zinc-800 transition-colors text-zinc-300",
-                                                                s.modelId === m.id && "bg-zinc-800 text-yellow-400"
+                                                                s.modelId === m.id && "bg-zinc-800 text-cyan-400"
                                                             )}
                                                         >
                                                             <div>{m.name}</div>
@@ -309,7 +309,7 @@ export function TerminalHub() {
                                             className={cn(
                                                 "flex items-center gap-1 px-1.5 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider transition-all border",
                                                 linkedTask
-                                                    ? "text-yellow-500 bg-yellow-500/10 border-yellow-500/30"
+                                                    ? "text-cyan-500 bg-cyan-500/10 border-cyan-500/30"
                                                     : "text-zinc-600 bg-zinc-900/50 border-zinc-800/50 hover:border-zinc-700"
                                             )}
                                         >
@@ -342,7 +342,7 @@ export function TerminalHub() {
                                                         }}
                                                         className={cn(
                                                             "w-full px-2 py-1.5 text-[8px] font-medium text-left hover:bg-zinc-800 transition-colors text-zinc-300 truncate",
-                                                            s.linkedTaskId === t.id && "bg-zinc-800 text-yellow-400"
+                                                            s.linkedTaskId === t.id && "bg-zinc-800 text-cyan-400"
                                                         )}
                                                     >
                                                         {t.task.slice(0, 30)}{t.task.length > 30 ? '...' : ''}
@@ -382,7 +382,7 @@ export function TerminalHub() {
 
                             {/* Linked task indicator */}
                             {linkedTask && (
-                                <div className="px-2 py-0.5 bg-yellow-500/5 border-b border-yellow-500/10 text-[7px] text-yellow-500/70 font-medium truncate">
+                                <div className="px-2 py-0.5 bg-cyan-500/5 border-b border-cyan-500/10 text-[7px] text-cyan-500/70 font-medium truncate">
                                     📋 {linkedTask.task.slice(0, 50)}{linkedTask.task.length > 50 ? '...' : ''}
                                 </div>
                             )}

@@ -66,7 +66,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
             <div className="w-full max-w-xl">
                 {/* Logo & Title */}
                 <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 mb-4">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-400 to-teal-500 mb-4">
                         <Rocket className="w-8 h-8 text-black" />
                     </div>
                     <h1 className="text-2xl font-bold text-white">Welcome to Squadron</h1>
@@ -80,7 +80,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                             key={i}
                             className={cn(
                                 "flex-1 h-1.5 rounded-full transition-all",
-                                i <= step ? "bg-yellow-400" : "bg-zinc-800"
+                                i <= step ? "bg-cyan-400" : "bg-zinc-800"
                             )}
                         />
                     ))}
@@ -93,7 +93,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                         {step === 1 && (
                             <div className="space-y-4">
                                 <div className="flex items-center gap-2 text-sm font-bold text-zinc-400">
-                                    <Key size={16} className="text-yellow-400" />
+                                    <Key size={16} className="text-cyan-400" />
                                     Step 1: Choose Your AI Provider
                                 </div>
 
@@ -105,7 +105,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                                             className={cn(
                                                 "w-full p-4 rounded-xl border-2 text-left transition-all",
                                                 selectedProvider === provider.id
-                                                    ? "border-yellow-400 bg-yellow-400/5"
+                                                    ? "border-cyan-400 bg-cyan-400/5"
                                                     : "border-zinc-800 hover:border-zinc-700 bg-zinc-950"
                                             )}
                                         >
@@ -118,7 +118,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                                                     <div className="text-xs text-zinc-500">{provider.description}</div>
                                                 </div>
                                                 {selectedProvider === provider.id && (
-                                                    <Check className="ml-auto text-yellow-400" size={20} />
+                                                    <Check className="ml-auto text-cyan-400" size={20} />
                                                 )}
                                             </div>
                                         </button>
@@ -131,7 +131,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                         {step === 2 && (
                             <div className="space-y-4">
                                 <div className="flex items-center gap-2 text-sm font-bold text-zinc-400">
-                                    <Key size={16} className="text-yellow-400" />
+                                    <Key size={16} className="text-cyan-400" />
                                     Step 2: Enter Your API Key
                                 </div>
 
@@ -159,7 +159,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                         {step === 3 && (
                             <div className="space-y-4">
                                 <div className="flex items-center gap-2 text-sm font-bold text-zinc-400">
-                                    <FolderOpen size={16} className="text-yellow-400" />
+                                    <FolderOpen size={16} className="text-cyan-400" />
                                     Step 3: Select Project Folder <span className="text-xs font-normal">(Optional)</span>
                                 </div>
 
@@ -205,7 +205,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                             <button
                                 onClick={handleNext}
                                 disabled={!canProceed() || saving}
-                                className="px-6 py-2 bg-yellow-400 hover:bg-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed text-black rounded-xl font-bold text-sm flex items-center gap-1 transition-colors"
+                                className="px-6 py-2 bg-cyan-400 hover:bg-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed text-black rounded-xl font-bold text-sm flex items-center gap-1 transition-colors"
                             >
                                 {saving ? 'Saving...' : step === totalSteps ? 'Finish' : 'Continue'}
                                 {!saving && <ChevronRight size={14} />}

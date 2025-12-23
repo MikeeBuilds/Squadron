@@ -20,7 +20,7 @@ export function KanbanColumn({ id, title, tasks, status, onAddTask }: KanbanColu
     const statusColor = {
         neutral: 'border-zinc-800/50',
         blue: 'border-blue-500/20',
-        yellow: 'border-yellow-500/20',
+        yellow: 'border-cyan-500/20',
         green: 'border-green-500/20',
         red: 'border-red-500/20'
     }[status]
@@ -37,7 +37,7 @@ export function KanbanColumn({ id, title, tasks, status, onAddTask }: KanbanColu
                 {onAddTask && (
                     <button
                         onClick={onAddTask}
-                        className="p-1 hover:bg-zinc-800 rounded transition-colors text-zinc-500 hover:text-yellow-400"
+                        className="p-1 hover:bg-zinc-800 rounded transition-colors text-zinc-500 hover:text-cyan-400"
                     >
                         <Plus size={14} />
                     </button>

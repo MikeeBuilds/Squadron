@@ -17,7 +17,7 @@ export function AgentCard({ agent }: AgentCardProps) {
                 <div className="flex items-center gap-3">
                     <div className={cn(
                         "w-10 h-10 rounded-xl flex items-center justify-center transition-all",
-                        agent.status === 'active' ? "bg-yellow-400 text-black shadow-lg shadow-yellow-400/20" : "bg-zinc-900 text-zinc-500"
+                        agent.status === 'active' ? "bg-cyan-400 text-black shadow-lg shadow-cyan-400/20" : "bg-zinc-900 text-zinc-500"
                     )}>
                         {agent.name === 'Marcus' && <Cpu size={20} />}
                         {agent.name === 'Caleb' && <Terminal size={20} />}
@@ -43,7 +43,7 @@ export function AgentCard({ agent }: AgentCardProps) {
                 <div className="bg-zinc-900/40 rounded-xl p-3 border border-zinc-800/50 min-h-[64px] flex flex-col justify-center">
                     {agent.status === 'active' ? (
                         <div className="space-y-2">
-                            <div className="flex items-center gap-2 text-[10px] font-bold text-yellow-400/70 uppercase tracking-widest">
+                            <div className="flex items-center gap-2 text-[10px] font-bold text-cyan-400/70 uppercase tracking-widest">
                                 <Activity size={10} className="animate-spin-slow" style={{ animationDuration: '3s' }} />
                                 <span>{isThinking ? 'Thinking' : 'Executing'}</span>
                             </div>
@@ -70,7 +70,7 @@ export function AgentCard({ agent }: AgentCardProps) {
 
             {/* Decorative background pulse */}
             {agent.status === 'active' && (
-                <div className="absolute -right-4 -top-4 w-16 h-16 bg-yellow-400/5 blur-3xl rounded-full" />
+                <div className="absolute -right-4 -top-4 w-16 h-16 bg-cyan-400/5 blur-3xl rounded-full" />
             )}
         </div>
     )

@@ -48,7 +48,7 @@ export function TaskWizard({ isOpen, onClose, onTaskCreated }: TaskWizardProps) 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
                 <div className="p-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/50">
                     <h2 className="text-lg font-bold flex items-center gap-2">
-                        <Zap className="text-yellow-400" size={18} />
+                        <Zap className="text-cyan-400" size={18} />
                         New Mission
                     </h2>
                     <button onClick={onClose} className="p-1 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-500 hover:text-white">
@@ -60,7 +60,7 @@ export function TaskWizard({ isOpen, onClose, onTaskCreated }: TaskWizardProps) 
                     {/* Progress Bar */}
                     <div className="flex gap-2">
                         {[1, 2, 3].map(s => (
-                            <div key={s} className={cn("h-1 flex-1 rounded-full bg-zinc-800 transition-colors", step >= s && "bg-yellow-400")} />
+                            <div key={s} className={cn("h-1 flex-1 rounded-full bg-zinc-800 transition-colors", step >= s && "bg-cyan-400")} />
                         ))}
                     </div>
 
@@ -70,7 +70,7 @@ export function TaskWizard({ isOpen, onClose, onTaskCreated }: TaskWizardProps) 
                                 <span className="text-sm font-medium text-zinc-400 uppercase tracking-wider">What needs to be done?</span>
                                 <textarea
                                     autoFocus
-                                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-yellow-400/50 transition-colors resize-none h-32"
+                                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-cyan-400/50 transition-colors resize-none h-32"
                                     placeholder="e.g. Implement a security audit tool for the SSH skill..."
                                     value={taskName}
                                     onChange={e => setTaskName(e.target.value)}
@@ -87,7 +87,7 @@ export function TaskWizard({ isOpen, onClose, onTaskCreated }: TaskWizardProps) 
                                     onClick={() => setAssignedTo(undefined)}
                                     className={cn(
                                         "flex items-center gap-3 p-3 rounded-xl border transition-all text-left",
-                                        !assignedTo ? "bg-yellow-400/5 border-yellow-400/50 text-yellow-400" : "bg-zinc-950 border-zinc-800 text-zinc-400 hover:border-zinc-700"
+                                        !assignedTo ? "bg-cyan-400/5 border-cyan-400/50 text-cyan-400" : "bg-zinc-950 border-zinc-800 text-zinc-400 hover:border-zinc-700"
                                     )}
                                 >
                                     <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center">
@@ -104,7 +104,7 @@ export function TaskWizard({ isOpen, onClose, onTaskCreated }: TaskWizardProps) 
                                         onClick={() => setAssignedTo(agent.name)}
                                         className={cn(
                                             "flex items-center gap-3 p-3 rounded-xl border transition-all text-left",
-                                            assignedTo === agent.name ? "bg-yellow-400/5 border-yellow-400/50 text-yellow-400" : "bg-zinc-950 border-zinc-800 text-zinc-400 hover:border-zinc-700"
+                                            assignedTo === agent.name ? "bg-cyan-400/5 border-cyan-400/50 text-cyan-400" : "bg-zinc-950 border-zinc-800 text-zinc-400 hover:border-zinc-700"
                                         )}
                                     >
                                         <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-bold uppercase">
@@ -131,7 +131,7 @@ export function TaskWizard({ isOpen, onClose, onTaskCreated }: TaskWizardProps) 
                                             onClick={() => setPriority(p)}
                                             className={cn(
                                                 "flex-1 py-3 rounded-xl border text-sm font-bold transition-all",
-                                                priority === p ? "bg-yellow-400 text-black border-yellow-400" : "bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700"
+                                                priority === p ? "bg-cyan-400 text-black border-cyan-400" : "bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700"
                                             )}
                                         >
                                             P{p}
@@ -168,7 +168,7 @@ export function TaskWizard({ isOpen, onClose, onTaskCreated }: TaskWizardProps) 
                     <button
                         onClick={() => step < 3 ? setStep(s => s + 1) : handleCreate()}
                         disabled={step === 1 && !taskName.trim() || isLoading}
-                        className="flex-[2] py-2.5 bg-yellow-400 hover:bg-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold rounded-xl transition-all flex items-center justify-center gap-2 text-sm"
+                        className="flex-[2] py-2.5 bg-cyan-400 hover:bg-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold rounded-xl transition-all flex items-center justify-center gap-2 text-sm"
                     >
                         {isLoading ? "Creating..." : step === 3 ? "Launch Mission" : "Continue"}
                     </button>

@@ -123,7 +123,7 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                 {/* Header */}
                 <div className="p-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/50">
                     <h2 className="text-lg font-bold flex items-center gap-2">
-                        <Key className="text-yellow-400" size={18} />
+                        <Key className="text-cyan-400" size={18} />
                         Settings & Integrations
                     </h2>
                     <button onClick={onClose} className="p-1 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-500 hover:text-white">
@@ -141,7 +141,7 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                                 className={cn(
                                     "w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2",
                                     activeSection === key
-                                        ? "bg-yellow-400/10 text-yellow-400"
+                                        ? "bg-cyan-400/10 text-cyan-400"
                                         : "text-zinc-400 hover:bg-zinc-800 hover:text-white"
                                 )}
                             >
@@ -155,7 +155,7 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                             className={cn(
                                 "w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2",
                                 activeSection === 'project-folder'
-                                    ? "bg-yellow-400/10 text-yellow-400"
+                                    ? "bg-cyan-400/10 text-cyan-400"
                                     : "text-zinc-400 hover:bg-zinc-800 hover:text-white"
                             )}
                         >
@@ -193,7 +193,7 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                                             "w-full py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2",
                                             saved === 'env-export'
                                                 ? "bg-green-500 text-black"
-                                                : "bg-yellow-400 hover:bg-yellow-500 text-black"
+                                                : "bg-cyan-400 hover:bg-cyan-500 text-black"
                                         )}
                                     >
                                         {saved === 'env-export' ? (
@@ -237,7 +237,7 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                                                     placeholder={hasKeys[item.id] ? '••••••••••••••••' : ((item as any).placeholder || `Enter ${item.label}`)}
                                                     value={apiKeys[item.id] || ''}
                                                     onChange={(e) => setApiKeys(prev => ({ ...prev, [item.id]: e.target.value }))}
-                                                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-yellow-400/50 transition-colors pr-8"
+                                                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-cyan-400/50 transition-colors pr-8"
                                                 />
                                                 <button
                                                     type="button"
@@ -255,7 +255,7 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                                                     "px-3 py-2 rounded-lg font-bold text-xs transition-all",
                                                     saved === item.id
                                                         ? "bg-green-500 text-black"
-                                                        : "bg-yellow-400 hover:bg-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed text-black"
+                                                        : "bg-cyan-400 hover:bg-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed text-black"
                                                 )}
                                             >
                                                 {saving === item.id ? '...' : saved === item.id ? <Check size={14} /> : 'Save'}
@@ -282,7 +282,7 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
 
                         {/* Security notice */}
                         <div className="mt-6 flex items-start gap-2 p-2 bg-zinc-950 rounded-lg border border-zinc-800">
-                            <AlertCircle size={14} className="text-yellow-500 shrink-0 mt-0.5" />
+                            <AlertCircle size={14} className="text-cyan-500 shrink-0 mt-0.5" />
                             <div className="text-[10px] text-zinc-500">
                                 <strong className="text-zinc-400">Security:</strong> Keys are encrypted using your OS secure storage.
                             </div>

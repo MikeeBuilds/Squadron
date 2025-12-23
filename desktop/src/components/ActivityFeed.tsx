@@ -39,7 +39,7 @@ export function ActivityFeed() {
         <div className="bg-zinc-950/50 border border-zinc-800 rounded-2xl flex flex-col h-full overflow-hidden">
             <div className="p-3 border-b border-zinc-800 bg-zinc-900/30 flex justify-between items-center">
                 <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 flex items-center gap-2">
-                    <Terminal size={12} className="text-yellow-400" />
+                    <Terminal size={12} className="text-cyan-400" />
                     Neural Activity Stream
                 </h3>
                 <div className="flex gap-1">
@@ -63,7 +63,7 @@ export function ActivityFeed() {
                             <div className={cn(
                                 "mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center shrink-0 border",
                                 event.type === 'agent_thought' && "bg-blue-500/10 text-blue-400 border-blue-500/20",
-                                event.type === 'tool_call' && "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
+                                event.type === 'tool_call' && "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
                                 event.type === 'agent_complete' && "bg-green-500/10 text-green-400 border-green-500/20",
                                 event.type === 'error' && "bg-red-500/10 text-red-400 border-red-500/20"
                             )}>
@@ -83,7 +83,7 @@ export function ActivityFeed() {
                                 </div>
                                 <div className="text-xs text-zinc-400 leading-relaxed break-words">
                                     {event.type === 'agent_thought' && <span className="italic text-zinc-500">thought: </span>}
-                                    {event.type === 'tool_call' && <span className="font-mono text-[10px] text-yellow-400/80">executing {event.data.tool}()...</span>}
+                                    {event.type === 'tool_call' && <span className="font-mono text-[10px] text-cyan-400/80">executing {event.data.tool}()...</span>}
                                     {event.type === 'tool_result' && <span className="font-mono text-[10px] text-zinc-500">tool result captured.</span>}
                                     {event.data.thought || event.data.task || event.data.summary || event.data.error || (event.type === 'tool_result' ? 'Success' : '')}
                                 </div>

@@ -87,7 +87,7 @@ export function TerminalView() {
                     </div>
                     <div className="h-4 w-px bg-zinc-800 mx-2" />
                     <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 flex items-center gap-2">
-                        <Cpu size={12} className="text-yellow-400" />
+                        <Cpu size={12} className="text-cyan-400" />
                         Autonomous System Logs
                     </h3>
                 </div>
@@ -100,7 +100,7 @@ export function TerminalView() {
                             placeholder="Filter logs..."
                             value={filter}
                             onChange={(e) => setFilter(e.target.value)}
-                            className="bg-zinc-950 border border-zinc-800 rounded-lg py-1 pl-8 pr-3 text-[10px] text-zinc-300 focus:outline-none focus:border-yellow-500/50 transition-colors w-48"
+                            className="bg-zinc-950 border border-zinc-800 rounded-lg py-1 pl-8 pr-3 text-[10px] text-zinc-300 focus:outline-none focus:border-cyan-500/50 transition-colors w-48"
                         />
                     </div>
                     <button
@@ -119,7 +119,7 @@ export function TerminalView() {
                     onClick={() => setSelectedAgent(null)}
                     className={cn(
                         "text-[9px] font-bold uppercase tracking-wider px-3 py-1 rounded-full transition-all border",
-                        !selectedAgent ? "bg-yellow-400/10 text-yellow-500 border-yellow-500/20" : "bg-transparent text-zinc-600 border-transparent hover:text-zinc-400"
+                        !selectedAgent ? "bg-cyan-400/10 text-cyan-500 border-cyan-500/20" : "bg-transparent text-zinc-600 border-transparent hover:text-zinc-400"
                     )}
                 >
                     All Agents
@@ -141,7 +141,7 @@ export function TerminalView() {
             {/* Log Stream */}
             <div
                 ref={scrollRef}
-                className="flex-1 overflow-y-auto p-6 font-mono text-[11px] leading-relaxed selection:bg-yellow-500/20 selection:text-yellow-200 custom-scrollbar"
+                className="flex-1 overflow-y-auto p-6 font-mono text-[11px] leading-relaxed selection:bg-cyan-500/20 selection:text-yellow-200 custom-scrollbar"
             >
                 {filteredLogs.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center opacity-10 space-y-4">
@@ -157,7 +157,7 @@ export function TerminalView() {
                             <span className={cn(
                                 "shrink-0 w-[80px] font-bold",
                                 log.agent === 'Marcus' && "text-blue-400",
-                                log.agent === 'Caleb' && "text-yellow-400",
+                                log.agent === 'Caleb' && "text-cyan-400",
                                 log.agent === 'Sentinel' && "text-purple-400"
                             )}>
                                 {log.agent.padEnd(8)}
@@ -184,7 +184,7 @@ export function TerminalView() {
                         <Shield size={10} className="text-blue-500" /> SSL Secured
                     </span>
                     <span className="flex items-center gap-1.5">
-                        <Zap size={10} className="text-yellow-500" /> SSE Live
+                        <Zap size={10} className="text-cyan-500" /> SSE Live
                     </span>
                 </div>
                 <div className="text-[9px] font-bold text-zinc-600 uppercase">

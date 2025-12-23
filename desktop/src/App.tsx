@@ -102,7 +102,7 @@ export default function App() {
         <Sidebar variant="inset" collapsible="icon" className="border-r border-zinc-900 bg-zinc-950 backdrop-blur-xl">
           <SidebarHeader className="p-4 pt-6 group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:pt-10">
             <div className="flex items-center gap-3 px-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
-              <div className="w-8 h-8 rounded-xl bg-yellow-400 flex items-center justify-center shadow-[0_0_15px_rgba(250,204,21,0.3)] shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-cyan-400 flex items-center justify-center shadow-[0_0_15px_rgba(250,204,21,0.3)] shrink-0">
                 <span className="text-black font-black text-xs">S</span>
               </div>
               <div className="flex flex-col group-data-[collapsible=icon]:hidden overflow-hidden">
@@ -124,7 +124,7 @@ export default function App() {
                       onClick={() => item.id === 'settings' ? setIsSettingsOpen(true) : setActiveTab(item.id)}
                       isActive={activeTab === item.id}
                       tooltip={item.label}
-                      className={activeTab === item.id ? "bg-yellow-400 text-black font-bold" : "text-zinc-500 hover:text-white hover:bg-zinc-900"}
+                      className={activeTab === item.id ? "bg-cyan-400 text-black font-bold" : "text-zinc-500 hover:text-white hover:bg-zinc-900"}
                     >
                       <item.icon className="shrink-0" size={18} />
                       <span className="font-bold tracking-tight">{item.label}</span>
@@ -169,7 +169,7 @@ export default function App() {
             </SidebarMenu>
             <button
               onClick={() => setIsWizardOpen(true)}
-              className="w-full flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-black font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(250,204,21,0.15)] active:scale-95 duration-200 py-2.5 px-4 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:p-0 overflow-hidden"
+              className="w-full flex items-center justify-center gap-2 bg-cyan-400 hover:bg-cyan-500 text-black font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(250,204,21,0.15)] active:scale-95 duration-200 py-2.5 px-4 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:p-0 overflow-hidden"
             >
               <Plus size={18} className="shrink-0" />
               <span className="text-xs uppercase tracking-wider group-data-[collapsible=icon]:hidden whitespace-nowrap">New Task</span>
@@ -181,11 +181,11 @@ export default function App() {
         <SidebarInset className="bg-zinc-950 flex-1 overflow-hidden border-none relative flex flex-col">
           <main className="h-full overflow-hidden p-4 relative flex flex-col custom-scrollbar">
             {/* Subtle Background Glow */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-yellow-400/5 blur-[120px] rounded-full pointer-events-none -mr-48 -mt-48" />
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-400/5 blur-[120px] rounded-full pointer-events-none -mr-48 -mt-48" />
 
             <header className="flex w-full justify-between items-center mb-2 max-w-[1400px] relative z-10 transition-all duration-300 shrink-0">
               <div className="flex items-center gap-4">
-                <SidebarTrigger className="text-zinc-500 hover:text-yellow-400" />
+                <SidebarTrigger className="text-zinc-500 hover:text-cyan-400" />
                 <div className="flex items-center gap-4">
                   <h1 className="text-2xl font-black tracking-tight text-white/90">
                     {activeTab === 'kanban' ? 'Operation Dashboard' : 'Terminal Workbench'}
