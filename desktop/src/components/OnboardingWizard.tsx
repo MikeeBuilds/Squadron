@@ -8,7 +8,7 @@ interface OnboardingWizardProps {
 
 const AI_PROVIDERS = [
     { id: 'anthropic', name: 'Claude', description: 'Anthropic Claude 4 Sonnet/Opus', color: 'from-orange-600 to-orange-400', envKey: 'ANTHROPIC_API_KEY' },
-    { id: 'google', name: 'Gemini', description: 'Google Gemini 2.5 Pro/Flash', color: 'from-blue-600 to-blue-400', envKey: 'GOOGLE_API_KEY' },
+    { id: 'google', name: 'Gemini', description: 'Google Gemini 2.5 Pro/Flash', color: 'from-blue-600 to-blue-400', envKey: 'GEMINI_API_KEY' },
     { id: 'openai', name: 'Codex', description: 'OpenAI GPT-4o / o1 / o3', color: 'from-green-600 to-green-400', envKey: 'OPENAI_API_KEY' },
 ]
 
