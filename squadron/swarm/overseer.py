@@ -1,12 +1,16 @@
 
 import logging
 import json
+import os
 from datetime import datetime
 from typing import Optional
 from .agent import AgentNode
 from squadron.services.worktree import cleanup_worktree, list_worktrees as get_all_worktrees
 
 logger = logging.getLogger('Overseer')
+
+# Task persistence file location
+TASKS_FILE = os.path.join(os.getcwd(), '.squadron', 'tasks.json')
 
 class Overseer:
     def __init__(self):
@@ -15,7 +19,30 @@ class Overseer:
         self.task_queue = []  # Pending tasks
         self.delegation_chain = {}  # Track who delegated to whom
         self.activity_log = []  # Activity history for dashboard
+        self._load_tasks()  # Load persisted tasks
         self.init_swarm()
+
+    def _load_tasks(self):
+        """Load tasks from disk."""
+        if os.path.exists(TASKS_FILE):
+            try:
+                with open(TASKS_FILE, 'r') as f:
+                    self.task_queue = json.load(f)
+                logger.info(f"📋 Loaded {len(self.task_queue)} tasks from disk")
+            except Exception as e:
+                logger.warning(f"Failed to load tasks: {e}")
+                self.task_queue = []
+        else:
+            self.task_queue = []
+
+    def _save_tasks(self):
+        """Persist tasks to disk."""
+        try:
+            os.makedirs(os.path.dirname(TASKS_FILE), exist_ok=True)
+            with open(TASKS_FILE, 'w') as f:
+                json.dump(self.task_queue, f, indent=2)
+        except Exception as e:
+            logger.error(f"Failed to save tasks: {e}")
 
     def init_swarm(self):
         """Initializes the Specialist Agents."""
@@ -186,6 +213,7 @@ Respond with ONLY the agent name (Marcus, Caleb, or Sentinel). Nothing else."""
 
         self.task_queue.append(task_entry)
         self.task_queue.sort(key=lambda x: x["priority"], reverse=True)
+        self._save_tasks()  # Persist to disk
         
         logger.info(f"📥 Task queued: {task_entry['id']}")
         self._log_activity("enqueue", {"task_id": task_entry["id"], "task": task[:100]})
@@ -247,6 +275,7 @@ Respond with ONLY the agent name (Marcus, Caleb, or Sentinel). Nothing else."""
                     "old_status": old_status,
                     "new_status": status
                 })
+                self._save_tasks()  # Persist to disk
                 return True
         return False
 
