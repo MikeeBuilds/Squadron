@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2025-12-22 (Desktop App)
+### Added
+- **🖥️ Electron Desktop App**: Full rewrite as a native desktop application
+  - React + Vite + TypeScript frontend with shadcn/ui components
+  - Integrated PTY terminals (node-pty) for real terminal emulation
+  - Session persistence for terminal tabs across restarts
+- **📋 TaskWizard Enhancements** (Auto-Claude Parity):
+  - **Draft Persistence**: Form state saved to localStorage on close, restored on open
+  - **Image Paste**: Ctrl+V screenshots into description with thumbnail preview
+  - **Model Selector**: Choose between Auto, GPT-4o, Claude Sonnet, Gemini Pro
+  - **Enhanced Review**: Shows priority, assignee, model, and image count badges
+- **💬 Insights Panel**: Chat interface for querying codebases with AI
+- **📖 Context Viewer**: Display `CODEBASE_MAP.md` knowledge map
+- **🛠️ Surgical File Editing (fs_tool v2)**:
+  - `replace_in_file()`: Pattern-based replacement with checksum verification
+  - `insert_into_file()`: Line-specific insertion
+  - `read_file_section()`: Read specific line ranges
+- **🔀 Git Tool with AI Merge**:
+  - `get_conflicts()`: Parse merge conflict markers
+  - `resolve_conflicts()`: AI-powered conflict resolution
+  - `commit()`, `push()`, `create_pr()`: Full Git workflow
+
+### Changed
+- **Architecture**: Shifted from pure Python CLI to Electron + Python backend hybrid
+- **UI Framework**: Dark theme with glassmorphism, micro-animations, premium feel
+
 ## [0.5.1] - 2025-12-16
 ### Added
 - **🧪 Comprehensive Test Suite**: Full pytest coverage with mocked dependencies
