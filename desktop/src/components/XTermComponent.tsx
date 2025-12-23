@@ -30,6 +30,7 @@ export function XTermComponent({ id, providerId = 'shell', modelId, cwd, isActiv
             lineHeight: 1.1,
             letterSpacing: 0,
             allowTransparency: true,
+            scrollOnUserInput: true,
             theme: {
                 background: 'transparent',
                 foreground: '#a1a1aa',
@@ -50,6 +51,10 @@ export function XTermComponent({ id, providerId = 'shell', modelId, cwd, isActiv
         term.loadAddon(fit)
         term.open(termRef.current)
         fit.fit()
+
+        // Focus immediately after opening
+        term.focus()
+        console.log(`[Terminal ${id}] Opened and focused`)
 
         terminalInstance.current = term
         fitAddon.current = fit
@@ -130,7 +135,9 @@ export function XTermComponent({ id, providerId = 'shell', modelId, cwd, isActiv
             term.write(data)
         })
 
+        // Forward keyboard input to PTY
         term.onData((data) => {
+            console.log(`[Terminal ${id}] Sending input:`, data.length, 'bytes')
             api.writeTerminal(id, data)
         })
 
@@ -141,12 +148,18 @@ export function XTermComponent({ id, providerId = 'shell', modelId, cwd, isActiv
 
         window.addEventListener('resize', handleResize)
 
-        // Initial resize
-        setTimeout(handleResize, 100)
+        // Initial resize and focus
+        setTimeout(() => {
+            handleResize()
+            term.focus()
+            console.log(`[Terminal ${id}] Focused`)
+        }, 100)
 
         return () => {
+            console.log(`[Terminal ${id}] Unmounting - killing PTY`)
             cleanupData()
             window.removeEventListener('resize', handleResize)
+            api.killTerminal(id) // Kill PTY process on unmount
             term.dispose()
         }
     }, [id, providerId, modelId, cwd])
@@ -163,20 +176,33 @@ export function XTermComponent({ id, providerId = 'shell', modelId, cwd, isActiv
 
     // Focus terminal when clicked
     const handleClick = () => {
+        console.log('[XTerm] Click - focusing terminal')
+        terminalInstance.current?.focus()
+    }
+
+    // Focus xterm on container focus (Tab navigation)
+    const handleFocus = () => {
+        console.log('[XTerm] Container focused - focusing terminal')
         terminalInstance.current?.focus()
     }
 
     return (
         <div
-            className="h-full w-full bg-transparent p-0 overflow-hidden [&_.xterm-viewport]:scrollbar-hide cursor-text"
+            className="h-full w-full bg-transparent p-0 cursor-text relative"
             onClick={handleClick}
+            onFocus={handleFocus}
+            tabIndex={0}
+            style={{ overflow: 'visible' }}
         >
             <style dangerouslySetInnerHTML={{
                 __html: `
                 .xterm-viewport::-webkit-scrollbar { display: none !important; width: 0 !important; }
-                .xterm-viewport { -ms-overflow-style: none !important; scrollbar-width: none !important; }
+                .xterm-viewport { -ms-overflow-style: none !important; scrollbar-width: none !important; overflow-y: auto !important; }
+                .xterm { height: 100% !important; }
+                .xterm-screen { height: 100% !important; }
+                .xterm-helper-textarea { position: absolute !important; opacity: 0 !important; left: -9999px !important; top: 0 !important; width: 0 !important; height: 0 !important; z-index: -5 !important; white-space: nowrap !important; overflow: hidden !important; resize: none !important; }
             `}} />
-            <div ref={termRef} className="h-full w-full" />
+            <div ref={termRef} className="h-full w-full" style={{ overflow: 'hidden' }} />
         </div>
     )
 }

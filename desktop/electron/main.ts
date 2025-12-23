@@ -40,7 +40,7 @@ function setupTerminalIPC(mainWindow: BrowserWindow) {
                 rows: 24,
                 cwd: cwd || process.cwd(),
                 env: spawnEnv as any,
-                useConpty: true // Better Windows support
+                useConpty: true // ConPTY works better on Windows, AttachConsole errors are non-fatal
             });
 
             ptyProcess.onData((data) => {
@@ -48,11 +48,14 @@ function setupTerminalIPC(mainWindow: BrowserWindow) {
             });
 
             ptyProcess.onExit(({ exitCode, signal }) => {
+                console.log(`[PTY] Process ${id} exited with code ${exitCode}, signal ${signal}`);
                 mainWindow.webContents.send(`terminal-exit-${id}`, { exitCode, signal });
                 ptyProcesses.delete(id);
+                console.log(`[PTY] Removed ${id}, remaining:`, Array.from(ptyProcesses.keys()));
             });
 
             ptyProcesses.set(id, ptyProcess);
+            console.log(`[PTY] Stored process ${id}, total:`, ptyProcesses.size, Array.from(ptyProcesses.keys()));
         } catch (err) {
             console.error(`[PTY] Failed to spawn ${shellPath}:`, err);
             mainWindow.webContents.send(`terminal-data-${id}`, `\r\n\x1b[31m[ERROR] Failed to spawn ${shellPath}\x1b[0m\r\n\x1b[31m[ERROR] Error code: ${(err as any).code || 'unknown'}\x1b[0m\r\n`);
@@ -62,7 +65,10 @@ function setupTerminalIPC(mainWindow: BrowserWindow) {
     ipcMain.on('terminal-write', (event, { id, data }) => {
         const ptyProcess = ptyProcesses.get(id);
         if (ptyProcess) {
+            console.log(`[PTY] Writing to ${id}:`, data.length, 'bytes');
             ptyProcess.write(data);
+        } else {
+            console.error(`[PTY] No process found for ${id}, available:`, Array.from(ptyProcesses.keys()));
         }
     });
 
