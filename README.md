@@ -30,7 +30,6 @@
 <p align="center">
   <a href="https://github.com/MikeeBuilds/Squadron/releases"><img src="https://img.shields.io/github/v/release/MikeeBuilds/Squadron?color=brightgreen&label=Download" alt="Release"></a>
   <a href="https://github.com/MikeeBuilds/Squadron/releases"><img src="https://img.shields.io/github/downloads/MikeeBuilds/Squadron/total?color=blue&label=Downloads" alt="Downloads"></a>
-  <a href="https://github.com/MikeeBuilds/Squadron/actions/workflows/test.yml"><img src="https://github.com/MikeeBuilds/Squadron/actions/workflows/test.yml/badge.svg" alt="Tests"></a>
   <a href="https://www.gnu.org/licenses/agpl-3.0"><img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="License: AGPL v3"></a>
 </p>
 
