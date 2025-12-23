@@ -9,8 +9,8 @@ logger = logging.getLogger('GeminiProvider')
 class GeminiProvider:
     def __init__(self, api_key: str):
         genai.configure(api_key=api_key)
-        # Using Gemini 2.5 Flash (GA June 2025) - stable agentic workhorse
-        self.model_name = "gemini-2.5-flash" 
+        # Using Gemini 2.0 Flash - more lenient safety filters for agentic work
+        self.model_name = "gemini-2.0-flash" 
         
         # Configure Safety Settings using explicit types
         from google.generativeai.types import HarmCategory, HarmBlockThreshold
