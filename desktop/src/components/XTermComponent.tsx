@@ -77,7 +77,7 @@ export function XTermComponent({ id, providerId = 'shell', modelId, cwd, isActiv
                 term.writeln(`\x1b[33m[Squadron] ${provider.name} CLI not found. Installing...\x1b[0m`)
                 term.writeln(`\x1b[90m$ ${provider.installCommand.windows || provider.installCommand.unix}\x1b[0m`)
 
-                const command = globalThis?.process?.platform === 'win32'
+                const command = (window as any).process?.platform === 'win32'
                     ? provider.installCommand.windows
                     : provider.installCommand.unix
 
