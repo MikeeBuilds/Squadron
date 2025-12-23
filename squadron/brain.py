@@ -542,10 +542,15 @@ INSTRUCTIONS:
                 temperature=0.3
             )
             
+            # Log raw response for debugging
+            logger.info(f"🧠 Raw LLM Response: {str(response)[:500]}")
+            
             # Simple clean up of code blocks
             clean_json = str(response).strip().replace("```json", "").replace("```", "")
             try:
-                return json.loads(clean_json)
+                decision = json.loads(clean_json)
+                logger.info(f"🧠 Parsed Decision: action={decision.get('action')}, tool={decision.get('tool_name', decision.get('tool', 'N/A'))}")
+                return decision
             except json.JSONDecodeError:
                 logger.warning(f"LLM did not return JSON. Raw: {response}")
                 # Fallback: Treat entire response as a reply
@@ -553,6 +558,7 @@ INSTRUCTIONS:
             
         except Exception as e:
             logger.error(f"Brain freeze: {e}")
+
             return {"action": "reply", "content": f"I'm having trouble thinking clearly right now. Error: {e}"}
 
     def execute(self, decision: dict) -> dict:
