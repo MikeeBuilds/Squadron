@@ -4,8 +4,17 @@
     "task": "create keyboard shortcuts for the sidebar\n",
     "priority": 3,
     "assigned_to": null,
-    "status": "in_progress",
+    "status": "done",
     "progress": 0,
     "created": "2025-12-22T22:49:04.722265"
+  },
+  {
+    "id": "task-2",
+    "task": "create keyboard shortcuts for the sidebar\n",
+    "priority": 3,
+    "assigned_to": null,
+    "status": "done",
+    "progress": 0,
+    "created": "2025-12-23T00:07:01.950785"
   }
 ]

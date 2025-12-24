@@ -56,6 +56,12 @@ def read_root():
     }
 
 
+@app.get("/health")
+def health_check():
+    """Simple health check endpoint for Electron ping."""
+    return {"status": "ok", "timestamp": datetime.now().isoformat()}
+
+
 @app.get("/agents")
 def get_agents():
     """Return list of active agents with real data from swarm."""

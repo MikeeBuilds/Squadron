@@ -23,22 +23,39 @@ class MockModel:
 
         return '{"action": "reply", "content": "I am a mocked brain. I cannot think yet."}'
 
+
 class ModelFactory:
     @staticmethod
-    def create(model_name):
+    def create(model_name: str = "auto"):
         import os
         from dotenv import load_dotenv
         
         # Ensure env vars are loaded
         load_dotenv()
         
+        openrouter_key = os.getenv("OPENROUTER_API_KEY")
         gemini_key = os.getenv("GEMINI_API_KEY")
         
+        # 1. OpenRouter (Explicit or Generic)
+        # If model name implies non-Gemini (like 'gpt', 'claude') OR if we only have OpenRouter key
+        is_openrouter_model = any(k in model_name.lower() for k in ['gpt', 'claude', 'openai', 'anthropic', 'mistral'])
+        
+        if openrouter_key and (is_openrouter_model or not gemini_key):
+            from squadron.services.llm.openrouter import OpenRouterProvider
+            return OpenRouterProvider(openrouter_key, model_name if model_name != "auto" else "openai/gpt-4o")
+            
+        # 2. Google Gemini
         if gemini_key:
-            # 🚀 Use Real Intelligence
             from squadron.services.llm.gemini import GeminiProvider
-            return GeminiProvider(gemini_key)
-        else:
-            # 🤡 Fallback to Mock
-            print("⚠️  Warning: GEMINI_API_KEY not found. Using Mock Brain.")
-            return MockModel()
+            target_model = model_name if "gemini" in model_name.lower() else "gemini-2.0-flash-exp"
+            return GeminiProvider(gemini_key, target_model)
+            
+        # 3. Fallback to OpenRouter if key exists (catch-all)
+        if openrouter_key:
+            from squadron.services.llm.openrouter import OpenRouterProvider
+            return OpenRouterProvider(openrouter_key, "openai/gpt-4o")
+
+        # 🤡 Fallback to Mock
+        print(f"⚠️  Warning: No API keys found (GEMINI_API_KEY or OPENROUTER_API_KEY). Using Mock Brain.")
+        return MockModel()
+

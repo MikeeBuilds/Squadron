@@ -27,6 +27,8 @@ from squadron.clients.mcp_client import MCPBridge
 
 logger = logging.getLogger('SquadronBrain')
 
+from squadron.engines.opencode_engine import get_engine as get_opencode_engine, OPENCODE_AVAILABLE
+
 class SquadronBrain:
     def __init__(self):
         # We use the smart model for routing
@@ -34,12 +36,58 @@ class SquadronBrain:
         self.tools = {}
         self.safety_mode = True  # Default: Safety Interlocks ENGAGED
         
+        # OpenCode Engine (Primary Brain)
+        self.opencode = get_opencode_engine() if OPENCODE_AVAILABLE else None
+        
         # Initialize Memory
         try:
             self.memory = Hippocampus()
         except Exception as e:
             logger.warning(f"Failed to initialize Memory: {e}")
             self.memory = None
+
+    # ... (rest of init and methods) ...
+
+    def think(self, user_input: str, agent_profile=None) -> dict:
+        """
+        Decides the next action.
+        Returns a dict: {"action": "reply"|"tool", "content": str, "tool_name": str, "tool_args": dict}
+        """
+        
+        # --- 1. OPENCODE ENGINE (PRIMARY) ---
+        if self.opencode:
+            try:
+                # OpenCode handles memory/planning internally or via its own context
+                result = self.opencode.think_sync(user_input, getattr(agent_profile, 'name', 'Caleb'))
+                
+                # Transform OpenCode result to Squadron format if needed
+                # (Assuming opencode_engine returns compatible dicts or we map them here)
+                # Currently opencode_engine.py generic wrapper returns {'action': 'reply'...} 
+                # but real SDK might return tool calls.
+                return result
+            except Exception as e:
+                logger.error(f"OpenCode Brain failed: {e}. Falling back to Gemini.")
+                # Fallthrough to fallback logic
+
+
+        # --- 2. LEGACY/FALLBACK LOGIC (Gemini/Local) ---
+        
+        # --- MEMORY RECALL ---
+        memory_context = ""
+        if self.memory:
+            try:
+                memories = self.memory.recall(user_input, n_results=3)
+                if memories:
+                    memory_context = "\n🧠 RELEVANT MEMORIES:\n"
+                    for mem in memories:
+                        memory_context += f"- {mem['content']} (Time: {mem['metadata'].get('timestamp')})\n"
+            except Exception as e:
+                logger.warning(f"Memory Recall Failed: {e}")
+        # ---------------------
+        
+        # --- PLAN CONTEXT ---
+        plan_context = ""
+        # ... rest of method ...
         
         # MCP Bridge
         self.mcp_bridge = MCPBridge()
