@@ -116,7 +116,7 @@ export interface TabState {
   tabOrder: string[];
 }
 
-export interface ElectronAPI {
+export interface ExtendedElectronAPI {
   // Project operations
   addProject: (projectPath: string) => Promise<IPCResult<Project>>;
   removeProject: (projectId: string) => Promise<IPCResult>;
@@ -578,11 +578,30 @@ export interface ElectronAPI {
     status: 'completed' | 'failed';
     output: string[];
   }>>;
+  // Legacy/Basic (required for TerminalHub and other legacy components)
+  askInsights: (query: string) => Promise<IPCResult<any>>;
+  getKnowledgeMap: () => Promise<IPCResult<any>>;
+  saveApiKey: (provider: string, key: string) => Promise<IPCResult>;
+  getApiKey: (provider: string) => Promise<IPCResult<string | null>>;
+  deleteApiKey: (provider: string) => Promise<IPCResult>;
+  getEnabledProviders: () => Promise<string[]>; // NOTE: TerminalHub expects direct array, but stubs return IPCResult. Verify runtime!
+  hasApiKey: (provider: string) => Promise<boolean>;
+  checkCliInstalled: (cli: string) => Promise<IPCResult<boolean>>;
+  installCli: (installCommand: string) => Promise<IPCResult>;
+  isOnboardingComplete: () => Promise<IPCResult<boolean>>;
+  setOnboardingComplete: (complete: boolean) => Promise<IPCResult>;
+  setProjectPath: (projectPath: string) => Promise<IPCResult>;
+  getIntegrationConfig: () => Promise<IPCResult<any>>;
+  exportEnvFile: (targetPath: string) => Promise<IPCResult>;
+  spawnTerminal: (id: string, shell: string, args: string[], cwd: string, env?: Record<string, string>) => void;
+  writeTerminal: (id: string, data: string) => void;
+  killTerminal: (id: string) => void;
+  onTerminalData: (id: string, callback: (data: string) => void) => () => void;
 }
 
 declare global {
   interface Window {
-    electronAPI: ElectronAPI;
+    electronAPI: ExtendedElectronAPI;
     DEBUG: boolean;
   }
 }

@@ -1,6 +1,5 @@
 import { spawn, ChildProcess } from 'child_process';
 import path from 'path';
-import { app } from 'electron';
 
 let pythonProcess: ChildProcess | null = null;
 const PY_MODULE = 'squadron.server';
@@ -54,7 +53,5 @@ export function stopPythonBackend() {
         pythonProcess = null;
     }
 }
+// Note: Cleanup handlers are registered in main.ts at app startup
 
-// Ensure cleanup on app exit
-app.on('before-quit', stopPythonBackend);
-app.on('will-quit', stopPythonBackend);

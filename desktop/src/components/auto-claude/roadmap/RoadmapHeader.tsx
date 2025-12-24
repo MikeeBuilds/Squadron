@@ -2,7 +2,7 @@ import { Target, Users, BarChart3, RefreshCw, Plus, TrendingUp } from 'lucide-re
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
-import { getFeatureStats } from '../../stores/roadmap-store';
+import { getFeatureStats } from '../../../stores/auto-claude/roadmap-store';
 import { ROADMAP_PRIORITY_COLORS } from '../../../shared/constants';
 import type { RoadmapHeaderProps } from './types';
 

@@ -3,7 +3,7 @@ import { X, FolderTree, RefreshCw } from 'lucide-react';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
 import { FileTree } from './FileTree';
-import { useFileExplorerStore } from '../stores/file-explorer-store';
+import { useFileExplorerStore } from '../../stores/auto-claude/file-explorer-store';
 
 interface FileExplorerPanelProps {
   projectPath: string;

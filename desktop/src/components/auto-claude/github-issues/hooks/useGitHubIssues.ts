@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useRef } from 'react';
-import { useGitHubStore, loadGitHubIssues, checkGitHubConnection } from '../../../stores/github-store';
+import { useGitHubStore, loadGitHubIssues, checkGitHubConnection } from '../../../../stores/auto-claude/github-store';
 import type { FilterState } from '../types';
 
 export function useGitHubIssues(projectId: string | undefined) {

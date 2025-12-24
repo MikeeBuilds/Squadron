@@ -1,7 +1,9 @@
-import { safeStorage } from 'electron'
 import * as fs from 'fs'
 import * as path from 'path'
-import { app } from 'electron'
+
+// Lazy-load electron APIs to avoid undefined at module load time
+const getElectronApp = () => require('electron').app;
+const getSafeStorage = () => require('electron').safeStorage;
 
 const SETTINGS_FILE = 'squadron-settings.json'
 
@@ -39,7 +41,7 @@ interface Settings {
 }
 
 const getSettingsPath = (): string => {
-    return path.join(app.getPath('userData'), SETTINGS_FILE)
+    return path.join(getElectronApp().getPath('userData'), SETTINGS_FILE)
 }
 
 const loadSettings = (): Settings => {
@@ -74,7 +76,7 @@ const saveSettings = (settings: Settings): void => {
 // API Key Management (encrypted)
 export const saveApiKey = (provider: string, key: string): boolean => {
     try {
-        if (!safeStorage.isEncryptionAvailable()) {
+        if (!getSafeStorage().isEncryptionAvailable()) {
             console.warn('[Settings] Encryption not available, storing in plain text')
             const settings = loadSettings()
             settings.apiKeys[provider] = key
@@ -85,7 +87,7 @@ export const saveApiKey = (provider: string, key: string): boolean => {
             return true
         }
 
-        const encrypted = safeStorage.encryptString(key).toString('base64')
+        const encrypted = getSafeStorage().encryptString(key).toString('base64')
         const settings = loadSettings()
         settings.apiKeys[provider] = encrypted
         if (!settings.enabledProviders.includes(provider) && ['anthropic', 'google', 'openai'].includes(provider)) {
@@ -105,12 +107,12 @@ export const getApiKey = (provider: string): string | null => {
         const stored = settings.apiKeys[provider]
         if (!stored) return null
 
-        if (!safeStorage.isEncryptionAvailable()) {
+        if (!getSafeStorage().isEncryptionAvailable()) {
             return stored // plain text fallback
         }
 
         const buffer = Buffer.from(stored, 'base64')
-        return safeStorage.decryptString(buffer)
+        return getSafeStorage().decryptString(buffer)
     } catch (err) {
         console.error('[Settings] Failed to get API key:', err)
         return null
@@ -189,10 +191,10 @@ export const exportToEnvFile = (targetPath: string): boolean => {
             if (stored) {
                 let value = stored
                 // Decrypt if encrypted
-                if (safeStorage.isEncryptionAvailable()) {
+                if (getSafeStorage().isEncryptionAvailable()) {
                     try {
                         const buffer = Buffer.from(stored, 'base64')
-                        value = safeStorage.decryptString(buffer)
+                        value = getSafeStorage().decryptString(buffer)
                     } catch { /* use as-is */ }
                 }
                 envLines.push(`${config.envKey}=${value}`)

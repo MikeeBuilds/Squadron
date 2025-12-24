@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { Terminal as XTerm } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import { WebLinksAddon } from '@xterm/addon-web-links';
-import { terminalBufferManager } from '../../lib/terminal-buffer-manager';
+import { terminalBufferManager } from '../../../lib/auto-claude/terminal-buffer-manager';
 
 interface UseXtermOptions {
   terminalId: string;

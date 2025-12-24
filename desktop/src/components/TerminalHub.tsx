@@ -5,21 +5,7 @@ import { XTermComponent } from './XTermComponent'
 import { getTasks, type Task } from '@/lib/api'
 import { PROVIDERS, getProviderById, getDefaultModel, type ProviderConfig } from '@/lib/providers'
 
-declare global {
-    interface Window {
-        electronAPI: {
-            spawnTerminal: (id: string, shell: string, args: string[], cwd: string, env?: Record<string, string>) => void
-            writeTerminal: (id: string, data: string) => void
-            resizeTerminal: (id: string, cols: number, rows: number) => void
-            killTerminal: (id: string) => void
-            onTerminalData: (id: string, callback: (data: string) => void) => () => void
-            onTerminalExit: (id: string, callback: (code: number) => void) => () => void
-            getApiKey: (provider: string) => Promise<string | null>
-            hasApiKey: (provider: string) => Promise<boolean>
-            getEnabledProviders: () => Promise<string[]>
-        }
-    }
-}
+
 
 interface TerminalSession {
     id: string

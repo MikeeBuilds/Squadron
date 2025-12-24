@@ -15,7 +15,7 @@ import type {
   IdeationGenerationStatus,
   IdeationSession
 } from '../../../shared/types';
-import type { IdeationTypeState } from '../../stores/ideation-store';
+import type { IdeationTypeState } from '../../../stores/auto-claude/ideation-store';
 import { TypeIcon } from './TypeIcon';
 import { TypeStateIcon } from './TypeStateIcon';
 import { IdeaSkeletonCard } from './IdeaSkeletonCard';
@@ -82,8 +82,6 @@ export function GenerationProgressScreen({
     return session.ideas.filter((idea) => idea.type === type);
   };
 
-  // Count how many types are still generating
-  const _generatingCount = enabledTypes.filter((t) => typeStates[t] === 'generating').length;
   const completedCount = enabledTypes.filter((t) => typeStates[t] === 'completed').length;
 
   return (
@@ -133,15 +131,14 @@ export function GenerationProgressScreen({
           {enabledTypes.map((type) => (
             <div
               key={type}
-              className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-xs ${
-                typeStates[type] === 'completed'
-                  ? 'bg-success/10 text-success'
-                  : typeStates[type] === 'failed'
-                    ? 'bg-destructive/10 text-destructive'
-                    : typeStates[type] === 'generating'
-                      ? 'bg-primary/10 text-primary'
-                      : 'bg-muted text-muted-foreground'
-              }`}
+              className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-xs ${typeStates[type] === 'completed'
+                ? 'bg-success/10 text-success'
+                : typeStates[type] === 'failed'
+                  ? 'bg-destructive/10 text-destructive'
+                  : typeStates[type] === 'generating'
+                    ? 'bg-primary/10 text-primary'
+                    : 'bg-muted text-muted-foreground'
+                }`}
             >
               <TypeStateIcon state={typeStates[type]} />
               <TypeIcon type={type} />
@@ -214,7 +211,7 @@ export function GenerationProgressScreen({
                       onConvert={onConvert}
                       onGoToTask={onGoToTask}
                       onDismiss={onDismiss}
-                      onToggleSelect={() => {/* Selection disabled during generation */}}
+                      onToggleSelect={() => {/* Selection disabled during generation */ }}
                     />
                   ))}
 

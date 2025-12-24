@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type Dispatch, type SetStateAction } from 'react';
 import {
   updateProjectSettings,
   checkProjectVersion,
   initializeProject,
   updateProjectAutoBuild
-} from '../../../stores/project-store';
-import { checkGitHubConnection as checkGitHubConnectionGlobal } from '../../../stores/github-store';
+} from '../../../../stores/auto-claude/project-store';
+import { checkGitHubConnection as checkGitHubConnectionGlobal } from '../../../../stores/auto-claude/github-store';
 import type {
   Project,
   ProjectSettings as ProjectSettingsType,
@@ -18,10 +18,10 @@ import type {
 export interface UseProjectSettingsReturn {
   // Settings state
   settings: ProjectSettingsType;
-  setSettings: React.Dispatch<React.SetStateAction<ProjectSettingsType>>;
+  setSettings: Dispatch<SetStateAction<ProjectSettingsType>>;
   isSaving: boolean;
   error: string | null;
-  setError: React.Dispatch<React.SetStateAction<string | null>>;
+  setError: Dispatch<SetStateAction<string | null>>;
 
   // Version info
   versionInfo: AutoBuildVersionInfo | null;
@@ -30,22 +30,22 @@ export interface UseProjectSettingsReturn {
 
   // Environment config
   envConfig: ProjectEnvConfig | null;
-  setEnvConfig: React.Dispatch<React.SetStateAction<ProjectEnvConfig | null>>;
+  setEnvConfig: Dispatch<SetStateAction<ProjectEnvConfig | null>>;
   isLoadingEnv: boolean;
   envError: string | null;
-  setEnvError: React.Dispatch<React.SetStateAction<string | null>>;
+  setEnvError: Dispatch<SetStateAction<string | null>>;
   isSavingEnv: boolean;
   updateEnvConfig: (updates: Partial<ProjectEnvConfig>) => Promise<void>;
 
   // Password visibility toggles
   showClaudeToken: boolean;
-  setShowClaudeToken: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowClaudeToken: Dispatch<SetStateAction<boolean>>;
   showLinearKey: boolean;
-  setShowLinearKey: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowLinearKey: Dispatch<SetStateAction<boolean>>;
   showOpenAIKey: boolean;
-  setShowOpenAIKey: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowOpenAIKey: Dispatch<SetStateAction<boolean>>;
   showGitHubToken: boolean;
-  setShowGitHubToken: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowGitHubToken: Dispatch<SetStateAction<boolean>>;
 
   // Collapsible sections
   expandedSections: Record<string, boolean>;
@@ -58,11 +58,11 @@ export interface UseProjectSettingsReturn {
   // Claude auth state
   isCheckingClaudeAuth: boolean;
   claudeAuthStatus: 'checking' | 'authenticated' | 'not_authenticated' | 'error';
-  setClaudeAuthStatus: React.Dispatch<React.SetStateAction<'checking' | 'authenticated' | 'not_authenticated' | 'error'>>;
+  setClaudeAuthStatus: Dispatch<SetStateAction<'checking' | 'authenticated' | 'not_authenticated' | 'error'>>;
 
   // Linear state
   showLinearImportModal: boolean;
-  setShowLinearImportModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowLinearImportModal: Dispatch<SetStateAction<boolean>>;
   linearConnectionStatus: LinearSyncStatus | null;
   isCheckingLinear: boolean;
 

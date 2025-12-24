@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  PanelGroup,
-  Panel,
-  PanelResizeHandle,
-} from 'react-resizable-panels';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import * as ResizablePanelsModule from 'react-resizable-panels';
+// @ts-ignore
+const ResizablePanels: any = ResizablePanelsModule;
+const { PanelGroup, Panel, PanelResizeHandle } = ResizablePanels;
 import {
   DndContext,
   DragOverlay,
@@ -25,9 +24,9 @@ import {
 } from './ui/dropdown-menu';
 import { FileExplorerPanel } from './FileExplorerPanel';
 import { cn } from '../lib/utils';
-import { useTerminalStore } from '../stores/terminal-store';
-import { useTaskStore } from '../stores/task-store';
-import { useFileExplorerStore } from '../stores/file-explorer-store';
+import { useTerminalStore } from '../../stores/auto-claude/terminal-store';
+import { useTaskStore } from '../../stores/auto-claude/task-store';
+import { useFileExplorerStore } from '../../stores/auto-claude/file-explorer-store';
 import type { SessionDateInfo } from '../../shared/types';
 
 interface TerminalGridProps {
@@ -157,7 +156,7 @@ export function TerminalGrid({ projectPath, onNewTaskClick, isActive = false }: 
   );
 
   // Track dragging state for overlay
-  const [activeDragData, setActiveDragData] = React.useState<{
+  const [activeDragData, setActiveDragData] = useState<{
     path: string;
     name: string;
     isDirectory: boolean;
@@ -398,11 +397,11 @@ export function TerminalGrid({ projectPath, onNewTaskClick, isActive = false }: 
             <PanelGroup direction="vertical" className="h-full">
               {terminalRows.map((row, rowIndex) => (
                 <div key={rowIndex} className="contents">
-                  <Panel id={`row-${rowIndex}`} order={rowIndex} defaultSize={100 / terminalRows.length} minSize={15}>
+                  <Panel id={`row-${rowIndex}`} defaultSize={100 / terminalRows.length} minSize={15}>
                     <PanelGroup direction="horizontal" className="h-full">
                       {row.map((terminal, colIndex) => (
                         <div key={terminal.id} className="contents">
-                          <Panel id={terminal.id} order={colIndex} defaultSize={100 / row.length} minSize={20}>
+                          <Panel id={terminal.id} defaultSize={100 / row.length} minSize={20}>
                             <div className="h-full p-1">
                               <Terminal
                                 id={terminal.id}

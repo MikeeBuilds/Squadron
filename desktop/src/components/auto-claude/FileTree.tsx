@@ -1,8 +1,8 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { FileTreeItem } from './FileTreeItem';
-import { useFileExplorerStore } from '../stores/file-explorer-store';
-import { useVirtualizedTree } from '../hooks/useVirtualizedTree';
+import { useFileExplorerStore } from '../../stores/auto-claude/file-explorer-store';
+import { useVirtualizedTree } from './hooks/useVirtualizedTree';
 import { Loader2, AlertCircle, FolderOpen } from 'lucide-react';
 
 interface FileTreeProps {

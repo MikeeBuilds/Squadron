@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { X, FolderTree, RefreshCw } from 'lucide-react';
 import { Button } from './ui/button';
 import { FileTree } from './FileTree';
-import { useFileExplorerStore } from '../stores/file-explorer-store';
+import { useFileExplorerStore } from '../../stores/auto-claude/file-explorer-store';
 
 interface TaskFileExplorerDrawerProps {
   isOpen: boolean;

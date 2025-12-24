@@ -33,9 +33,9 @@ import { GeneralSettings } from './GeneralSettings';
 import { IntegrationSettings } from './IntegrationSettings';
 import { AdvancedSettings } from './AdvancedSettings';
 import { ProjectSelector } from './ProjectSelector';
-import { ProjectSettingsContent, ProjectSettingsSection } from './ProjectSettingsContent';
-import { useProjectStore } from '../../stores/project-store';
-import type { UseProjectSettingsReturn } from '../project-settings/hooks/useProjectSettings';
+import { ProjectSettingsContent, type ProjectSettingsSection } from './ProjectSettingsContent';
+import { useProjectStore } from '../../../stores/auto-claude/project-store';
+import type { UseProjectSettingsReturn } from '@/components/auto-claude/project-settings/hooks/useProjectSettings';
 
 interface AppSettingsDialogProps {
   open: boolean;
@@ -129,7 +129,7 @@ export function AppSettingsDialog({ open, onOpenChange, initialSection, initialP
 
     // If on project section with a project selected, save project settings too
     if (activeTopLevel === 'project' && selectedProject && projectSettingsHook) {
-      await projectSettingsHook.handleSave(() => {});
+      await projectSettingsHook.handleSave(() => { });
       // Check for project errors
       if (projectSettingsHook.error || projectSettingsHook.envError) {
         setProjectError(projectSettingsHook.error || projectSettingsHook.envError);

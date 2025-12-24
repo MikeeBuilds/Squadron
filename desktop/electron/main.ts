@@ -5,6 +5,7 @@ import * as pty from 'node-pty';
 import OpenAI from 'openai';
 import { startPythonBackend, stopPythonBackend } from './process_manager';
 import * as settingsStore from './settings-store';
+import { setupStubs } from './stubs';
 
 // Terminal PTY Storage
 const ptyProcesses = new Map<string, pty.IPty>();
@@ -176,6 +177,9 @@ function setupTerminalIPC(mainWindow: BrowserWindow) {
         return result.canceled ? null : result.filePaths[0];
     });
 
+    // PROJECT MANAGEMENT IPC
+
+
     // INSIGHTS IPC
     ipcMain.handle('knowledge-get', async () => {
         try {
@@ -249,15 +253,40 @@ function createWindow() {
     setupTerminalIPC(mainWindow);
 
     if (process.env.VITE_DEV_SERVER_URL) {
+        console.log('[Main] Loading DEV URL:', process.env.VITE_DEV_SERVER_URL);
         mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
+        mainWindow.webContents.openDevTools();
     } else {
-        mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+        const indexHtml = path.join(__dirname, '../dist/index.html');
+        console.log('[Main] Loading file:', indexHtml);
+        mainWindow.loadFile(indexHtml);
+        // Force DevTools open for debugging "Blank Screen" even in production build mode
+        mainWindow.webContents.openDevTools();
     }
 }
 
-app.whenReady().then(() => {
-    startPythonBackend();
-    createWindow();
+// Global error handlers
+process.on('uncaughtException', (error) => {
+    console.error('[Main] UNCAUGHT EXCEPTION:', error);
+});
+
+process.on('unhandledRejection', (reason) => {
+    console.error('[Main] UNHANDLED REJECTION:', reason);
+});
+
+app.whenReady().then(async () => {
+    console.log('[Main] App ready');
+    try {
+        console.log('[Main] Creating window...');
+        createWindow();
+        console.log('[Main] Window created');
+
+        console.log('[Main] Setting up stubs (secondary)...');
+        setupStubs();
+        console.log('[Main] Stubs setup complete');
+    } catch (error) {
+        console.error('[Main] Startup error:', error);
+    }
 
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();

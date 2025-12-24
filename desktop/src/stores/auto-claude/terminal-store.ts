@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { v4 as uuid } from 'uuid';
 import type { TerminalSession } from '../../shared/types';
-import { terminalBufferManager } from '../lib/terminal-buffer-manager';
+import { terminalBufferManager } from '../../lib/auto-claude/terminal-buffer-manager';
 import { debugLog, debugError } from '../../shared/utils/debug-logger';
 
 export type TerminalStatus = 'idle' | 'running' | 'claude-active' | 'exited';
@@ -72,7 +72,7 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
       id: uuid(),
       title: `Terminal ${state.terminals.length + 1}`,
       status: 'idle',
-      cwd: cwd || process.env.HOME || '~',
+      cwd: cwd || '~',
       createdAt: new Date(),
       isClaudeMode: false,
       // outputBuffer removed - managed by terminalBufferManager

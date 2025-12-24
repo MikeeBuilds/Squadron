@@ -11,6 +11,10 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    include: ['react-resizable-panels'],
+    exclude: ['lucide-react'],
+  },
   server: {
     port: 5173,
     strictPort: true,

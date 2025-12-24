@@ -6,7 +6,7 @@
  * for better code organization and maintainability.
  */
 
-import type { ElectronAPI } from '../../shared/types';
+import type { ExtendedElectronAPI as ElectronAPI } from '../../shared/types';
 import {
   projectMock,
   taskMock,
@@ -91,10 +91,10 @@ const browserMockAPI: ElectronAPI = {
   stopRoadmap: async () => ({ success: true }),
 
   // Roadmap Event Listeners
-  onRoadmapProgress: () => () => {},
-  onRoadmapComplete: () => () => {},
-  onRoadmapError: () => () => {},
-  onRoadmapStopped: () => () => {},
+  onRoadmapProgress: () => () => { },
+  onRoadmapComplete: () => () => { },
+  onRoadmapError: () => () => { },
+  onRoadmapStopped: () => () => { },
   // Context Operations
   ...contextMock,
 
@@ -108,7 +108,26 @@ const browserMockAPI: ElectronAPI = {
   ...insightsMock,
 
   // Infrastructure & Docker Operations
-  ...infrastructureMock
+  ...infrastructureMock,
+  // Legacy/Basic stubs
+  askInsights: async () => ({ success: true, data: {} }),
+  getKnowledgeMap: async () => ({ success: true, data: {} }),
+  saveApiKey: async () => ({ success: true }),
+  getApiKey: async () => ({ success: true, data: 'mock-key' }),
+  deleteApiKey: async () => ({ success: true }),
+  getEnabledProviders: async () => ['openai', 'anthropic'],
+  hasApiKey: async () => true,
+  checkCliInstalled: async () => ({ success: true, data: true }),
+  installCli: async () => ({ success: true }),
+  isOnboardingComplete: async () => ({ success: true, data: true }),
+  setOnboardingComplete: async () => ({ success: true }),
+  setProjectPath: async () => ({ success: true }),
+  getIntegrationConfig: async () => ({ success: true, data: {} }),
+  exportEnvFile: async () => ({ success: true }),
+  spawnTerminal: () => { },
+  writeTerminal: () => { },
+  killTerminal: () => { },
+  onTerminalData: () => () => { },
 };
 
 /**

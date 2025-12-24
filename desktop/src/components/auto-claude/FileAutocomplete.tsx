@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { File, Folder, ChevronRight } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { useFileExplorerStore } from '../stores/file-explorer-store';
+import { useFileExplorerStore } from '../../stores/auto-claude/file-explorer-store';
 import type { FileNode } from '../../shared/types';
 
 interface FileAutocompleteProps {

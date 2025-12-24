@@ -8,7 +8,7 @@ import {
   SelectValue
 } from '../ui/select';
 import { Separator } from '../ui/separator';
-import { useProjectStore, removeProject } from '../../stores/project-store';
+import { useProjectStore, removeProject } from '../../../stores/auto-claude/project-store';
 import { AddProjectModal } from '../AddProjectModal';
 import type { Project } from '../../../shared/types';
 

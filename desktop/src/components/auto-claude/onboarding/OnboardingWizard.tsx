@@ -9,12 +9,12 @@ import {
   FullScreenDialogDescription
 } from '../ui/full-screen-dialog';
 import { ScrollArea } from '../ui/scroll-area';
-import { WizardProgress, WizardStep } from './WizardProgress';
+import { WizardProgress, type WizardStep } from './WizardProgress';
 import { WelcomeStep } from './WelcomeStep';
 import { OAuthStep } from './OAuthStep';
 import { MemoryStep } from './MemoryStep';
 import { CompletionStep } from './CompletionStep';
-import { useSettingsStore } from '../../stores/settings-store';
+import { useSettingsStore } from '../../../stores/auto-claude/settings-store';
 
 interface OnboardingWizardProps {
   open: boolean;

@@ -1,7 +1,7 @@
-import { AlertCircle, GitMerge, Loader2, Trash2, Check } from 'lucide-react';
+import { AlertCircle, GitMerge, Loader2, Check } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '../../ui/button';
-import { persistTaskStatus } from '../../../stores/task-store';
+import { persistTaskStatus } from '../../../../stores/auto-claude/task-store';
 import type { Task } from '../../../../shared/types';
 
 interface LoadingMessageProps {
@@ -94,7 +94,7 @@ interface StagedInProjectMessageProps {
 /**
  * Displays message when changes have already been staged in the main project
  */
-export function StagedInProjectMessage({ task, projectPath, hasWorktree = false, onClose }: StagedInProjectMessageProps) {
+export function StagedInProjectMessage({ task, hasWorktree = false, onClose }: StagedInProjectMessageProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

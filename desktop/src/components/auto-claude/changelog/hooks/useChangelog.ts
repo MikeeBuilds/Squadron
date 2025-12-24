@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useProjectStore } from '../../../stores/project-store';
+import { useProjectStore } from '../../../../stores/auto-claude/project-store';
 import {
   useChangelogStore,
   loadChangelogData,
@@ -9,8 +9,8 @@ import {
   saveChangelog,
   copyChangelogToClipboard,
   canGenerate as canGenerateSelector
-} from '../../../stores/changelog-store';
-import { loadTasks } from '../../../stores/task-store';
+} from '../../../../stores/auto-claude/changelog-store';
+import { loadTasks } from '../../../../stores/auto-claude/task-store';
 
 export type WizardStep = 1 | 2 | 3;
 

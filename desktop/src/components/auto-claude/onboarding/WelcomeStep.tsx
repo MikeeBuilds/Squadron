@@ -1,4 +1,5 @@
 import { Sparkles, Zap, Brain, FileCode } from 'lucide-react';
+import type { ReactNode } from 'react';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 
@@ -8,7 +9,7 @@ interface WelcomeStepProps {
 }
 
 interface FeatureCardProps {
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
   description: string;
 }

@@ -4,8 +4,8 @@
  */
 
 const isDebugEnabled = (): boolean => {
-  if (typeof process !== 'undefined' && process.env) {
-    return process.env.DEBUG === 'true';
+  if (typeof window !== 'undefined' && window.DEBUG) {
+    return true;
   }
   return false;
 };

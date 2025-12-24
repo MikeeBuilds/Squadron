@@ -4,16 +4,16 @@ import { LinearTaskImportModal } from './LinearTaskImportModal';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
 import { Button } from './ui/button';
 import { Separator } from './ui/separator';
-import { updateProjectSettings, initializeProject, updateProjectAutoBuild, checkProjectVersion } from '../stores/project-store';
-import type { Project } from '../../shared/types';
+import { updateProjectSettings, initializeProject, updateProjectAutoBuild, checkProjectVersion } from '../../stores/auto-claude/project-store';
+import type { Project, SourceEnvConfig } from '../../shared/types';
 
 // Import custom hooks
-import { useProjectSettings } from '../hooks/useProjectSettings';
-import { useEnvironmentConfig } from '../hooks/useEnvironmentConfig';
-import { useClaudeAuth } from '../hooks/useClaudeAuth';
-import { useLinearConnection } from '../hooks/useLinearConnection';
-import { useGitHubConnection } from '../hooks/useGitHubConnection';
-import { useInfrastructureStatus } from '../hooks/useInfrastructureStatus';
+import { useProjectSettings } from './hooks/useProjectSettings';
+import { useEnvironmentConfig } from './hooks/useEnvironmentConfig';
+import { useClaudeAuth } from './hooks/useClaudeAuth';
+import { useLinearConnection } from './hooks/useLinearConnection';
+import { useGitHubConnection } from './hooks/useGitHubConnection';
+import { useInfrastructureStatus } from './hooks/useInfrastructureStatus';
 
 // Import section components
 import { AutoBuildIntegration } from './project-settings/AutoBuildIntegration';
@@ -162,7 +162,7 @@ export function ProjectSettings({ project, open, onOpenChange }: ProjectSettings
   };
 
   const handleClaudeSetupWithCallback = () => {
-    handleClaudeSetup((newEnvConfig) => {
+    handleClaudeSetup((newEnvConfig: SourceEnvConfig) => {
       setEnvConfig(newEnvConfig);
     });
   };
@@ -205,7 +205,7 @@ export function ProjectSettings({ project, open, onOpenChange }: ProjectSettings
                   isLoadingEnv={isLoadingEnv}
                   envError={envError}
                   isCheckingAuth={isCheckingClaudeAuth}
-                  authStatus={claudeAuthStatus}
+                  authStatus={claudeAuthStatus as any}
                   onClaudeSetup={handleClaudeSetupWithCallback}
                   onUpdateConfig={updateEnvConfig}
                 />
@@ -218,7 +218,7 @@ export function ProjectSettings({ project, open, onOpenChange }: ProjectSettings
                   onToggle={() => toggleSection('linear')}
                   envConfig={envConfig}
                   onUpdateConfig={updateEnvConfig}
-                  linearConnectionStatus={linearConnectionStatus}
+                  linearConnectionStatus={linearConnectionStatus as any}
                   isCheckingLinear={isCheckingLinear}
                   onOpenImportModal={() => setShowLinearImportModal(true)}
                 />
@@ -231,7 +231,7 @@ export function ProjectSettings({ project, open, onOpenChange }: ProjectSettings
                   onToggle={() => toggleSection('github')}
                   envConfig={envConfig}
                   onUpdateConfig={updateEnvConfig}
-                  gitHubConnectionStatus={gitHubConnectionStatus}
+                  gitHubConnectionStatus={gitHubConnectionStatus as any}
                   isCheckingGitHub={isCheckingGitHub}
                   projectName={project.name}
                 />
@@ -246,7 +246,7 @@ export function ProjectSettings({ project, open, onOpenChange }: ProjectSettings
                   settings={settings}
                   onUpdateConfig={updateEnvConfig}
                   onUpdateSettings={(updates) => setSettings({ ...settings, ...updates })}
-                  infrastructureStatus={infrastructureStatus}
+                  infrastructureStatus={infrastructureStatus as any}
                   isCheckingInfrastructure={isCheckingInfrastructure}
                 />
 

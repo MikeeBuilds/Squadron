@@ -11,6 +11,7 @@
     "url": "https://github.com/MikeeBuilds/Squadron"
   },
   "scripts": {
+    "start": "npm run electron:dev",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
@@ -109,6 +110,7 @@
     "axios": "^1.13.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "electron": "^39.2.7",
     "lucide-react": "^0.562.0",
     "motion": "^12.23.26",
     "node-pty": "^1.1.0",
@@ -134,7 +136,6 @@
     "autoprefixer": "^10.4.23",
     "concurrently": "^9.2.1",
     "cross-env": "^10.1.0",
-    "electron": "^39.2.7",
     "electron-builder": "^26.0.12",
     "electron-squirrel-startup": "^1.0.1",
     "eslint": "^9.39.1",

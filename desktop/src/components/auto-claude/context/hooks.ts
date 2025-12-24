@@ -3,7 +3,7 @@ import {
   loadProjectContext,
   refreshProjectIndex,
   searchMemories
-} from '../../stores/context-store';
+} from '../../../stores/auto-claude/context-store';
 
 export function useProjectContext(projectId: string) {
   useEffect(() => {

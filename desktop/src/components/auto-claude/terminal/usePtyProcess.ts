@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useTerminalStore } from '../../stores/terminal-store';
+import { useTerminalStore } from '../../../stores/auto-claude/terminal-store';
 
 interface UsePtyProcessOptions {
   terminalId: string;

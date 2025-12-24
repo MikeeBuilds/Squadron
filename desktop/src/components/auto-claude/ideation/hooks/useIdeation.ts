@@ -13,8 +13,8 @@ import {
   getArchivedIdeas,
   getIdeationSummary,
   setupIdeationListeners
-} from '../../../stores/ideation-store';
-import { loadTasks } from '../../../stores/task-store';
+} from '../../../../stores/auto-claude/ideation-store';
+import { loadTasks } from '../../../../stores/auto-claude/task-store';
 import { useClaudeTokenCheck } from '../../EnvConfigModal';
 import type { Idea, IdeationType } from '../../../../shared/types';
 import { ALL_IDEATION_TYPES } from '../constants';

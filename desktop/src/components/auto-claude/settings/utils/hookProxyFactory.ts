@@ -1,4 +1,4 @@
-import type { UseProjectSettingsReturn } from '../../project-settings/hooks/useProjectSettings';
+import type { UseProjectSettingsReturn } from '@/components/auto-claude/project-settings/hooks/useProjectSettings';
 import type { MutableRefObject } from 'react';
 
 /**

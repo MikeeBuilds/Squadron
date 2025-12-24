@@ -5,7 +5,6 @@ import {
   Key,
   Loader2,
   CheckCircle2,
-  AlertCircle,
   ChevronRight,
   Sparkles,
   Plus,
@@ -35,7 +34,7 @@ import {
 } from './ui/select';
 import { GitHubOAuthFlow } from './project-settings/GitHubOAuthFlow';
 import { ClaudeOAuthFlow } from './project-settings/ClaudeOAuthFlow';
-import type { Project, ProjectSettings } from '../../shared/types';
+import type { Project } from '../../shared/types';
 
 interface GitHubSetupModalProps {
   open: boolean;
@@ -533,11 +532,10 @@ export function GitHubSetupModal({
                         {githubUsername && (
                           <button
                             onClick={() => setSelectedOwner(githubUsername)}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-md border ${
-                              selectedOwner === githubUsername
-                                ? 'border-primary bg-primary/10 text-primary'
-                                : 'border-muted hover:border-primary/50'
-                            }`}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-md border ${selectedOwner === githubUsername
+                              ? 'border-primary bg-primary/10 text-primary'
+                              : 'border-muted hover:border-primary/50'
+                              }`}
                             disabled={isCreatingRepo}
                           >
                             <User className="h-4 w-4" />
@@ -549,11 +547,10 @@ export function GitHubSetupModal({
                           <button
                             key={org.login}
                             onClick={() => setSelectedOwner(org.login)}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-md border ${
-                              selectedOwner === org.login
-                                ? 'border-primary bg-primary/10 text-primary'
-                                : 'border-muted hover:border-primary/50'
-                            }`}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-md border ${selectedOwner === org.login
+                              ? 'border-primary bg-primary/10 text-primary'
+                              : 'border-muted hover:border-primary/50'
+                              }`}
                             disabled={isCreatingRepo}
                           >
                             <Building className="h-4 w-4" />
@@ -591,11 +588,10 @@ export function GitHubSetupModal({
                     <div className="flex gap-2">
                       <button
                         onClick={() => setIsPrivateRepo(true)}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-md border ${
-                          isPrivateRepo
-                            ? 'border-primary bg-primary/10 text-primary'
-                            : 'border-muted hover:border-primary/50'
-                        }`}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-md border ${isPrivateRepo
+                          ? 'border-primary bg-primary/10 text-primary'
+                          : 'border-muted hover:border-primary/50'
+                          }`}
                         disabled={isCreatingRepo}
                       >
                         <Lock className="h-4 w-4" />
@@ -603,11 +599,10 @@ export function GitHubSetupModal({
                       </button>
                       <button
                         onClick={() => setIsPrivateRepo(false)}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-md border ${
-                          !isPrivateRepo
-                            ? 'border-primary bg-primary/10 text-primary'
-                            : 'border-muted hover:border-primary/50'
-                        }`}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-md border ${!isPrivateRepo
+                          ? 'border-primary bg-primary/10 text-primary'
+                          : 'border-muted hover:border-primary/50'
+                          }`}
                         disabled={isCreatingRepo}
                       >
                         <Globe className="h-4 w-4" />
@@ -852,22 +847,21 @@ export function GitHubSetupModal({
     // Config steps (branch) = 1
     const currentIndex =
       step === 'github-auth' ? 0 :
-      step === 'claude-auth' ? 0 :
-      step === 'repo' ? 0 :
-      1;
+        step === 'claude-auth' ? 0 :
+          step === 'repo' ? 0 :
+            1;
 
     return (
       <div className="flex items-center justify-center gap-2 mb-4">
         {steps.map((s, index) => (
           <div key={index} className="flex items-center">
             <div
-              className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium ${
-                index < currentIndex
-                  ? 'bg-success text-success-foreground'
-                  : index === currentIndex
+              className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium ${index < currentIndex
+                ? 'bg-success text-success-foreground'
+                : index === currentIndex
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-muted text-muted-foreground'
-              }`}
+                }`}
             >
               {index < currentIndex ? (
                 <CheckCircle2 className="h-4 w-4" />
@@ -875,9 +869,8 @@ export function GitHubSetupModal({
                 index + 1
               )}
             </div>
-            <span className={`ml-2 text-xs ${
-              index === currentIndex ? 'text-foreground font-medium' : 'text-muted-foreground'
-            }`}>
+            <span className={`ml-2 text-xs ${index === currentIndex ? 'text-foreground font-medium' : 'text-muted-foreground'
+              }`}>
               {s.label}
             </span>
             {index < steps.length - 1 && (

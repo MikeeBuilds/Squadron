@@ -25,7 +25,7 @@ import { Label } from '../ui/label';
 import { Switch } from '../ui/switch';
 import { cn } from '../../lib/utils';
 import { SettingsSection } from './SettingsSection';
-import { loadClaudeProfiles as loadGlobalClaudeProfiles } from '../../stores/claude-profile-store';
+import { loadClaudeProfiles as loadGlobalClaudeProfiles } from '../../../stores/auto-claude/claude-profile-store';
 import type { AppSettings, ClaudeProfile, ClaudeAutoSwitchSettings } from '../../../shared/types';
 
 interface IntegrationSettingsProps {

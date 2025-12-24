@@ -3,7 +3,7 @@ import { useDroppable } from '@dnd-kit/core';
 import '@xterm/xterm/css/xterm.css';
 import { FileDown } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { useTerminalStore } from '../stores/terminal-store';
+import { useTerminalStore } from '../../stores/auto-claude/terminal-store';
 import type { TerminalProps } from './terminal/types';
 import { TerminalHeader } from './terminal/TerminalHeader';
 import { useXterm } from './terminal/useXterm';

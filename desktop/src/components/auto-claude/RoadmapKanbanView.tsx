@@ -15,8 +15,7 @@ import {
 import {
   SortableContext,
   sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-  arrayMove
+  verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { Plus, Inbox, Eye, Calendar, Play, Check } from 'lucide-react';
 import { ScrollArea } from './ui/scroll-area';
@@ -24,12 +23,12 @@ import { Badge } from './ui/badge';
 import { Card } from './ui/card';
 import { SortableFeatureCard } from './SortableFeatureCard';
 import { cn } from '../lib/utils';
-import { useRoadmapStore } from '../stores/roadmap-store';
+import { useRoadmapStore } from '../../stores/auto-claude/roadmap-store';
 import {
   ROADMAP_STATUS_COLUMNS,
   type RoadmapStatusColumn
-} from '../../shared/constants';
-import type { RoadmapFeature, RoadmapFeatureStatus, Roadmap } from '../../shared/types';
+} from '@/shared/constants';
+import type { RoadmapFeature, RoadmapFeatureStatus, Roadmap } from '@/shared/types';
 
 interface RoadmapKanbanViewProps {
   roadmap: Roadmap;
@@ -99,10 +98,10 @@ function DroppableStatusColumn({
               column.id === 'done'
                 ? 'bg-success/10 text-success'
                 : column.id === 'in_progress'
-                ? 'bg-primary/10 text-primary'
-                : column.id === 'planned'
-                ? 'bg-info/10 text-info'
-                : 'bg-muted text-muted-foreground'
+                  ? 'bg-primary/10 text-primary'
+                  : column.id === 'planned'
+                    ? 'bg-info/10 text-info'
+                    : 'bg-muted text-muted-foreground'
             )}
           >
             {getStatusIcon(column.icon)}

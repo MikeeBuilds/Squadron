@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useRoadmapStore, loadRoadmap, generateRoadmap, refreshRoadmap, stopRoadmap } from '../../stores/roadmap-store';
-import { useTaskStore } from '../../stores/task-store';
+import { useRoadmapStore, loadRoadmap, generateRoadmap, refreshRoadmap, stopRoadmap } from '../../../stores/auto-claude/roadmap-store';
+import { useTaskStore } from '../../../stores/auto-claude/task-store';
 import type { RoadmapFeature } from '../../../shared/types';
 
 /**

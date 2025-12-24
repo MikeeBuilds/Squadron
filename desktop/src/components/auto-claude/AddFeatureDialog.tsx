@@ -41,16 +41,15 @@ import {
   SelectTrigger,
   SelectValue
 } from './ui/select';
-import { useRoadmapStore } from '../stores/roadmap-store';
+import { useRoadmapStore } from '../../stores/auto-claude/roadmap-store';
 import {
   ROADMAP_PRIORITY_LABELS
 } from '../../shared/constants';
 import type {
   RoadmapPhase,
   RoadmapFeaturePriority,
-  RoadmapFeatureStatus,
-  FeatureSource
-} from '../../shared/types';
+  RoadmapFeatureStatus
+} from '../../shared/types/roadmap';
 
 /**
  * Props for the AddFeatureDialog component

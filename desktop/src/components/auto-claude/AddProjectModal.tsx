@@ -12,7 +12,7 @@ import {
   DialogTitle
 } from './ui/dialog';
 import { cn } from '../lib/utils';
-import { addProject } from '../stores/project-store';
+import { addProject } from '../../stores/auto-claude/project-store';
 import type { Project } from '../../shared/types';
 
 type ModalStep = 'choose' | 'create-form';

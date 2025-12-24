@@ -1,265 +1,382 @@
-import { useState, useEffect } from 'react'
+/**
+ * Squadron 3.0 - Powered by Auto-Claude UI
+ * 
+ * This is the main application component, based on Auto-Claude's architecture
+ * with Squadron's integrations (Jira, Linear, Slack, Discord).
+ */
+
+import { useState, useEffect } from 'react';
+import { Settings2 } from 'lucide-react';
 import {
-  LayoutDashboard,
-  Terminal,
-  Activity,
-  Map,
-  Lightbulb,
-  FileClock,
-  Settings,
-  Plus,
-  Github,
-  GitBranch,
-  Sparkles,
-  FileText,
-} from 'lucide-react'
-import { getAgents, type Agent } from '@/lib/api'
-import { KanbanBoard } from '@/components/KanbanBoard'
-import { TaskWizard } from '@/components/TaskWizard'
-import { AgentCard } from '@/components/AgentCard'
-import { TerminalHub } from '@/components/TerminalHub'
-import { SettingsPanel } from '@/components/SettingsPanel'
-import { OnboardingWizard } from '@/components/OnboardingWizard'
-import { InsightsPanel } from '@/components/InsightsPanel'
-import { ContextViewer } from '@/components/ContextViewer'
-
-// Shadcn Sidebar Imports
+    DndContext,
+    DragOverlay,
+    closestCenter,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    type DragEndEvent
+} from '@dnd-kit/core';
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarTrigger,
-  SidebarRail,
-} from "@/components/ui/sidebar"
+    SortableContext,
+    horizontalListSortingStrategy
+} from '@dnd-kit/sortable';
 
-export default function App() {
-  const [activeTab, setActiveTab] = useState('kanban')
-  const [agents, setAgents] = useState<Agent[]>([])
-  const [isWizardOpen, setIsWizardOpen] = useState(false)
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const [kanbanKey, setKanbanKey] = useState(0)
-  const [showOnboarding, setShowOnboarding] = useState(false)
-  const [loading, setLoading] = useState(true)
+// Auto-Claude Components
+import { TooltipProvider } from './components/auto-claude/ui/tooltip';
+import { Button } from './components/auto-claude/ui/button';
 
-  const api = (window as any).electronAPI
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger
+} from './components/auto-claude/ui/tooltip';
+import { Sidebar, type SidebarView } from './components/auto-claude/Sidebar';
+import { KanbanBoard } from './components/auto-claude/KanbanBoard';
+import { TaskDetailModal } from './components/auto-claude/task-detail/TaskDetailModal';
+import { TaskCreationWizard } from './components/auto-claude/TaskCreationWizard';
+import { AppSettingsDialog } from './components/auto-claude/settings/AppSettings';
+import { TerminalGrid } from './components/auto-claude/TerminalGrid';
+import { Roadmap } from './components/auto-claude/Roadmap';
+import { Context } from './components/auto-claude/Context';
+import { Ideation } from './components/auto-claude/Ideation';
+import { Insights } from './components/auto-claude/Insights';
+import { GitHubIssues } from './components/auto-claude/GitHubIssues';
+import { Changelog } from './components/auto-claude/Changelog';
+import { Worktrees } from './components/auto-claude/Worktrees';
+import { WelcomeScreen } from './components/auto-claude/WelcomeScreen';
+import { OnboardingWizard } from './components/auto-claude/onboarding';
+import { UsageIndicator } from './components/auto-claude/UsageIndicator';
+import { ProjectTabBar } from './components/auto-claude/ProjectTabBar';
 
-  // Check if onboarding is needed
-  useEffect(() => {
-    const checkOnboarding = async () => {
-      try {
-        const isComplete = await api.isOnboardingComplete()
-        setShowOnboarding(!isComplete)
-      } catch (err) {
-        console.error('Failed to check onboarding:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    checkOnboarding()
-  }, [])
+// Auto-Claude Stores
+import { useProjectStore, loadProjects, addProject } from './stores/auto-claude/project-store';
+import { useTaskStore, loadTasks } from './stores/auto-claude/task-store';
+import { useSettingsStore, loadSettings } from './stores/auto-claude/settings-store';
 
-  useEffect(() => {
-    const fetchStatus = async () => {
-      const latestAgents = await getAgents()
-      setAgents(latestAgents)
-    }
 
-    fetchStatus()
-    const interval = setInterval(fetchStatus, 5000)
-    return () => clearInterval(interval)
-  }, [])
+// Shared types and constants
+import type { Task, Project } from './shared/types';
 
-  // Show loading or onboarding
-  if (loading) {
+export function App() {
+    // Stores
+    const projects = useProjectStore((state) => state.projects);
+    const selectedProjectId = useProjectStore((state) => state.selectedProjectId);
+    const activeProjectId = useProjectStore((state) => state.activeProjectId);
+    const getProjectTabs = useProjectStore((state) => state.getProjectTabs);
+
+    const openProjectTab = useProjectStore((state) => state.openProjectTab);
+    const closeProjectTab = useProjectStore((state) => state.closeProjectTab);
+    const setActiveProject = useProjectStore((state) => state.setActiveProject);
+    const reorderTabs = useProjectStore((state) => state.reorderTabs);
+    const tasks = useTaskStore((state) => state.tasks);
+    const settings = useSettingsStore((state) => state.settings);
+    const settingsLoading = useSettingsStore((state) => state.isLoading);
+
+    // UI State
+    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+    const [isNewTaskDialogOpen, setIsNewTaskDialogOpen] = useState(false);
+    const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
+
+    const [activeView, setActiveView] = useState<SidebarView>('kanban');
+    const [isOnboardingWizardOpen, setIsOnboardingWizardOpen] = useState(false);
+
+    // Setup drag sensors
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        })
+    );
+
+    // Track dragging state for overlay
+    const [activeDragProject, setActiveDragProject] = useState<Project | null>(null);
+
+    // Get tabs and selected project
+    const projectTabs = getProjectTabs();
+    const selectedProject = projects.find((p) => p.id === (activeProjectId || selectedProjectId));
+
+    // Initial load
+    useEffect(() => {
+        loadProjects();
+        loadSettings();
+    }, []);
+
+    // Track if settings have been loaded at least once
+    const [settingsHaveLoaded, setSettingsHaveLoaded] = useState(false);
+
+    // Mark settings as loaded when loading completes
+    useEffect(() => {
+        if (!settingsLoading && !settingsHaveLoaded) {
+            setSettingsHaveLoaded(true);
+        }
+    }, [settingsLoading, settingsHaveLoaded]);
+
+    // First-run detection - show onboarding wizard if not completed
+    useEffect(() => {
+        if (settingsHaveLoaded && settings.onboardingCompleted === false) {
+            setIsOnboardingWizardOpen(true);
+        }
+    }, [settingsHaveLoaded, settings.onboardingCompleted]);
+
+    // Load tasks when project changes
+    useEffect(() => {
+        const currentProjectId = activeProjectId || selectedProjectId;
+        if (currentProjectId) {
+            loadTasks(currentProjectId);
+            setSelectedTask(null);
+        } else {
+            useTaskStore.getState().clearTasks();
+        }
+    }, [activeProjectId, selectedProjectId]);
+
+    // Apply theme on load
+    useEffect(() => {
+        const root = document.documentElement;
+
+        const applyTheme = () => {
+            if (settings.theme === 'dark') {
+                root.classList.add('dark');
+            } else if (settings.theme === 'light') {
+                root.classList.remove('dark');
+            } else {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    root.classList.add('dark');
+                } else {
+                    root.classList.remove('dark');
+                }
+            }
+        };
+
+        applyTheme();
+    }, [settings.theme, settings.colorTheme]);
+
+    const handleTaskClick = (task: Task) => {
+        setSelectedTask(task);
+    };
+
+    const handleCloseTaskDetail = () => {
+        setSelectedTask(null);
+    };
+
+    const handleAddProject = async () => {
+        try {
+            const path = await (window as any).electronAPI.selectDirectory();
+            if (path) {
+                const project = await addProject(path);
+                if (project) {
+                    openProjectTab(project.id);
+                }
+            }
+        } catch (error) {
+            console.error('Failed to add project:', error);
+        }
+    };
+
+    const handleProjectTabSelect = (projectId: string) => {
+        setActiveProject(projectId);
+    };
+
+    const handleProjectTabClose = (projectId: string) => {
+        closeProjectTab(projectId);
+    };
+
+    const handleDragStart = (event: any) => {
+        const { active } = event;
+        const draggedProject = projectTabs.find(p => p.id === active.id);
+        if (draggedProject) {
+            setActiveDragProject(draggedProject);
+        }
+    };
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        setActiveDragProject(null);
+
+        if (!over) return;
+
+        const oldIndex = projectTabs.findIndex(p => p.id === active.id);
+        const newIndex = projectTabs.findIndex(p => p.id === over.id);
+
+        if (oldIndex !== newIndex && oldIndex !== -1 && newIndex !== -1) {
+            reorderTabs(oldIndex, newIndex);
+        }
+    };
+
+    const handleGoToTask = (taskId: string) => {
+        setActiveView('kanban');
+        const task = tasks.find((t) => t.id === taskId || t.specId === taskId);
+        if (task) {
+            setSelectedTask(task);
+        }
+    };
+
     return (
-      <div className="dark h-full w-full flex items-center justify-center bg-zinc-950">
-        <div className="text-zinc-500">Loading...</div>
-      </div>
-    )
-  }
+        <TooltipProvider>
+            <div className="flex h-screen bg-background text-foreground">
+                {/* Sidebar */}
+                <Sidebar
+                    onSettingsClick={() => setIsSettingsDialogOpen(true)}
+                    onNewTaskClick={() => setIsNewTaskDialogOpen(true)}
+                    activeView={activeView}
+                    onViewChange={setActiveView}
+                />
 
-  if (showOnboarding) {
-    return <OnboardingWizard onComplete={() => setShowOnboarding(false)} />
-  }
+                {/* Main content */}
+                <div className="flex flex-1 flex-col overflow-hidden">
+                    {/* Project Tabs */}
+                    {projectTabs.length > 0 && (
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCenter}
+                            onDragStart={handleDragStart}
+                            onDragEnd={handleDragEnd}
+                        >
+                            <SortableContext items={projectTabs.map(p => p.id)} strategy={horizontalListSortingStrategy}>
+                                <ProjectTabBar
+                                    projects={projectTabs}
+                                    activeProjectId={activeProjectId}
+                                    onProjectSelect={handleProjectTabSelect}
+                                    onProjectClose={handleProjectTabClose}
+                                    onAddProject={handleAddProject}
+                                />
+                            </SortableContext>
 
-  const navItems = [
-    { id: 'kanban', label: 'Operations', icon: LayoutDashboard },
-    { id: 'terminals', label: 'Terminal Hub', icon: Terminal },
-    { id: 'insights', label: 'Insights', icon: Sparkles },
-    { id: 'context', label: 'Context', icon: FileText },
-    { id: 'network', label: 'Agent Network', icon: Activity },
-    { id: 'roadmap', label: 'Flight Plan', icon: Map },
-    { id: 'prompts', label: 'Command Library', icon: Lightbulb },
-    { id: 'history', label: 'Mission Logs', icon: FileClock },
-    { id: 'settings', label: 'System Config', icon: Settings },
-  ]
+                            <DragOverlay>
+                                {activeDragProject && (
+                                    <div className="flex items-center gap-2 bg-card border border-border rounded-md px-4 py-2.5 shadow-lg max-w-[200px]">
+                                        <div className="w-1 h-4 bg-muted-foreground rounded-full" />
+                                        <span className="truncate font-medium text-sm">
+                                            {activeDragProject.name}
+                                        </span>
+                                    </div>
+                                )}
+                            </DragOverlay>
+                        </DndContext>
+                    )}
 
-  return (
-    <div className="dark h-full w-full">
-      <SidebarProvider>
-        <Sidebar variant="inset" collapsible="icon" className="border-r border-zinc-900 bg-zinc-950 backdrop-blur-xl">
-          <SidebarHeader className="p-4 pt-6 group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:pt-10">
-            <div className="flex items-center gap-3 px-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
-              <div className="w-8 h-8 rounded-xl bg-cyan-400 flex items-center justify-center shadow-[0_0_15px_rgba(250,204,21,0.3)] shrink-0">
-                <span className="text-black font-black text-xs">S</span>
-              </div>
-              <div className="flex flex-col group-data-[collapsible=icon]:hidden overflow-hidden">
-                <h2 className="text-sm font-black tracking-tight text-white leading-tight">SQUADRON</h2>
-                <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-[0.2em]">Agentic OS v2.0</span>
-              </div>
+                    {/* Header */}
+                    <header className="electron-drag flex h-14 items-center justify-between border-b border-border bg-card/50 backdrop-blur-sm px-6">
+                        <div className="electron-no-drag">
+                            {selectedProject ? (
+                                <h1 className="font-semibold text-foreground">{selectedProject.name}</h1>
+                            ) : (
+                                <div className="text-muted-foreground">
+                                    Select a project to get started
+                                </div>
+                            )}
+                        </div>
+                        {selectedProject && (
+                            <div className="electron-no-drag flex items-center gap-3">
+                                <UsageIndicator />
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => setIsSettingsDialogOpen(true)}
+                                        >
+                                            <Settings2 className="h-4 w-4" />
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Settings</TooltipContent>
+                                </Tooltip>
+                            </div>
+                        )}
+                    </header>
+
+                    {/* Main content area */}
+                    <main className="flex-1 overflow-hidden">
+                        {selectedProject ? (
+                            <>
+                                {activeView === 'kanban' && (
+                                    <KanbanBoard
+                                        tasks={tasks}
+                                        onTaskClick={handleTaskClick}
+                                        onNewTaskClick={() => setIsNewTaskDialogOpen(true)}
+                                    />
+                                )}
+                                <div className={activeView === 'terminals' ? 'h-full' : 'hidden'}>
+                                    <TerminalGrid
+                                        projectPath={selectedProject?.path}
+                                        onNewTaskClick={() => setIsNewTaskDialogOpen(true)}
+                                        isActive={activeView === 'terminals'}
+                                    />
+                                </div>
+                                {activeView === 'roadmap' && (activeProjectId || selectedProjectId) && (
+                                    <Roadmap projectId={activeProjectId || selectedProjectId!} onGoToTask={handleGoToTask} />
+                                )}
+                                {activeView === 'context' && (activeProjectId || selectedProjectId) && (
+                                    <Context projectId={activeProjectId || selectedProjectId!} />
+                                )}
+                                {activeView === 'ideation' && (activeProjectId || selectedProjectId) && (
+                                    <Ideation projectId={activeProjectId || selectedProjectId!} onGoToTask={handleGoToTask} />
+                                )}
+                                {activeView === 'insights' && (activeProjectId || selectedProjectId) && (
+                                    <Insights projectId={activeProjectId || selectedProjectId!} />
+                                )}
+                                {activeView === 'github-issues' && (activeProjectId || selectedProjectId) && (
+                                    <GitHubIssues
+                                        onOpenSettings={() => setIsSettingsDialogOpen(true)}
+                                        onNavigateToTask={handleGoToTask}
+                                    />
+                                )}
+                                {activeView === 'changelog' && (activeProjectId || selectedProjectId) && (
+                                    <Changelog />
+                                )}
+                                {activeView === 'worktrees' && (activeProjectId || selectedProjectId) && (
+                                    <Worktrees projectId={activeProjectId || selectedProjectId!} />
+                                )}
+                            </>
+                        ) : (
+                            <WelcomeScreen
+                                projects={projects}
+                                onNewProject={handleAddProject}
+                                onOpenProject={handleAddProject}
+                                onSelectProject={(projectId) => {
+                                    openProjectTab(projectId);
+                                }}
+                            />
+                        )}
+                    </main>
+                </div>
+
+                {/* Task detail modal */}
+                <TaskDetailModal
+                    open={!!selectedTask}
+                    task={selectedTask}
+                    onOpenChange={(open) => !open && handleCloseTaskDetail()}
+                />
+
+                {/* Dialogs */}
+                {(activeProjectId || selectedProjectId) && (
+                    <TaskCreationWizard
+                        projectId={activeProjectId || selectedProjectId!}
+                        open={isNewTaskDialogOpen}
+                        onOpenChange={setIsNewTaskDialogOpen}
+                    />
+                )}
+
+                {/* Onboarding Wizard */}
+                <AppSettingsDialog
+                    open={isSettingsDialogOpen}
+                    onOpenChange={setIsSettingsDialogOpen}
+                />
+                <OnboardingWizard
+                    open={isOnboardingWizardOpen}
+                    onOpenChange={setIsOnboardingWizardOpen}
+                    onOpenTaskCreator={() => {
+                        setIsOnboardingWizardOpen(false);
+                        setIsNewTaskDialogOpen(true);
+                    }}
+                    onOpenSettings={() => {
+                        setIsOnboardingWizardOpen(false);
+                        setIsSettingsDialogOpen(true);
+                    }}
+                />
             </div>
-          </SidebarHeader>
-
-          <SidebarContent>
-            <SidebarGroup>
-              <SidebarGroupLabel className="px-6 text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] mb-4 group-data-[collapsible=icon]:hidden">
-                Main Interface
-              </SidebarGroupLabel>
-              <SidebarMenu className="px-2 group-data-[collapsible=icon]:px-0">
-                {navItems.map((item) => (
-                  <SidebarMenuItem key={item.id} className="mb-1">
-                    <SidebarMenuButton
-                      onClick={() => item.id === 'settings' ? setIsSettingsOpen(true) : setActiveTab(item.id)}
-                      isActive={activeTab === item.id}
-                      tooltip={item.label}
-                      className={activeTab === item.id ? "bg-cyan-400 text-black font-bold" : "text-zinc-500 hover:text-white hover:bg-zinc-900"}
-                    >
-                      <item.icon className="shrink-0" size={18} />
-                      <span className="font-bold tracking-tight">{item.label}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroup>
-
-            <SidebarGroup className="mt-auto">
-              <SidebarGroupLabel className="px-6 text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] mb-4 group-data-[collapsible=icon]:hidden">
-                Deployment
-              </SidebarGroupLabel>
-              <SidebarMenu className="px-2 group-data-[collapsible=icon]:px-0">
-                <SidebarMenuItem className="mb-1">
-                  <SidebarMenuButton className="text-zinc-500 hover:text-white hover:bg-zinc-900">
-                    <Github size={18} />
-                    <span className="font-bold tracking-tight">Repository</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton className="text-zinc-500 hover:text-white hover:bg-zinc-900">
-                    <GitBranch size={18} />
-                    <span className="font-bold tracking-tight">Active Branch</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroup>
-          </SidebarContent>
-
-          <SidebarFooter className="p-4 border-t border-zinc-900/50 group-data-[collapsible=icon]:p-2">
-            <SidebarMenu>
-              <SidebarMenuItem className="flex items-center gap-3 px-2 py-3 bg-zinc-900/30 rounded-xl mb-4 group-data-[collapsible=icon]:hidden">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-zinc-700 to-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0">
-                  <div className="w-2 h-2 rounded-full bg-green-500" />
-                </div>
-                <div className="flex flex-col overflow-hidden">
-                  <span className="text-xs font-bold text-zinc-200 truncate">Commander Michael</span>
-                  <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">Session Active</span>
-                </div>
-              </SidebarMenuItem>
-            </SidebarMenu>
-            <button
-              onClick={() => setIsWizardOpen(true)}
-              className="w-full flex items-center justify-center gap-2 bg-cyan-400 hover:bg-cyan-500 text-black font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(250,204,21,0.15)] active:scale-95 duration-200 py-2.5 px-4 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:p-0 overflow-hidden"
-            >
-              <Plus size={18} className="shrink-0" />
-              <span className="text-xs uppercase tracking-wider group-data-[collapsible=icon]:hidden whitespace-nowrap">New Task</span>
-            </button>
-          </SidebarFooter>
-          <SidebarRail />
-        </Sidebar>
-
-        <SidebarInset className="bg-zinc-950 flex-1 overflow-hidden border-none relative flex flex-col">
-          <main className="h-full overflow-hidden p-4 relative flex flex-col custom-scrollbar">
-            {/* Subtle Background Glow */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-400/5 blur-[120px] rounded-full pointer-events-none -mr-48 -mt-48" />
-
-            <header className="flex w-full justify-between items-center mb-2 max-w-[1400px] relative z-10 transition-all duration-300 shrink-0">
-              <div className="flex items-center gap-4">
-                <SidebarTrigger className="text-zinc-500 hover:text-cyan-400" />
-                <div className="flex items-center gap-4">
-                  <h1 className="text-2xl font-black tracking-tight text-white/90">
-                    {activeTab === 'kanban' ? 'Operation Dashboard' : 'Terminal Workbench'}
-                  </h1>
-                  <div className="h-4 w-px bg-zinc-800" />
-                  <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-green-500/10 border border-green-500/20 text-[8px] font-bold text-green-500 uppercase tracking-widest">
-                    <div className="w-1 h-1 rounded-full bg-green-500 animate-pulse" />
-                    Live System
-                  </div>
-                </div>
-              </div>
-            </header>
-
-            <div className="w-full max-w-[1400px] flex-1 min-h-0 overflow-hidden relative z-10 flex flex-col">
-              {activeTab === 'kanban' && (
-                <div className="h-full overflow-auto scrollbar-hide">
-                  <div className="space-y-16 animate-in fade-in duration-700">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                      {agents.map(agent => (
-                        <AgentCard key={agent.name} agent={agent} />
-                      ))}
-                    </div>
-
-                    <div className="relative">
-                      <div className="flex items-center gap-4 mb-8">
-                        <h3 className="text-xl font-black tracking-tight text-white">Project Flight Path</h3>
-                        <div className="flex-1 h-px bg-zinc-900" />
-                      </div>
-                      <KanbanBoard key={kanbanKey} />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeTab === 'terminals' && (
-                <div className="flex-1 min-h-0 pb-4 animate-in fade-in zoom-in-95 duration-500">
-                  <TerminalHub />
-                </div>
-              )}
-
-              {activeTab === 'insights' && (
-                <div className="flex-1 min-h-0 pb-4 animate-in fade-in zoom-in-95 duration-500">
-                  <InsightsPanel />
-                </div>
-              )}
-
-              {activeTab === 'context' && (
-                <div className="flex-1 min-h-0 pb-4 animate-in fade-in zoom-in-95 duration-500">
-                  <ContextViewer />
-                </div>
-              )}
-            </div>
-          </main>
-        </SidebarInset>
-
-        <TaskWizard
-          isOpen={isWizardOpen}
-          onClose={() => setIsWizardOpen(false)}
-          onTaskCreated={() => {
-            setKanbanKey(prev => prev + 1)
-          }}
-        />
-
-        <SettingsPanel
-          isOpen={isSettingsOpen}
-          onClose={() => setIsSettingsOpen(false)}
-        />
-      </SidebarProvider>
-    </div>
-  )
+        </TooltipProvider>
+    );
 }
+
+export default App;

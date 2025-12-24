@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
-import { useGitHubStore, investigateGitHubIssue } from '../../../stores/github-store';
-import { loadTasks } from '../../../stores/task-store';
+import { useGitHubStore, investigateGitHubIssue } from '../../../../stores/auto-claude/github-store';
+import { loadTasks } from '../../../../stores/auto-claude/task-store';
 import type { GitHubIssue } from '../../../../shared/types';
 
 export function useGitHubInvestigation(projectId: string | undefined) {

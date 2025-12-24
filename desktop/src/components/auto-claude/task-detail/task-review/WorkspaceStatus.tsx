@@ -4,7 +4,6 @@ import {
   Plus,
   Minus,
   Eye,
-  ExternalLink,
   GitMerge,
   FolderX,
   Loader2,
@@ -61,13 +60,7 @@ export function WorkspaceStatus({
   const hasAIConflicts = mergePreview && mergePreview.conflicts.length > 0;
 
   // Determine overall status
-  const statusColor = hasGitConflicts
-    ? 'warning'
-    : hasUncommittedChanges
-      ? 'warning'
-      : mergePreview && !hasAIConflicts
-        ? 'success'
-        : 'info';
+
 
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden">

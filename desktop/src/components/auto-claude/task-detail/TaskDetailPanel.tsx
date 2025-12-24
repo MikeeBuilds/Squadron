@@ -2,8 +2,8 @@ import { Separator } from '../ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { ScrollArea } from '../ui/scroll-area';
 import { TooltipProvider } from '../ui/tooltip';
-import { calculateProgress } from '../../lib/utils';
-import { startTask, stopTask, submitReview, recoverStuckTask, deleteTask } from '../../stores/task-store';
+
+import { startTask, stopTask, submitReview, recoverStuckTask, deleteTask } from '../../../stores/auto-claude/task-store';
 import { TaskEditDialog } from '../TaskEditDialog';
 import { useTaskDetail } from './hooks/useTaskDetail';
 import { TaskHeader } from './TaskHeader';
@@ -23,7 +23,6 @@ interface TaskDetailPanelProps {
 
 export function TaskDetailPanel({ task, onClose }: TaskDetailPanelProps) {
   const state = useTaskDetail({ task });
-  const _progress = calculateProgress(task.subtasks);
 
   // Event Handlers
   const handleStartStop = () => {

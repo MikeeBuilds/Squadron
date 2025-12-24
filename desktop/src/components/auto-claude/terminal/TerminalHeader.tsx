@@ -1,6 +1,6 @@
 import { X, Sparkles, TerminalSquare } from 'lucide-react';
 import type { Task } from '../../../shared/types';
-import type { TerminalStatus } from '../../stores/terminal-store';
+import type { TerminalStatus } from '../../../stores/auto-claude/terminal-store';
 import { Button } from '../ui/button';
 import { cn } from '../../lib/utils';
 import { STATUS_COLORS } from './types';

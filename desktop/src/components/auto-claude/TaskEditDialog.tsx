@@ -55,7 +55,7 @@ import {
   resolveFilename
 } from './ImageUpload';
 import { AgentProfileSelector } from './AgentProfileSelector';
-import { persistUpdateTask } from '../stores/task-store';
+import { persistUpdateTask } from '../../stores/auto-claude/task-store';
 import { cn } from '../lib/utils';
 import type { Task, ImageAttachment, TaskCategory, TaskPriority, TaskComplexity, TaskImpact, ModelType, ThinkingLevel } from '../../shared/types';
 import {
@@ -70,7 +70,7 @@ import {
   DEFAULT_PHASE_THINKING
 } from '../../shared/constants';
 import type { PhaseModelConfig, PhaseThinkingConfig } from '../../shared/types/settings';
-import { useSettingsStore } from '../stores/settings-store';
+import { useSettingsStore } from '../../stores/auto-claude/settings-store';
 
 /**
  * Props for the TaskEditDialog component

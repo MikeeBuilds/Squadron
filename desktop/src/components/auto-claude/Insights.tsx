@@ -32,8 +32,8 @@ import {
   updateModelConfig,
   createTaskFromSuggestion,
   setupInsightsListeners
-} from '../stores/insights-store';
-import { loadTasks } from '../stores/task-store';
+} from '../../stores/auto-claude/insights-store';
+import { loadTasks } from '../../stores/auto-claude/task-store';
 import { ChatHistorySidebar } from './ChatHistorySidebar';
 import { InsightsModelSelector } from './InsightsModelSelector';
 import type { InsightsChatMessage, InsightsModelConfig } from '../../shared/types';

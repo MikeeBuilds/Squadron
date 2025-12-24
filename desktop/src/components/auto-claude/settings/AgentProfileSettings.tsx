@@ -8,7 +8,7 @@ import {
   DEFAULT_PHASE_MODELS,
   DEFAULT_PHASE_THINKING
 } from '../../../shared/constants';
-import { useSettingsStore, saveSettings } from '../../stores/settings-store';
+import { useSettingsStore, saveSettings } from '../../../stores/auto-claude/settings-store';
 import { SettingsSection } from './SettingsSection';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';

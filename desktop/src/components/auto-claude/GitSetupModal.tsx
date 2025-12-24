@@ -33,7 +33,7 @@ export function GitSetupModal({
   const [step, setStep] = useState<'info' | 'initializing' | 'success'>('info');
 
   const needsGitInit = gitStatus && !gitStatus.isGitRepo;
-  const _needsCommit = gitStatus && gitStatus.isGitRepo && !gitStatus.hasCommits;
+  // _needsCommit variable removed as it was unused
 
   const handleInitializeGit = async () => {
     if (!project) return;

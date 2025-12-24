@@ -19,8 +19,8 @@ import {
 import { Switch } from './ui/switch';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
-import { useRateLimitStore } from '../stores/rate-limit-store';
-import { useClaudeProfileStore, loadClaudeProfiles, switchTerminalToProfile } from '../stores/claude-profile-store';
+import { useRateLimitStore } from '../../stores/auto-claude/rate-limit-store';
+import { useClaudeProfileStore, loadClaudeProfiles, switchTerminalToProfile } from '../../stores/auto-claude/claude-profile-store';
 
 const CLAUDE_UPGRADE_URL = 'https://claude.ai/upgrade';
 

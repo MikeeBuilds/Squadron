@@ -1,9 +1,9 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, type RefObject, type ClipboardEvent, type DragEvent } from 'react';
 import { FileText, Copy, Save, CheckCircle, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
-import ReactMarkdown, { Components } from 'react-markdown';
+import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 // Component for loading local images via IPC
@@ -84,15 +84,15 @@ interface PreviewPanelProps {
   canSave: boolean;
   isDragOver: boolean;
   imageError: string | null;
-  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
+  textareaRef: RefObject<HTMLTextAreaElement | null>;
   projectPath?: string;
   onSave: () => void;
   onCopy: () => void;
   onChangelogEdit: (content: string) => void;
-  onPaste: (e: React.ClipboardEvent<HTMLTextAreaElement>) => void;
-  onDragOver: (e: React.DragEvent) => void;
-  onDragLeave: (e: React.DragEvent) => void;
-  onDrop: (e: React.DragEvent) => void;
+  onPaste: (e: ClipboardEvent<HTMLTextAreaElement>) => void;
+  onDragOver: (e: DragEvent) => void;
+  onDragLeave: (e: DragEvent) => void;
+  onDrop: (e: DragEvent) => void;
 }
 
 export function PreviewPanel({

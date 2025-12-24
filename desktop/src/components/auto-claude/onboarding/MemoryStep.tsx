@@ -21,7 +21,7 @@ import {
   SelectValue
 } from '../ui/select';
 import { OllamaModelSelector } from './OllamaModelSelector';
-import { useSettingsStore } from '../../stores/settings-store';
+import { useSettingsStore } from '../../../stores/auto-claude/settings-store';
 import type { GraphitiEmbeddingProvider, AppSettings } from '../../../shared/types';
 
 interface MemoryStepProps {

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { LinearTaskImportModal } from '../LinearTaskImportModal';
 import { SettingsSection } from './SettingsSection';
-import { useProjectSettings, UseProjectSettingsReturn } from '../project-settings/hooks/useProjectSettings';
+import { useProjectSettings, type UseProjectSettingsReturn } from '@/components/auto-claude/project-settings/hooks/useProjectSettings';
 import { EmptyProjectState } from './common/EmptyProjectState';
 import { ErrorDisplay } from './common/ErrorDisplay';
 import { SectionRouter } from './sections/SectionRouter';

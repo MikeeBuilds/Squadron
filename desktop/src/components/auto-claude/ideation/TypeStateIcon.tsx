@@ -1,5 +1,5 @@
 import { CheckCircle2, Circle, Loader2, XCircle } from 'lucide-react';
-import type { IdeationTypeState } from '../../stores/ideation-store';
+import type { IdeationTypeState } from '../../../stores/auto-claude/ideation-store';
 
 interface TypeStateIconProps {
   state: IdeationTypeState;

@@ -119,7 +119,7 @@ export function TaskReview({
       ) : task.stagedInMainProject && !stagedSuccess ? (
         <StagedInProjectMessage
           task={task}
-          projectPath={stagedProjectPath}
+
           hasWorktree={worktreeStatus?.exists || false}
           onClose={onClose}
         />

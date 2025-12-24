@@ -3,7 +3,7 @@ import { PreviewPanel } from './PreviewPanel';
 import { Step3SuccessScreen } from './Step3SuccessScreen';
 import { useImageUpload } from './hooks/useImageUpload';
 import { getSummaryInfo } from './utils';
-import { useProjectStore } from '../../stores/project-store';
+import { useProjectStore } from '../../../stores/auto-claude/project-store';
 import type {
   ChangelogFormat,
   ChangelogAudience,

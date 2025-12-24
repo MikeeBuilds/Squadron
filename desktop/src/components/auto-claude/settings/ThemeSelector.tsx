@@ -2,7 +2,7 @@ import { Check, Sun, Moon, Monitor } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { Label } from '../ui/label';
 import { COLOR_THEMES } from '../../../shared/constants';
-import { useSettingsStore } from '../../stores/settings-store';
+import { useSettingsStore } from '../../../stores/auto-claude/settings-store';
 import type { ColorTheme, AppSettings } from '../../../shared/types';
 
 interface ThemeSelectorProps {

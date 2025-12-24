@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { useProjectStore } from '../../../stores/project-store';
-import { checkTaskRunning, isIncompleteHumanReview, getTaskProgress } from '../../../stores/task-store';
+import { useProjectStore } from '../../../../stores/auto-claude/project-store';
+import { checkTaskRunning, isIncompleteHumanReview, getTaskProgress } from '../../../../stores/auto-claude/task-store';
 import type { Task, TaskLogs, TaskLogPhase, WorktreeStatus, WorktreeDiff, MergeConflict, MergeStats, GitConflictInfo } from '../../../../shared/types';
 
 export interface UseTaskDetailOptions {

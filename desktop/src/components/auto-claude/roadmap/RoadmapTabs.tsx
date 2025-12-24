@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { PhaseCard } from './PhaseCard';
 import { FeatureCard } from './FeatureCard';
 import { RoadmapKanbanView } from '../RoadmapKanbanView';
-import { getFeaturesByPhase } from '../../stores/roadmap-store';
+import { getFeaturesByPhase } from '../../../stores/auto-claude/roadmap-store';
 import {
   ROADMAP_PRIORITY_COLORS,
   ROADMAP_PRIORITY_LABELS,

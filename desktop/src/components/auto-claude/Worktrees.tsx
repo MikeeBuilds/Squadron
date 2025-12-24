@@ -36,8 +36,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from './ui/alert-dialog';
-import { useProjectStore } from '../stores/project-store';
-import { useTaskStore } from '../stores/task-store';
+import { useProjectStore } from '../../stores/auto-claude/project-store';
+import { useTaskStore } from '../../stores/auto-claude/task-store';
 import type { WorktreeListItem, WorktreeMergeResult } from '../../shared/types';
 
 interface WorktreesProps {

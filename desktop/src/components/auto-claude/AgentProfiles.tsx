@@ -1,7 +1,7 @@
 import { Brain, Scale, Zap, Check } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { DEFAULT_AGENT_PROFILES, AVAILABLE_MODELS, THINKING_LEVELS } from '../../shared/constants';
-import { useSettingsStore, saveSettings } from '../stores/settings-store';
+import { useSettingsStore, saveSettings } from '../../stores/auto-claude/settings-store';
 import type { AgentProfile } from '../../shared/types/settings';
 
 /**

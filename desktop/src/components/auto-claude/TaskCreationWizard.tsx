@@ -30,8 +30,8 @@ import {
 import { TaskFileExplorerDrawer } from './TaskFileExplorerDrawer';
 import { AgentProfileSelector } from './AgentProfileSelector';
 import { FileAutocomplete } from './FileAutocomplete';
-import { createTask, saveDraft, loadDraft, clearDraft, isDraftEmpty } from '../stores/task-store';
-import { useProjectStore } from '../stores/project-store';
+import { createTask, saveDraft, loadDraft, clearDraft, isDraftEmpty } from '../../stores/auto-claude/task-store';
+import { useProjectStore } from '../../stores/auto-claude/project-store';
 import { cn } from '../lib/utils';
 import type { TaskCategory, TaskPriority, TaskComplexity, TaskImpact, TaskMetadata, ImageAttachment, TaskDraft, ModelType, ThinkingLevel, ReferencedFile } from '../../shared/types';
 import type { PhaseModelConfig, PhaseThinkingConfig } from '../../shared/types/settings';
@@ -46,7 +46,7 @@ import {
   DEFAULT_PHASE_MODELS,
   DEFAULT_PHASE_THINKING
 } from '../../shared/constants';
-import { useSettingsStore } from '../stores/settings-store';
+import { useSettingsStore } from '../../stores/auto-claude/settings-store';
 
 interface TaskCreationWizardProps {
   projectId: string;

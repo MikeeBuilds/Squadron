@@ -5,7 +5,7 @@
  * Shows detailed breakdown on hover.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Activity, TrendingUp, AlertCircle } from 'lucide-react';
 import {
   Tooltip,
@@ -48,14 +48,14 @@ export function UsageIndicator() {
 
   const colorClasses =
     maxUsage >= 95 ? 'text-red-500 bg-red-500/10 border-red-500/20' :
-    maxUsage >= 91 ? 'text-orange-500 bg-orange-500/10 border-orange-500/20' :
-    maxUsage >= 71 ? 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20' :
-    'text-green-500 bg-green-500/10 border-green-500/20';
+      maxUsage >= 91 ? 'text-orange-500 bg-orange-500/10 border-orange-500/20' :
+        maxUsage >= 71 ? 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20' :
+          'text-green-500 bg-green-500/10 border-green-500/20';
 
   const Icon =
     maxUsage >= 91 ? AlertCircle :
-    maxUsage >= 71 ? TrendingUp :
-    Activity;
+      maxUsage >= 71 ? TrendingUp :
+        Activity;
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -87,12 +87,11 @@ export function UsageIndicator() {
               {/* Progress bar */}
               <div className="mt-1.5 h-1.5 bg-muted rounded-full overflow-hidden">
                 <div
-                  className={`h-full transition-all ${
-                    usage.sessionPercent >= 95 ? 'bg-red-500' :
-                    usage.sessionPercent >= 91 ? 'bg-orange-500' :
-                    usage.sessionPercent >= 71 ? 'bg-yellow-500' :
-                    'bg-green-500'
-                  }`}
+                  className={`h-full transition-all ${usage.sessionPercent >= 95 ? 'bg-red-500' :
+                      usage.sessionPercent >= 91 ? 'bg-orange-500' :
+                        usage.sessionPercent >= 71 ? 'bg-yellow-500' :
+                          'bg-green-500'
+                    }`}
                   style={{ width: `${Math.min(usage.sessionPercent, 100)}%` }}
                 />
               </div>
@@ -114,12 +113,11 @@ export function UsageIndicator() {
               {/* Progress bar */}
               <div className="mt-1.5 h-1.5 bg-muted rounded-full overflow-hidden">
                 <div
-                  className={`h-full transition-all ${
-                    usage.weeklyPercent >= 99 ? 'bg-red-500' :
-                    usage.weeklyPercent >= 91 ? 'bg-orange-500' :
-                    usage.weeklyPercent >= 71 ? 'bg-yellow-500' :
-                    'bg-green-500'
-                  }`}
+                  className={`h-full transition-all ${usage.weeklyPercent >= 99 ? 'bg-red-500' :
+                      usage.weeklyPercent >= 91 ? 'bg-orange-500' :
+                        usage.weeklyPercent >= 71 ? 'bg-yellow-500' :
+                          'bg-green-500'
+                    }`}
                   style={{ width: `${Math.min(usage.weeklyPercent, 100)}%` }}
                 />
               </div>

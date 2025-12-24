@@ -1,6 +1,6 @@
 import { AlertTriangle, X } from 'lucide-react';
 import { Button } from './ui/button';
-import { useRateLimitStore } from '../stores/rate-limit-store';
+import { useRateLimitStore } from '../../stores/auto-claude/rate-limit-store';
 
 /**
  * Sidebar indicator that shows when there's an active rate limit.

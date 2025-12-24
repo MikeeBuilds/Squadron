@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import {
-  Key,
   Eye,
   EyeOff,
   Info,
@@ -23,7 +22,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Card, CardContent } from '../ui/card';
 import { cn } from '../../lib/utils';
-import { loadClaudeProfiles as loadGlobalClaudeProfiles } from '../../stores/claude-profile-store';
+import { loadClaudeProfiles as loadGlobalClaudeProfiles } from '../../../stores/auto-claude/claude-profile-store';
 import type { ClaudeProfile } from '../../../shared/types';
 
 interface OAuthStepProps {

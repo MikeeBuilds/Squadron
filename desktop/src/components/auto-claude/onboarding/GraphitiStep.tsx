@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '../ui/select';
-import { useSettingsStore } from '../../stores/settings-store';
+import { useSettingsStore } from '../../../stores/auto-claude/settings-store';
 import type { GraphitiLLMProvider, GraphitiEmbeddingProvider, AppSettings } from '../../../shared/types';
 
 interface GraphitiStepProps {

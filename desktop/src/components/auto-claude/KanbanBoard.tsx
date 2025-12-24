@@ -26,7 +26,7 @@ import { TaskCard } from './TaskCard';
 import { SortableTaskCard } from './SortableTaskCard';
 import { TASK_STATUS_COLUMNS, TASK_STATUS_LABELS } from '../../shared/constants';
 import { cn } from '../lib/utils';
-import { persistTaskStatus, archiveTasks } from '../stores/task-store';
+import { persistTaskStatus, archiveTasks } from '../../stores/auto-claude/task-store';
 import type { Task, TaskStatus } from '../../shared/types';
 
 interface KanbanBoardProps {

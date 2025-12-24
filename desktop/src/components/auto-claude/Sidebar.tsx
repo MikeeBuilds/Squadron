@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   Plus,
   Settings,
-  Trash2,
+
   LayoutGrid,
   Terminal,
   Map,
@@ -37,12 +37,10 @@ import {
 import { cn } from '../lib/utils';
 import {
   useProjectStore,
-  removeProject,
   initializeProject,
-  checkProjectVersion,
-  updateProjectAutoBuild
-} from '../stores/project-store';
-import { useSettingsStore } from '../stores/settings-store';
+  checkProjectVersion
+} from '../../stores/auto-claude/project-store';
+import { useSettingsStore } from '../../stores/auto-claude/settings-store';
 import { AddProjectModal } from './AddProjectModal';
 import { GitSetupModal } from './GitSetupModal';
 import { RateLimitIndicator } from './RateLimitIndicator';
@@ -87,7 +85,7 @@ export function Sidebar({
 }: SidebarProps) {
   const projects = useProjectStore((state) => state.projects);
   const selectedProjectId = useProjectStore((state) => state.selectedProjectId);
-  const selectProject = useProjectStore((state) => state.selectProject);
+
   const settings = useSettingsStore((state) => state.settings);
 
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
@@ -173,9 +171,7 @@ export function Sidebar({
     checkGit();
   }, [selectedProject]);
 
-  const handleAddProject = () => {
-    setShowAddProjectModal(true);
-  };
+
 
   const handleProjectAdded = (project: Project, needsInit: boolean) => {
     if (needsInit) {
@@ -207,25 +203,9 @@ export function Sidebar({
     setPendingProject(null);
   };
 
-  const _handleUpdate = async () => {
-    if (!selectedProjectId) return;
 
-    setIsInitializing(true);
-    try {
-      const result = await updateProjectAutoBuild(selectedProjectId);
-      if (result?.success) {
-        setShowUpdateDialog(false);
-        setVersionInfo(null);
-      }
-    } finally {
-      setIsInitializing(false);
-    }
-  };
 
-  const _handleSkipUpdate = () => {
-    setShowUpdateDialog(false);
-    setVersionInfo(null);
-  };
+
 
   const handleGitInitialized = async () => {
     // Refresh git status after initialization
@@ -241,11 +221,7 @@ export function Sidebar({
     }
   };
 
-  const _handleRemoveProject = async (projectId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    await removeProject(projectId);
-  };
+
 
 
   const handleNavClick = (view: SidebarView) => {

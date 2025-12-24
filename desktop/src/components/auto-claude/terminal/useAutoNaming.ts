@@ -1,6 +1,6 @@
 import { useCallback, useRef } from 'react';
-import { useSettingsStore } from '../../stores/settings-store';
-import { useTerminalStore } from '../../stores/terminal-store';
+import { useSettingsStore } from '../../../stores/auto-claude/settings-store';
+import { useTerminalStore } from '../../../stores/auto-claude/terminal-store';
 
 interface UseAutoNamingOptions {
   terminalId: string;
