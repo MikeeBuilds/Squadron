@@ -104,7 +104,7 @@ function setupTerminalIPC(mainWindow: BrowserWindow) {
     });
 
     ipcMain.handle('settings-get-all', async () => {
-        return settingsStore.getAllSettings();
+        return { success: true, data: settingsStore.getAllSettings() };
     });
 
     ipcMain.handle('settings-get-providers', async () => {
@@ -113,6 +113,11 @@ function setupTerminalIPC(mainWindow: BrowserWindow) {
 
     ipcMain.handle('settings-has-key', async (_, { provider }) => {
         return settingsStore.hasApiKey(provider);
+    });
+
+    ipcMain.handle('settings-save', async (_, { settings }) => {
+        settingsStore.updateSettings(settings);
+        return { success: true };
     });
 
     // CLI Installation IPC Handlers
@@ -147,7 +152,7 @@ function setupTerminalIPC(mainWindow: BrowserWindow) {
 
     // Onboarding & Project IPC Handlers
     ipcMain.handle('settings-onboarding-complete', async () => {
-        return settingsStore.isOnboardingComplete();
+        return { success: true, data: settingsStore.isOnboardingComplete() };
     });
 
     ipcMain.handle('settings-set-onboarding', async (_, { complete }) => {
@@ -161,11 +166,19 @@ function setupTerminalIPC(mainWindow: BrowserWindow) {
     });
 
     ipcMain.handle('settings-get-integrations', async () => {
-        return settingsStore.getIntegrationConfig();
+        return { success: true, data: settingsStore.getIntegrationConfig() };
+    });
+
+    ipcMain.handle('app-get-version', async () => {
+        return app.getVersion();
     });
 
     ipcMain.handle('settings-export-env', async (_, { targetPath }) => {
         return settingsStore.exportToEnvFile(targetPath);
+    });
+
+    ipcMain.handle('settings-get-default-location', async () => {
+        return app.getPath('documents');
     });
 
     ipcMain.handle('dialog-select-folder', async () => {

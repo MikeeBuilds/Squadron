@@ -26,5 +26,6 @@
 
 ## Next Implementation Steps
 1.  **Wire Settings**: Make `settings-store.ts` persistent.
-2.  **Connect Python**: Ensure the React frontend can talk to the local Python server (proxying or CORS).
-3.  **Real File System**: Replace `dialog-select-folder` mock with real Electron dialog.
+2.  **Connect Python**: Ensure the React frontend can talk to the local- **IPC Return Type Inconsistency**: Some IPC handlers return raw values (`app.getVersion()`, `date.now()`) while others return `{ success: true, data: ... }` envelopes. This causes frontend crashes if mismatched. `electron/main.ts` is currently a mix. Future refactor should standardize on envelopes and use Zod schemas on frontend to validate.
+- **Python Backend**: Runs on port 8000 but not fully integrated.
+- **Mock Dialogs**: `dialog-select-folder` is real, but others might be mocked.ctron dialog.

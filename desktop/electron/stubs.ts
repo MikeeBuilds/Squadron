@@ -15,21 +15,6 @@ export function setupStubs() {
 
     // Custom handlers for Legacy/Basic methods (must be defined before generic loop or excluded)
     // These return raw values instead of IPCResult
-    safeHandle('settings-get-providers', async () => {
-        console.log('[STUB] settings-get-providers');
-        return ['openai', 'anthropic', 'ollama'];
-    });
-
-    safeHandle('settings-has-key', async (_, { provider }) => {
-        console.log(`[STUB] settings-has-key: ${provider}`);
-        return true; // Always return true for dev
-    });
-
-    safeHandle('settings-get-key', async (_, { provider }) => {
-        console.log(`[STUB] settings-get-key: ${provider}`);
-        return 'sk-mock-key';
-    });
-
     safeHandle('settings-onboarding-complete', async () => {
         return { success: true, data: true };
     });
@@ -63,9 +48,8 @@ export function setupStubs() {
         'usage-get',
 
         // Settings
-        'settings-get-all', 'settings-save', 'settings-get-default-location', 'settings-save-key',
-        'settings-delete-key', // 'settings-get-providers', 'settings-has-key', handled manually
-        /* 'settings-onboarding-complete', handled manually */ 'settings-set-onboarding', 'settings-set-project',
+        'settings-get-default-location',
+        /* 'settings-onboarding-complete', handled manually */
         'settings-get-integrations', 'settings-export-env',
 
         // Dialog

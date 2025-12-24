@@ -64,13 +64,20 @@ const loadSettings = (): Settings => {
     }
 }
 
-const saveSettings = (settings: Settings): void => {
+export const saveSettings = (settings: Settings): void => {
     try {
         const settingsPath = getSettingsPath()
         fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2))
     } catch (err) {
         console.error('[Settings] Failed to save settings:', err)
     }
+}
+
+export const updateSettings = (updates: Partial<Settings>): Settings => {
+    const current = loadSettings();
+    const updated = { ...current, ...updates };
+    saveSettings(updated);
+    return updated;
 }
 
 // API Key Management (encrypted)
