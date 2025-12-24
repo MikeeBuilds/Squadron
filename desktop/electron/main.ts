@@ -191,7 +191,65 @@ function setupTerminalIPC(mainWindow: BrowserWindow) {
     });
 
     // PROJECT MANAGEMENT IPC
+    ipcMain.handle('project-add', async (_, { path }) => {
+        try {
+            const project = settingsStore.addProject(path);
+            return { success: true, data: project };
+        } catch (error: any) {
+            console.error('[Project] Failed to add project:', error);
+            return { success: false, error: error.message };
+        }
+    });
 
+    ipcMain.handle('project-remove', async (_, { projectId }) => {
+        const success = settingsStore.removeProject(projectId);
+        return { success };
+    });
+
+    ipcMain.handle('project-get-all', async () => {
+        const projects = settingsStore.getProjects();
+        return { success: true, data: projects };
+    });
+
+    ipcMain.handle('project-update-settings', async (_, { projectId, settings }) => {
+        const success = settingsStore.updateProjectSettingsInStore(projectId, settings);
+        return { success };
+    });
+
+    ipcMain.handle('project-initialize', async (_, { projectId }) => {
+        // Update the project in the store to mark it as initialized
+        const success = settingsStore.updateProjectSettingsInStore(projectId, { autoBuildPath: '.auto-claude' });
+        return { success, data: { success } };
+    });
+
+    // TASK IPC
+    ipcMain.handle('task-create', async (_, { projectId, title, description, metadata }) => {
+        try {
+            const task = settingsStore.addTask(projectId, { title, description, metadata, status: 'todo', createdAt: Date.now() });
+            return { success: true, data: task };
+        } catch (error: any) {
+            return { success: false, error: error.message };
+        }
+    });
+
+    ipcMain.handle('task-get-all', async (_, { projectId }) => {
+        const tasks = settingsStore.getTasks(projectId);
+        return { success: true, data: tasks };
+    });
+
+    ipcMain.handle('task-update', async (_, { taskId, updates }) => {
+        const success = settingsStore.updateTask(taskId, updates);
+        return { success };
+    });
+
+    ipcMain.handle('task-update-status', async (_, { taskId, status }) => {
+        const success = settingsStore.updateTask(taskId, { status });
+        return { success };
+    });
+
+    ipcMain.handle('task-check-running', async () => {
+        return { success: true, data: false };
+    });
 
     // INSIGHTS IPC
     ipcMain.handle('knowledge-get', async () => {
@@ -239,6 +297,44 @@ function setupTerminalIPC(mainWindow: BrowserWindow) {
         } catch (e: any) {
             console.error("Insights Error:", e);
             return `Error: ${e.message}`;
+        }
+    });
+
+    // PYTHON BACKEND PROXY
+    ipcMain.handle('api-request', async (_, { method, endpoint, body }) => {
+        try {
+            const fetch = (await import('node-fetch')).default;
+            const url = `http://localhost:8000${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
+            console.log(`[API Proxy] ${method} ${url}`);
+
+            const options: any = {
+                method: method || 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            };
+
+            if (body && (method === 'POST' || method === 'PUT')) {
+                options.body = JSON.stringify(body);
+            }
+
+            const response = await fetch(url, options);
+            const data = await response.json();
+
+            return { success: response.ok, data, status: response.status };
+        } catch (error: any) {
+            console.error('[API Proxy] Error:', error);
+            return { success: false, error: error.message };
+        }
+    });
+
+    ipcMain.handle('api-ping', async () => {
+        try {
+            const fetch = (await import('node-fetch')).default;
+            const response = await fetch('http://127.0.0.1:8000/health');
+            return response.ok;
+        } catch (error) {
+            return false;
         }
     });
 }
@@ -290,6 +386,9 @@ process.on('unhandledRejection', (reason) => {
 app.whenReady().then(async () => {
     console.log('[Main] App ready');
     try {
+        console.log('[Main] Starting Python Backend...');
+        startPythonBackend();
+
         console.log('[Main] Creating window...');
         createWindow();
         console.log('[Main] Window created');

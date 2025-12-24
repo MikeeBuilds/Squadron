@@ -15,7 +15,9 @@ export function startPythonBackend() {
     // We assume we are running from 'desktop/'
     const projectRoot = path.resolve(__dirname, '../../');
 
-    console.log('🚀 Starting Python Backend from:', projectRoot);
+    console.log('🚀 [Process Manager] Starting Python Backend...');
+    console.log('📂 [Process Manager] Project Root (CWD):', projectRoot);
+    console.log('🐍 [Process Manager] Command: python -m', PY_MODULE);
 
     pythonProcess = spawn('python', ['-m', PY_MODULE], {
         cwd: projectRoot,

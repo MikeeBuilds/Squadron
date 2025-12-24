@@ -1,5 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import { randomUUID } from 'crypto';
 
 // Lazy-load electron APIs to avoid undefined at module load time
 const getElectronApp = () => require('electron').app;
@@ -31,6 +32,16 @@ export const INTEGRATION_KEYS = {
 
 export type IntegrationKey = keyof typeof INTEGRATION_KEYS
 
+interface Project {
+    id: string;
+    name: string;
+    path: string;
+    lastOpened: number;
+    settings?: any;
+    autoBuildPath?: string;
+    tasks?: any[]; // Store tasks within project
+}
+
 interface Settings {
     apiKeys: Record<string, string> // encrypted keys
     enabledProviders: string[]
@@ -38,6 +49,7 @@ interface Settings {
     defaultModel: string
     onboardingComplete: boolean
     projectPath: string | null
+    projects: Project[]
 }
 
 const getSettingsPath = (): string => {
@@ -49,7 +61,10 @@ const loadSettings = (): Settings => {
         const settingsPath = getSettingsPath()
         if (fs.existsSync(settingsPath)) {
             const data = fs.readFileSync(settingsPath, 'utf-8')
-            return JSON.parse(data)
+            const parsed = JSON.parse(data)
+            // Ensure projects array exists for migration
+            if (!parsed.projects) parsed.projects = [];
+            return parsed
         }
     } catch (err) {
         console.error('[Settings] Failed to load settings:', err)
@@ -60,7 +75,8 @@ const loadSettings = (): Settings => {
         defaultProvider: 'shell',
         defaultModel: 'default',
         onboardingComplete: false,
-        projectPath: null
+        projectPath: null,
+        projects: []
     }
 }
 
@@ -80,7 +96,8 @@ export const updateSettings = (updates: Partial<Settings>): Settings => {
     return updated;
 }
 
-// API Key Management (encrypted)
+// --- API Key Management (encrypted) ---
+
 export const saveApiKey = (provider: string, key: string): boolean => {
     try {
         if (!getSafeStorage().isEncryptionAvailable()) {
@@ -157,6 +174,7 @@ export const getAllSettings = (): Omit<Settings, 'apiKeys'> & { hasKeys: Record<
         defaultModel: settings.defaultModel,
         onboardingComplete: settings.onboardingComplete,
         projectPath: settings.projectPath,
+        projects: settings.projects || [],
         hasKeys: Object.fromEntries(
             Object.keys(settings.apiKeys).map(k => [k, true])
         )
@@ -187,7 +205,104 @@ export const isOnboardingComplete = (): boolean => {
     return settings.onboardingComplete
 }
 
-// Export settings to .env file for Python backend
+// --- Project Management ---
+
+export const getProjects = (): Project[] => {
+    const settings = loadSettings();
+    return settings.projects || [];
+}
+
+export const addProject = (projectPath: string): Project => {
+    const settings = loadSettings();
+    const existing = settings.projects.find(p => p.path === projectPath);
+    if (existing) {
+        existing.lastOpened = Date.now();
+        // Ensure tasks exists
+        if (!existing.tasks) existing.tasks = [];
+        saveSettings(settings);
+        return existing;
+    }
+
+    const name = path.basename(projectPath);
+    const newProject: Project = {
+        id: randomUUID(),
+        name,
+        path: projectPath,
+        lastOpened: Date.now(),
+        settings: {},
+        tasks: []
+    };
+
+    settings.projects.push(newProject);
+    saveSettings(settings);
+    return newProject;
+}
+
+export const removeProject = (projectId: string): boolean => {
+    const settings = loadSettings();
+    const initialLength = settings.projects.length;
+    settings.projects = settings.projects.filter(p => p.id !== projectId);
+    saveSettings(settings);
+    return settings.projects.length < initialLength;
+}
+
+export const getProject = (projectId: string): Project | undefined => {
+    const settings = loadSettings();
+    return settings.projects.find(p => p.id === projectId);
+}
+
+export const updateProjectSettingsInStore = (projectId: string, projectSettings: any): boolean => {
+    const settings = loadSettings();
+    const project = settings.projects.find(p => p.id === projectId);
+    if (project) {
+        project.settings = { ...project.settings, ...projectSettings };
+        // Special handling for autoBuildPath update
+        if (projectSettings.autoBuildPath) {
+            project.autoBuildPath = projectSettings.autoBuildPath;
+        }
+        saveSettings(settings);
+        return true;
+    }
+    return false;
+}
+
+// --- Task Management ---
+
+export const getTasks = (projectId: string): any[] => {
+    const project = getProject(projectId);
+    return project?.tasks || [];
+}
+
+export const addTask = (projectId: string, task: any): any => {
+    const settings = loadSettings();
+    const project = settings.projects.find(p => p.id === projectId);
+    if (project) {
+        if (!project.tasks) project.tasks = [];
+        // Ensure task has ID and projectId
+        const newTask = { ...task, id: task.id || randomUUID(), projectId };
+        project.tasks.push(newTask);
+        saveSettings(settings);
+        return newTask;
+    }
+    return null;
+}
+
+export const updateTask = (taskId: string, updates: any): boolean => {
+    const settings = loadSettings();
+    for (const project of settings.projects) {
+        if (!project.tasks) continue;
+        const taskIndex = project.tasks.findIndex((t: any) => t.id === taskId);
+        if (taskIndex !== -1) {
+            project.tasks[taskIndex] = { ...project.tasks[taskIndex], ...updates };
+            saveSettings(settings);
+            return true;
+        }
+    }
+    return false;
+}
+
+// --- Export to Env ---
+
 export const exportToEnvFile = (targetPath: string): boolean => {
     try {
         const settings = loadSettings()

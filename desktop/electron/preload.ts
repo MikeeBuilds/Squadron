@@ -498,4 +498,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
         ipcRenderer.on(channel, subscription);
         return () => ipcRenderer.removeListener(channel, subscription);
     },
+
+    // Python Backend API
+    apiRequest: (method: string, endpoint: string, body?: any) => ipcRenderer.invoke('api-request', { method, endpoint, body }),
+    apiPing: () => ipcRenderer.invoke('api-ping'),
 });

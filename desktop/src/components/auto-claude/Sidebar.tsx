@@ -340,9 +340,15 @@ export function Sidebar({
             New Task
           </Button>
           {selectedProject && !selectedProject.autoBuildPath && (
-            <p className="mt-2 text-xs text-muted-foreground text-center">
-              Initialize Auto Claude to create tasks
-            </p>
+            <button
+              onClick={() => {
+                setPendingProject(selectedProject);
+                setShowInitDialog(true);
+              }}
+              className="mt-2 w-full text-xs text-primary text-center hover:underline cursor-pointer"
+            >
+              Click here to Initialize Auto Claude
+            </button>
           )}
         </div>
       </div>

@@ -72,9 +72,7 @@ export function ProjectTabBar({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [projects, activeProjectId, onProjectSelect, onProjectClose]);
 
-  if (projects.length === 0) {
-    return null;
-  }
+
 
   return (
     <div className={cn(
@@ -84,18 +82,19 @@ export function ProjectTabBar({
     )}>
       <div className="flex items-center flex-1 min-w-0">
         {projects.map((project, index) => (
-          <SortableProjectTab
-            key={project.id}
-            project={project}
-            isActive={activeProjectId === project.id}
-            canClose={projects.length > 1}
-            tabIndex={index}
-            onSelect={() => onProjectSelect(project.id)}
-            onClose={(e) => {
-              e.stopPropagation();
-              onProjectClose(project.id);
-            }}
-          />
+          <div key={project.id} className="contents">
+            <SortableProjectTab
+              project={project}
+              isActive={activeProjectId === project.id}
+              canClose={projects.length > 1}
+              tabIndex={index}
+              onSelect={() => onProjectSelect(project.id)}
+              onClose={(e) => {
+                e.stopPropagation();
+                onProjectClose(project.id);
+              }}
+            />
+          </div>
         ))}
       </div>
 
